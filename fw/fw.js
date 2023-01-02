@@ -1,4 +1,4 @@
-import {
+const {
     h,
     ref,
     reactive,
@@ -7,10 +7,10 @@ import {
     onUnmounted,
     onUpdated,
     getCurrentInstance,
-  } from 'vue';
+  } = require('vue');
 
 class Layer {
-    private children = [];
+    children = [];
 
     constructor() {
       console.log('Layer', this)
@@ -22,7 +22,7 @@ class Layer {
 }
 
 class Rect {
-    private children = [];
+    children = [];
 
     toString() {
         return 'Rect'
@@ -30,7 +30,7 @@ class Rect {
 }
 
 class Circle {
-    private children = [];
+    children = [];
 
     toString() {
         return 'Circle'
@@ -62,9 +62,9 @@ const FWNode = (name) => {
             const NodeClass = WidgetList[name];
             const _fwNode = new NodeClass();
             // @ts-expect-error
-            instance!.__fwNode = _fwNode;
+            instance.__fwNode = _fwNode;
             // @ts-expect-error
-            instance!.vnode.__fwNode = _fwNode;
+            instance.vnode.__fwNode = _fwNode;
             uploadKonva();
 
             function getNode() {
@@ -113,10 +113,10 @@ const FWNode = (name) => {
                 getNode,
               });
 
-            const isContainer = true;
+            const isContainer = false;
             return isContainer
             ? () => h('template', {}, slots.default?.())
-            : () => null;
+            : () => h(name, {}, slots.default?.());
         }
     }
 }
@@ -133,4 +133,4 @@ const FW = {
     },
   };
   
-  export default FW;
+module.exports.default = FW;

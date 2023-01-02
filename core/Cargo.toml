@@ -3,6 +3,17 @@ name = "core"
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+crate-type = ["cdylib"]
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+png = "0.17.5"
+colorsys = "0.6.5"
+skia-safe = "0.55.0"
+
+[dependencies.neon]
+version = "0.10.1"
+default-features = false
+features = ["napi-6", "promise-api", "task-api"]
