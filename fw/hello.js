@@ -15,5 +15,11 @@ renderToString(app).then((html) => {
   const root = parse(html);
   console.log(root.childNodes[0].rawTagName)
   console.log(core)
-  core.Canvas_draw_circle();
+  const ctx = core.Canvas_create_a_context();
+  console.log(core.Context_read_cc(ctx));
+  core.Context_make_a_triangle(ctx, 0, 0);
+  core.Context_make_a_triangle(ctx, 100, 100);
+  core.Context_make_a_triangle(ctx, 140, 20);
+  core.Context_make_a_circle(ctx);
+  core.Context_make_a_draw(ctx);
 })
