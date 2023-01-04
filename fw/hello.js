@@ -15,5 +15,5 @@ renderToString(app).then((html) => {
   const root = parse(html);
   console.log(root.childNodes[0].rawTagName)
   console.log(core)
-  core.Canvas_hello();
+  core.Canvas_draw_circle();
 })
