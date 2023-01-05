@@ -78,16 +78,19 @@ pub fn make_a_triangle(mut cx: FunctionContext) -> JsResult<JsUndefined> {
 
 pub fn make_a_circle(mut cx: FunctionContext) -> JsResult<JsUndefined> {
     let this = cx.argument::<BoxedContext2d>(0)?;
-    let mut this = this.borrow_mut();
-    let color = Rgb::from_hex_str("ff0000").expect("Failed to create color");
+    let xy = opt_float_args(&mut cx, 1..3);
+    if let [x, y] = xy.as_slice(){
+        let mut this = this.borrow_mut();
+        let color = Rgb::from_hex_str("ff0000").expect("Failed to create color");
 
-    this.paint.set_color(Color::from_rgb(color.red() as u8, color.green() as u8, color.blue() as u8));
-    this.paint.set_anti_alias(true);
-    this.paint.set_stroke_width(2.0);
+        this.paint.set_color(Color::from_rgb(color.red() as u8, color.green() as u8, color.blue() as u8));
+        this.paint.set_anti_alias(true);
+        this.paint.set_stroke_width(2.0);
 
-    this.path.arc_to(Rect::new(100.0, 200.0, 140.0, 240.0), 0.0, 180.0, false);
-    this.path.arc_to(Rect::new(100.0, 200.0, 140.0, 240.0), 180.0, 180.0, false);
-    this.paint.set_style(PaintStyle::Fill);
+        this.path.arc_to(Rect::new(*x, *y, *x + 40.0, *y + 40.0), 0.0, 180.0, false);
+        this.path.arc_to(Rect::new(*x, *y, *x + 40.0, *y + 40.0), 180.0, 180.0, false);
+        this.paint.set_style(PaintStyle::Fill);
+    }
     Ok(cx.undefined())
 }
 

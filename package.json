@@ -11,10 +11,17 @@
     "url": "git+https://github.com/rustq/vue-skia.git"
   },
   "author": "rustq",
-  "files": ["LICENSE", "package.json", "README.md"],
+  "files": [
+    "LICENSE",
+    "package.json",
+    "README.md"
+  ],
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/rustq/vue-skia/issues"
   },
-  "homepage": "https://github.com/rustq/vue-skia#readme"
+  "homepage": "https://github.com/rustq/vue-skia#readme",
+  "devDependencies": {
+    "node-html-parser": "^6.1.4"
+  }
 }
