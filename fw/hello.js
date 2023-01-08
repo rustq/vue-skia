@@ -27,19 +27,20 @@ app.use(FW);
 
 renderToString(app).then((html) => {
   console.log(html)
-  const ctx = core.Canvas_create_a_context();
+  const ctx = core.createContext();
   const root = parse(html);
+  core.createRect(ctx, 0, 0, 20, 20, "ffffff");
   function recursiveTraceChild(root) {
     root.childNodes.forEach(child => {
       if (child.rawTagName === 'Circle') {
         const x = Number(child.getAttribute("x"));
         const y = Number(child.getAttribute("y"));
-        core.Context_make_a_circle(ctx, x, y);
+        core.createCircle(ctx, x, y, 30, "003333");
       }
       if (child.rawTagName === 'Rect') {
         const x = Number(child.getAttribute("x"));
         const y = Number(child.getAttribute("y"));
-        core.Context_make_a_triangle(ctx, x, y);
+        core.createTriangle(ctx, x, y, x + Math.random() * 60, y + Math.random() * 20, x - Math.random() * 20, y - Math.random() * 20, "ff3eff");
       }
       return recursiveTraceChild(child);
     })

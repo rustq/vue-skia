@@ -30,6 +30,27 @@ pub fn opt_float_args(cx: &mut FunctionContext, rng: Range<usize>) -> Vec<f32>{
     args
   }
 
+pub fn opt_string_arg(cx: &mut FunctionContext, idx: usize) -> Option<String>{
+  match cx.argument_opt(idx as i32) {
+    Some(arg) => match arg.downcast::<JsString, _>(cx) {
+      Ok(v) => Some(v.value(cx)),
+      Err(_e) => None
+    },
+    None => None
+  }
+}
+
+pub fn string_arg<'a>(cx: &mut FunctionContext<'a>, idx: usize) -> NeonResult<String> {
+  let exists = cx.len() > idx as i32;
+  match opt_string_arg(cx, idx){
+    Some(v) => Ok(v),
+    None => cx.throw_type_error(
+      if exists { format!("must be a string") }
+      else { format!("Missing argument: expected a string for it") }
+    )
+  }
+}
+
 
 pub struct Context2d{
     cc:String,
@@ -110,3 +131,109 @@ pub fn make_a_draw(mut cx: FunctionContext) -> JsResult<JsUndefined> {
     Ok(cx.undefined())
 }
 
+/*
+ * Create Triangle
+ *
+ * context.createTriangle
+ * @ ax: number, 
+ * @ ay: number, 
+ * @ bx: number, 
+ * @ by: number, 
+ * @ cx: number, 
+ * @ cy: number,
+ * @ fill: string,
+ * @ stroke: string,
+ *
+ */
+pub fn create_triangle(mut cx: FunctionContext) -> JsResult<JsUndefined> {
+  let this = cx.argument::<BoxedContext2d>(0)?;
+  let args_1_7 = opt_float_args(&mut cx, 1..7);
+  let fill = string_arg(&mut cx, 7)?;
+  let stroke = opt_string_arg(&mut cx, 8);
+  if let [ax, ay, bx, by, cx, cy] = args_1_7.as_slice(){
+      let mut this = this.borrow_mut();
+      let color = Rgb::from_hex_str(&fill).expect("Failed to create color");
+  
+      this.paint.set_color(Color::from_rgb(color.red() as u8, color.green() as u8, color.blue() as u8));
+      this.paint.set_anti_alias(true);
+      this.paint.set_stroke_width(2.0);
+  
+      this.path.move_to((*ax, *ay));
+      this.path.line_to((*bx, *by));
+      this.path.line_to((*cx, *cy));
+      this.path.line_to((*ax, *ay));
+      this.paint.set_style(PaintStyle::Fill);
+    }
+
+  Ok(cx.undefined())
+}
+
+
+/*
+ * Create Rect
+ *
+ * context.createRect
+ * @ x: number, 
+ * @ y: number, 
+ * @ w: number, 
+ * @ h: number,
+ * @ fill: string,
+ * @ stroke: string,
+ *
+ */
+pub fn create_rect(mut cx: FunctionContext) -> JsResult<JsUndefined> {
+  let this = cx.argument::<BoxedContext2d>(0)?;
+  let args_1_5 = opt_float_args(&mut cx, 1..5);
+  let fill = string_arg(&mut cx, 5)?;
+  let stroke = opt_string_arg(&mut cx, 6);
+  if let [x, y, w, h] = args_1_5.as_slice(){
+      let mut this = this.borrow_mut();
+      let color = Rgb::from_hex_str(&fill).expect("Failed to create color");
+  
+      this.paint.set_color(Color::from_rgb(color.red() as u8, color.green() as u8, color.blue() as u8));
+      this.paint.set_anti_alias(true);
+      this.paint.set_stroke_width(2.0);
+  
+      this.path.move_to((*x, *y));
+      this.path.line_to((*x + *w, *y));
+      this.path.line_to((*x + *w, *y + *h));
+      this.path.line_to((*x, *y + *h));
+      this.path.line_to((*x, *y));
+      this.paint.set_style(PaintStyle::Fill);
+    }
+
+  Ok(cx.undefined())
+}
+
+
+/*
+ * Create Circle
+ *
+ * context.createCircle
+ * @ cx: number, 
+ * @ cy: number, 
+ * @ r: number, 
+ * @ fill: string,
+ * @ stroke: string,
+ *
+ */
+pub fn create_circle(mut cx: FunctionContext) -> JsResult<JsUndefined> {
+  let this = cx.argument::<BoxedContext2d>(0)?;
+  let xyr = opt_float_args(&mut cx, 1..4);
+  let fill = string_arg(&mut cx, 4)?;
+  let stroke = opt_string_arg(&mut cx, 5);
+  if let [x, y, r] = xyr.as_slice(){
+      let mut this = this.borrow_mut();
+      let color = Rgb::from_hex_str(&fill).expect("Failed to create color");
+
+      this.paint.set_color(Color::from_rgb(color.red() as u8, color.green() as u8, color.blue() as u8));
+      this.paint.set_anti_alias(true);
+      this.paint.set_stroke_width(2.0);
+
+      let d: f32 = *r * 2.0;
+      this.path.arc_to(Rect::new(*x, *y, *x + d, *y + d), 0.0, 180.0, false);
+      this.path.arc_to(Rect::new(*x, *y, *x + d, *y + d), 180.0, 180.0, false);
+      this.paint.set_style(PaintStyle::Fill);
+  }
+  Ok(cx.undefined())
+}
