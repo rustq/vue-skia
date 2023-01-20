@@ -53,20 +53,34 @@ pub fn string_arg<'a>(cx: &mut FunctionContext<'a>, idx: usize) -> NeonResult<St
 
 
 pub struct Context2d{
+    pub(crate) surface: Surface,
     cc:String,
     path: Path,
     paint: Paint,
 }
 
 impl Context2d {
+  pub fn new() -> Self {
+    let surface = Surface::new_raster_n32_premul((200, 300)).expect("no surface!");
+    Context2d {
+      surface,
+      cc:"qqqq".to_string(),
+      path: Path::new(),
+      paint: Paint::default()
+    }
+  }
 }
+
 impl Finalize for Context2d {}
+
+unsafe impl Send for Context2d {}
 
 pub type BoxedContext2d = JsBox<RefCell<Context2d>>;
 
 
 pub fn new(mut cx: FunctionContext) -> JsResult<BoxedContext2d> {
-    let this = RefCell::new(Context2d{ cc:"qqqq".to_string(), path: Path::new(), paint: Paint::default() });
+    let ctx2d = Context2d::new();
+    let this = RefCell::new(ctx2d);
     Ok(cx.boxed(this))
   }
 
@@ -76,55 +90,15 @@ pub fn read_cc(mut cx: FunctionContext) -> JsResult<JsString> {
     Ok(cx.string(this.cc.clone() as String))
 }
 
-pub fn make_a_triangle(mut cx: FunctionContext) -> JsResult<JsUndefined> {
-    let this = cx.argument::<BoxedContext2d>(0)?;
-    let xy = opt_float_args(&mut cx, 1..3);
-    if let [x, y] = xy.as_slice(){
-        let mut this = this.borrow_mut();
-        let color = Rgb::from_hex_str("00ff00").expect("Failed to create color");
-    
-        this.paint.set_color(Color::from_rgb(color.red() as u8, color.green() as u8, color.blue() as u8));
-        this.paint.set_anti_alias(true);
-        this.paint.set_stroke_width(2.0);
-    
-        this.path.move_to((*x, *y));
-        this.path.line_to((*x + 80.0, *y + 90.0));
-        this.path.line_to((*x + 20.0, *y + 100.0));
-        this.path.line_to((*x, *y));
-        this.paint.set_style(PaintStyle::Fill);
-      }
-
-    Ok(cx.undefined())
-}
-
-pub fn make_a_circle(mut cx: FunctionContext) -> JsResult<JsUndefined> {
-    let this = cx.argument::<BoxedContext2d>(0)?;
-    let xy = opt_float_args(&mut cx, 1..3);
-    if let [x, y] = xy.as_slice(){
-        let mut this = this.borrow_mut();
-        let color = Rgb::from_hex_str("ff0000").expect("Failed to create color");
-
-        this.paint.set_color(Color::from_rgb(color.red() as u8, color.green() as u8, color.blue() as u8));
-        this.paint.set_anti_alias(true);
-        this.paint.set_stroke_width(2.0);
-
-        this.path.arc_to(Rect::new(*x, *y, *x + 40.0, *y + 40.0), 0.0, 180.0, false);
-        this.path.arc_to(Rect::new(*x, *y, *x + 40.0, *y + 40.0), 180.0, 180.0, false);
-        this.paint.set_style(PaintStyle::Fill);
-    }
-    Ok(cx.undefined())
-}
-
-pub fn make_a_draw(mut cx: FunctionContext) -> JsResult<JsUndefined> {
+pub fn save(mut cx: FunctionContext) -> JsResult<JsUndefined> {
     let this = cx.argument::<BoxedContext2d>(0)?;
     let mut this = this.borrow_mut();
-    let mut surface = Surface::new_raster_n32_premul((200, 300)).expect("no surface!");
-    surface.canvas().draw_path(&this.path, &this.paint);
+    let file_path = string_arg(&mut cx, 1)?;
 
-    let image = surface.image_snapshot();
+    let image = this.surface.image_snapshot();
     let d = image.encode_to_data(EncodedImageFormat::PNG).unwrap();
 
-    let mut file = File::create("make_a_draw.png").expect("Failed to open output png");
+    let mut file = File::create(file_path).expect("Failed to open output png");
     let bytes = d.as_bytes();
 
     file.write_all(bytes).expect("Failed to write output png");
@@ -153,16 +127,20 @@ pub fn create_triangle(mut cx: FunctionContext) -> JsResult<JsUndefined> {
   if let [ax, ay, bx, by, cx, cy] = args_1_7.as_slice(){
       let mut this = this.borrow_mut();
       let color = Rgb::from_hex_str(&fill).expect("Failed to create color");
+      let canvas = &mut this.surface.canvas();
+      let mut path = Path::new();
+      let mut paint = Paint::default();
   
-      this.paint.set_color(Color::from_rgb(color.red() as u8, color.green() as u8, color.blue() as u8));
-      this.paint.set_anti_alias(true);
-      this.paint.set_stroke_width(2.0);
+      paint.set_color(Color::from_rgb(color.red() as u8, color.green() as u8, color.blue() as u8));
+      paint.set_anti_alias(true);
+      paint.set_stroke_width(2.0);
   
-      this.path.move_to((*ax, *ay));
-      this.path.line_to((*bx, *by));
-      this.path.line_to((*cx, *cy));
-      this.path.line_to((*ax, *ay));
-      this.paint.set_style(PaintStyle::Fill);
+      path.move_to((*ax, *ay));
+      path.line_to((*bx, *by));
+      path.line_to((*cx, *cy));
+      path.line_to((*ax, *ay));
+      paint.set_style(PaintStyle::Fill);
+      canvas.draw_path(&path, &paint);
     }
 
   Ok(cx.undefined())
@@ -189,17 +167,21 @@ pub fn create_rect(mut cx: FunctionContext) -> JsResult<JsUndefined> {
   if let [x, y, w, h] = args_1_5.as_slice(){
       let mut this = this.borrow_mut();
       let color = Rgb::from_hex_str(&fill).expect("Failed to create color");
+      let canvas = &mut this.surface.canvas();
+      let mut path = Path::new();
+      let mut paint = Paint::default();
   
-      this.paint.set_color(Color::from_rgb(color.red() as u8, color.green() as u8, color.blue() as u8));
-      this.paint.set_anti_alias(true);
-      this.paint.set_stroke_width(2.0);
+      paint.set_color(Color::from_rgb(color.red() as u8, color.green() as u8, color.blue() as u8));
+      paint.set_anti_alias(true);
+      paint.set_stroke_width(2.0);
   
-      this.path.move_to((*x, *y));
-      this.path.line_to((*x + *w, *y));
-      this.path.line_to((*x + *w, *y + *h));
-      this.path.line_to((*x, *y + *h));
-      this.path.line_to((*x, *y));
-      this.paint.set_style(PaintStyle::Fill);
+      path.move_to((*x, *y));
+      path.line_to((*x + *w, *y));
+      path.line_to((*x + *w, *y + *h));
+      path.line_to((*x, *y + *h));
+      path.line_to((*x, *y));
+      paint.set_style(PaintStyle::Fill);
+      canvas.draw_path(&path, &paint);
     }
 
   Ok(cx.undefined())
@@ -225,15 +207,18 @@ pub fn create_circle(mut cx: FunctionContext) -> JsResult<JsUndefined> {
   if let [x, y, r] = xyr.as_slice(){
       let mut this = this.borrow_mut();
       let color = Rgb::from_hex_str(&fill).expect("Failed to create color");
+      let canvas = &mut this.surface.canvas();
+      let mut path = Path::new();
+      let mut paint = Paint::default();
 
-      this.paint.set_color(Color::from_rgb(color.red() as u8, color.green() as u8, color.blue() as u8));
-      this.paint.set_anti_alias(true);
-      this.paint.set_stroke_width(2.0);
+      paint.set_color(Color::from_rgb(color.red() as u8, color.green() as u8, color.blue() as u8));
+      paint.set_anti_alias(true);
+      paint.set_stroke_width(2.0);
 
-      let d: f32 = *r * 2.0;
-      this.path.arc_to(Rect::new(*x, *y, *x + d, *y + d), 0.0, 180.0, false);
-      this.path.arc_to(Rect::new(*x, *y, *x + d, *y + d), 180.0, 180.0, false);
-      this.paint.set_style(PaintStyle::Fill);
+      path.arc_to(Rect::new(*x, *y, *x + 40.0, *y + 40.0), 0.0, 180.0, false);
+      path.arc_to(Rect::new(*x, *y, *x + 40.0, *y + 40.0), 180.0, 180.0, false);
+      paint.set_style(PaintStyle::Fill);
+      canvas.draw_path(&path, &paint);
   }
   Ok(cx.undefined())
 }

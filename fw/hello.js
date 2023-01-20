@@ -40,12 +40,12 @@ renderToString(app).then((html) => {
       if (child.rawTagName === 'Rect') {
         const x = Number(child.getAttribute("x"));
         const y = Number(child.getAttribute("y"));
-        core.createTriangle(ctx, x, y, x + Math.random() * 60, y + Math.random() * 20, x - Math.random() * 20, y - Math.random() * 20, "ff3eff");
+        core.createTriangle(ctx, x, y, x + Math.random() * 60, y + Math.random() * 20, x - Math.random() * 20, y - Math.random() * 20, "ff3eff", "ffffff");
       }
       return recursiveTraceChild(child);
     })
   }
   recursiveTraceChild(root)
-  core.Context_make_a_draw(ctx);
+  core.save(ctx, "hello.png");
   console.log('done 🌟')
 })
