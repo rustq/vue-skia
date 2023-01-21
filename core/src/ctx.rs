@@ -141,6 +141,12 @@ pub fn create_triangle(mut cx: FunctionContext) -> JsResult<JsUndefined> {
       path.line_to((*ax, *ay));
       paint.set_style(PaintStyle::Fill);
       canvas.draw_path(&path, &paint);
+      if let Some(strokeColor) = stroke {
+        paint.set_style(PaintStyle::Stroke);
+        let color = Rgb::from_hex_str(&strokeColor).expect("Failed to create color");
+        paint.set_color(Color::from_rgb(color.red() as u8, color.green() as u8, color.blue() as u8));
+        canvas.draw_path(&path, &paint);
+      }
     }
 
   Ok(cx.undefined())
@@ -182,6 +188,12 @@ pub fn create_rect(mut cx: FunctionContext) -> JsResult<JsUndefined> {
       path.line_to((*x, *y));
       paint.set_style(PaintStyle::Fill);
       canvas.draw_path(&path, &paint);
+      if let Some(strokeColor) = stroke {
+        paint.set_style(PaintStyle::Stroke);
+        let color = Rgb::from_hex_str(&strokeColor).expect("Failed to create color");
+        paint.set_color(Color::from_rgb(color.red() as u8, color.green() as u8, color.blue() as u8));
+        canvas.draw_path(&path, &paint);
+      }
     }
 
   Ok(cx.undefined())
@@ -221,6 +233,12 @@ pub fn create_round_rect(mut cx: FunctionContext) -> JsResult<JsUndefined> {
     path.add_rrect(rrect, Some((PathDirection::CW, 0)));
     paint.set_style(PaintStyle::Fill);
     canvas.draw_path(&path, &paint);
+    if let Some(strokeColor) = stroke {
+      paint.set_style(PaintStyle::Stroke);
+      let color = Rgb::from_hex_str(&strokeColor).expect("Failed to create color");
+      paint.set_color(Color::from_rgb(color.red() as u8, color.green() as u8, color.blue() as u8));
+      canvas.draw_path(&path, &paint);
+    }
   }
 
   Ok(cx.undefined())
@@ -258,6 +276,12 @@ pub fn create_circle(mut cx: FunctionContext) -> JsResult<JsUndefined> {
       path.arc_to(Rect::new(*x, *y, *x + 40.0, *y + 40.0), 180.0, 180.0, false);
       paint.set_style(PaintStyle::Fill);
       canvas.draw_path(&path, &paint);
+      if let Some(strokeColor) = stroke {
+        paint.set_style(PaintStyle::Stroke);
+        let color = Rgb::from_hex_str(&strokeColor).expect("Failed to create color");
+        paint.set_color(Color::from_rgb(color.red() as u8, color.green() as u8, color.blue() as u8));
+        canvas.draw_path(&path, &paint);
+      }
   }
   Ok(cx.undefined())
 }

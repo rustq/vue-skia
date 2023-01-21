@@ -29,14 +29,15 @@ renderToString(app).then((html) => {
   console.log(html)
   const ctx = core.createContext();
   const root = parse(html);
-  core.createRoundRect(ctx, 0, 0, 80, 80, 20, "0000ff");
-  core.createRect(ctx, 56, 14, 20, 20, "ffffff");
+  core.createRoundRect(ctx, 0, 0, 80, 80, 20, "0000ff", "ffffff");
+  core.createRect(ctx, 56, 14, 20, 20, "ffffff", "ff22aa");
+  core.createRect(ctx, 156, 114, 20, 20, "ffffff", "ff22aa");
   function recursiveTraceChild(root) {
     root.childNodes.forEach(child => {
       if (child.rawTagName === 'Circle') {
         const x = Number(child.getAttribute("x"));
         const y = Number(child.getAttribute("y"));
-        core.createCircle(ctx, x, y, 30, "003333");
+        core.createCircle(ctx, x, y, 30, "003333", "000011");
       }
       if (child.rawTagName === 'Rect') {
         const x = Number(child.getAttribute("x"));
