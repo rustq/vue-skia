@@ -1,136 +1,136 @@
-const {
-    h,
-    ref,
-    reactive,
-    watch,
-    onMounted,
-    onUnmounted,
-    onUpdated,
-    getCurrentInstance,
-  } = require('vue');
+// const {
+//     h,
+//     ref,
+//     reactive,
+//     watch,
+//     onMounted,
+//     onUnmounted,
+//     onUpdated,
+//     getCurrentInstance,
+//   } = require('vue');
 
-class Layer {
-    children = [];
+// class Layer {
+//     children = [];
 
-    constructor() {
-      console.log('Layer', this)
-    }
+//     constructor() {
+//       console.log('Layer', this)
+//     }
 
-    toString() {
-        return 'Layer'
-    }
-}
+//     toString() {
+//         return 'Layer'
+//     }
+// }
 
-class Rect {
-    children = [];
+// class Rect {
+//     children = [];
 
-    toString() {
-        return 'Rect'
-    }
-}
+//     toString() {
+//         return 'Rect'
+//     }
+// }
 
-class Circle {
-    children = [];
+// class Circle {
+//     children = [];
 
-    toString() {
-        return 'Circle'
-    }
-}
+//     toString() {
+//         return 'Circle'
+//     }
+// }
 
-const WidgetList = {
-    'Layer': Layer,
-    'Rect': Rect,
-    'Circle': Circle,
-};
+// const WidgetList = {
+//     'Layer': Layer,
+//     'Rect': Rect,
+//     'Circle': Circle,
+// };
 
-const FWNode = (name) => {
-    return {
-        props: {
-            config: {
-              type: Object,
-              default: function () {
-                return {};
-              },
-            },
-            __useStrictMode: {
-              type: Boolean,
-            },
-        },
-        setup(props, { attrs, slots, expose }) {
-            const instance = getCurrentInstance();
-            const oldProps = reactive({});
-            const NodeClass = WidgetList[name];
-            const _fwNode = new NodeClass();
-            // @ts-expect-error
-            instance.__fwNode = _fwNode;
-            // @ts-expect-error
-            instance.vnode.__fwNode = _fwNode;
-            uploadKonva();
+// const FWNode = (name) => {
+//     return {
+//         props: {
+//             config: {
+//               type: Object,
+//               default: function () {
+//                 return {};
+//               },
+//             },
+//             __useStrictMode: {
+//               type: Boolean,
+//             },
+//         },
+//         setup(props, { attrs, slots, expose }) {
+//             const instance = getCurrentInstance();
+//             const oldProps = reactive({});
+//             const NodeClass = WidgetList[name];
+//             const _fwNode = new NodeClass();
+//             // @ts-expect-error
+//             instance.__fwNode = _fwNode;
+//             // @ts-expect-error
+//             instance.vnode.__fwNode = _fwNode;
+//             uploadKonva();
 
-            function getNode() {
-                // @ts-expect-error
-              return instance.__fwNode;
-            }
-            function getStage() {
-                // @ts-expect-error
-              return instance.__fwNode;
-            }
+//             function getNode() {
+//                 // @ts-expect-error
+//               return instance.__fwNode;
+//             }
+//             function getStage() {
+//                 // @ts-expect-error
+//               return instance.__fwNode;
+//             }
       
-            function uploadKonva() {
-              const events = {};
-              // @ts-expect-error
-              for (var key in instance.vnode.props) {
-                if (key.slice(0, 2) === 'on') {
-                  // @ts-expect-error
-                  events[key] = instance.vnode.props[key];
-                }
-              }
-              const existingProps = oldProps || {};
-              const newProps = {
-                ...attrs,
-                ...props.config,
-                ...events,
-              };
+//             function uploadKonva() {
+//               const events = {};
+//               // @ts-expect-error
+//               for (var key in instance.vnode.props) {
+//                 if (key.slice(0, 2) === 'on') {
+//                   // @ts-expect-error
+//                   events[key] = instance.vnode.props[key];
+//                 }
+//               }
+//               const existingProps = oldProps || {};
+//               const newProps = {
+//                 ...attrs,
+//                 ...props.config,
+//                 ...events,
+//               };
 
-              Object.assign(oldProps, newProps);
-            }
+//               Object.assign(oldProps, newProps);
+//             }
 
-            onMounted(() => {
-                // @ts-expect-error
-                if (instance.parent?.__fwNode) {
-                  // @ts-expect-error
-                  instance.parent.__fwNode.children.push(_fwNode);
-                }
-              });
+//             onMounted(() => {
+//                 // @ts-expect-error
+//                 if (instance.parent?.__fwNode) {
+//                   // @ts-expect-error
+//                   instance.parent.__fwNode.children.push(_fwNode);
+//                 }
+//               });
 
-            onUpdated(() => {
-                uploadKonva();
-            });
+//             onUpdated(() => {
+//                 uploadKonva();
+//             });
 
-            watch(() => props.config, uploadKonva, { deep: true });
-            expose({
-                getStage,
-                getNode,
-              });
+//             watch(() => props.config, uploadKonva, { deep: true });
+//             expose({
+//                 getStage,
+//                 getNode,
+//               });
 
-            const isContainer = false;
-            return isContainer
-            ? () => h('template', {}, slots.default?.())
-            : () => h(name, {}, slots.default?.());
-        }
-    }
-}
+//             const isContainer = false;
+//             return isContainer
+//             ? () => h('template', {}, slots.default?.())
+//             : () => h(name, {}, slots.default?.());
+//         }
+//     }
+// }
 
-const FW = {
-    install: (app, options) => {
-      let prefixToUse = 'v';
-      if (options && options.prefix) {
-        prefixToUse = options.prefix;
-      }
-      ['Layer', 'Rect', 'Circle'].forEach((name) => {
-        app.component(`${prefixToUse}${name}`, FWNode(name));
-      });
-    },
-  };
+// const FW = {
+//     install: (app, options) => {
+//       let prefixToUse = 'v';
+//       if (options && options.prefix) {
+//         prefixToUse = options.prefix;
+//       }
+//       ['Layer', 'Rect', 'Circle'].forEach((name) => {
+//         app.component(`${prefixToUse}${name}`, FWNode(name));
+//       });
+//     },
+//   };
   
-module.exports.default = FW;
+// module.exports.default = FW;
