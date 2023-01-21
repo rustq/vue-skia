@@ -22,6 +22,7 @@ fn main(mut cx: ModuleContext) -> NeonResult<()> {
   cx.export_function("createContext", ctx::new)?;
   cx.export_function("createTriangle", ctx::create_triangle)?;
   cx.export_function("createRect", ctx::create_rect)?;
+  cx.export_function("createRoundRect", ctx::create_round_rect)?;
   cx.export_function("createCircle", ctx::create_circle)?;
 
   Ok(())

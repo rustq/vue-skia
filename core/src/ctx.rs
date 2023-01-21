@@ -1,8 +1,8 @@
 use std::cell::RefCell;
 use neon::{prelude::*, types::buffer::TypedArray};
 use skia_safe::{
-    Data, EncodedImageFormat, Paint, Rect, PaintStyle, Path,
-    scalar, Budgeted, ImageInfo, ColorType, Size, Surface,
+    Data, EncodedImageFormat, Paint, Rect, RRect, PaintStyle, Path, PathDirection,
+    Point, scalar, Budgeted, ImageInfo, ColorType, Size, Surface,
 };
 use skia_safe::{Color};
 use colorsys::Rgb;
@@ -183,6 +183,45 @@ pub fn create_rect(mut cx: FunctionContext) -> JsResult<JsUndefined> {
       paint.set_style(PaintStyle::Fill);
       canvas.draw_path(&path, &paint);
     }
+
+  Ok(cx.undefined())
+}
+
+/*
+ * Create RoundRect
+ *
+ * context.createRoundRect
+ * @ x: number, 
+ * @ y: number, 
+ * @ w: number, 
+ * @ h: number,
+ * @ radius: number,
+ * @ fill: string,
+ * @ stroke: string,
+ *
+ */
+pub fn create_round_rect(mut cx: FunctionContext) -> JsResult<JsUndefined> {
+  let this = cx.argument::<BoxedContext2d>(0)?;
+  let args_1_6 = opt_float_args(&mut cx, 1..6);
+  let fill = string_arg(&mut cx, 6)?;
+  let stroke = opt_string_arg(&mut cx, 7);
+  if let [x, y, w, h, radius] = args_1_6.as_slice(){
+    let mut this = this.borrow_mut();
+    let color = Rgb::from_hex_str(&fill).expect("Failed to create color");
+    let canvas = &mut this.surface.canvas();
+    let mut path = Path::new();
+    let mut paint = Paint::default();
+    paint.set_color(Color::from_rgb(color.red() as u8, color.green() as u8, color.blue() as u8));
+    paint.set_anti_alias(true);
+    paint.set_stroke_width(2.0);
+
+    let rect = Rect::from_xywh(*x, *y, *w, *h);
+    let rrect = RRect::new_rect_radii(rect, &[Point::new(*radius, *radius), Point::new(*radius, *radius), Point::new(*radius, *radius), Point::new(*radius, *radius)]);
+
+    path.add_rrect(rrect, Some((PathDirection::CW, 0)));
+    paint.set_style(PaintStyle::Fill);
+    canvas.draw_path(&path, &paint);
+  }
 
   Ok(cx.undefined())
 }

@@ -29,7 +29,8 @@ renderToString(app).then((html) => {
   console.log(html)
   const ctx = core.createContext();
   const root = parse(html);
-  core.createRect(ctx, 0, 0, 20, 20, "ffffff");
+  core.createRoundRect(ctx, 0, 0, 80, 80, 20, "0000ff");
+  core.createRect(ctx, 56, 14, 20, 20, "ffffff");
   function recursiveTraceChild(root) {
     root.childNodes.forEach(child => {
       if (child.rawTagName === 'Circle') {

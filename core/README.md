@@ -13,5 +13,9 @@ context.createRect(x: number, y: number, width: number, height: number)
 ```
 
 ```typescript
+context.createRoundRect(x: number, y: number, width: number, height: number, radius: number)
+```
+
+```typescript
 context.createCircle(cx: number, cy: number, r: number)
 ```
