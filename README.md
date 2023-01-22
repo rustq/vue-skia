@@ -7,7 +7,8 @@ $ npm run build
 ```
 
 ```shell
-$ cd ../fw
+$ cd ../renderer/node
 $ npm i
-$ node hello.js
+$ npm run build
+$ node render.js
 ```

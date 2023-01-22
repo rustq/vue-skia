@@ -1,0 +1,40 @@
+{
+  "name": "vue-skia-node-renderer",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "@vue/compat": "^3.1.1",
+    "@vue/server-renderer": "^3.1.1",
+    "core-js": "^3.6.5",
+    "express": "^4.17.1",
+    "vue": "^3.1.1",
+    "webpack-manifest-plugin": "^2.2.0",
+    "webpack-node-externals": "^2.5.1"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.1.1",
+    "babel-eslint": "^10.1.0",
+    "cross-env": "^7.0.2",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^7.0.0-0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": ["plugin:vue/vue3-essential", "eslint:recommended"],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {}
+  },
+  "browserslist": ["> 1%", "last 2 versions", "not dead"]
+}
