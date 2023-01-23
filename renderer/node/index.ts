@@ -4,7 +4,7 @@ const { parse } = require('node-html-parser');
 const vsk = require('../../plugin/').default;
 const core = require('../../core');
 
-function vrender(App: any, path: string) {
+function render(App: any, path: string) {
 
   const app = createSSRApp(App);
   app.use(vsk);
@@ -48,4 +48,6 @@ function vrender(App: any, path: string) {
   
 }
 
-module.exports.default = vrender
+module.exports = {
+  render
+}
