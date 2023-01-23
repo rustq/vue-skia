@@ -6,7 +6,7 @@ exports.chainWebpack = webpackConfig => {
   webpackConfig
     .entry("app")
     .clear()
-    .add("./src/main.js");
+    .add("./demo/main.js");
 
   webpackConfig.target("node");
   webpackConfig.output.libraryTarget("commonjs2");

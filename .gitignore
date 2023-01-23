@@ -21,3 +21,7 @@ package-lock.json
 *.png
 *.node
 dist/
+lib/
+plugin/*.js
+renderer/**/*.js
+typings/

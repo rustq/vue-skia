@@ -2,9 +2,13 @@
   "name": "vue-skia",
   "version": "0.0.0",
   "description": "```shell $ cd core $ npm i $ npm run build ```",
-  "main": "index.js",
+  "main": "./lib/renderer/node/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npm run build:core; npm run build:tsc; npm run build:demo;",
+    "build:core": "cargo-cp-artifact -nc lib/core.node -- cargo build --message-format=json-render-diagnostics",
+    "build:tsc": "npx tsc",
+    "build:demo": "vue-cli-service build",
+    "test": "node test/demo.test.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +26,34 @@
   },
   "homepage": "https://github.com/rustq/vue-skia#readme",
   "devDependencies": {
-    "node-html-parser": "^6.1.4"
-  }
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.1.1",
+    "@vue/server-renderer": "^3.1.1",
+    "@vue/compat": "^3.1.1",
+    "webpack-manifest-plugin": "^2.2.0",
+    "webpack-node-externals": "^2.5.1",
+    "babel-eslint": "^10.1.0",
+    "cross-env": "^7.0.2",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^7.0.0-0",
+    "vue": "^3.1.1",
+    "@types/node": "^18.11.18",
+    "node-html-parser": "^6.1.4",
+    "cargo-cp-artifact": "^0.1.7",
+    "typescript": "4"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": ["plugin:vue/vue3-essential", "eslint:recommended"],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {}
+  },
+  "browserslist": ["> 1%", "last 2 versions", "not dead"]
 }
