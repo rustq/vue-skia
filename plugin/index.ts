@@ -1,7 +1,10 @@
 const { h } = require("vue");
 
 const WidgetList = [
+    'Surface',
     'Layer',
+    'Triangle',
+    'RoundRect',
     'Rect',
     'Circle',
 ];
@@ -37,4 +40,4 @@ const VueSkiaPlugin = {
     },
 };
 
-module.exports.default = VueSkiaPlugin
+export default VueSkiaPlugin;

@@ -1,7 +1,7 @@
 {
   "name": "vue-skia",
-  "version": "0.0.1-dev.1",
-  "description": "```shell $ cd core $ npm i $ npm run build ```",
+  "version": "0.0.1-dev.18",
+  "description": "vue skia",
   "main": "./lib/renderer/node/index.js",
   "typings": "./typings/renderer/node/index.d.ts",
   "scripts": {
@@ -9,7 +9,8 @@
     "build:core": "cargo-cp-artifact -nc lib/core.node -- cargo build --message-format=json-render-diagnostics",
     "build:tsc": "npx tsc",
     "build:demo": "vue-cli-service build",
-    "test": "node test/demo.test.js"
+    "postinstall": "npm run build:core",
+    "test": "ts-node test/demo.spec.ts"
   },
   "repository": {
     "type": "git",
@@ -18,8 +19,13 @@
   "author": "rustq",
   "files": [
     "LICENSE",
-    "lib",
-    "typings",
+    "plugin",
+    "renderer",
+    "src",
+    "lib/plugin",
+    "lib/renderer",
+    "Cargo.toml",
+    "tsconfig.json",
     "package.json",
     "README.md"
   ],
@@ -30,38 +36,49 @@
   "homepage": "https://github.com/rustq/vue-skia#readme",
   "dependencies": {
     "@vue/server-renderer": "3",
-    "node-html-parser": "6"
+    "cargo-cp-artifact": "0.1.7",
+    "node-html-parser": "6",
+    "typescript": "4"
   },
   "devDependencies": {
+    "@types/node": "^18.11.18",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
-    "@vue/compiler-sfc": "^3.1.1",
     "@vue/compat": "^3.1.1",
-    "webpack-manifest-plugin": "^2.2.0",
-    "webpack-node-externals": "^2.5.1",
+    "@vue/compiler-sfc": "^3.1.1",
     "babel-eslint": "^10.1.0",
     "cross-env": "^7.0.2",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.0.0-0",
+    "ts-node": "^10.9.1",
     "vue": "^3.1.1",
-    "@types/node": "^18.11.18",
-    "cargo-cp-artifact": "^0.1.7",
-    "typescript": "4"
+    "webpack-manifest-plugin": "^2.2.0",
+    "webpack-node-externals": "^2.5.1"
   },
   "peerDependencies": {
     "vue": ">=3.0.0"
+  },
+  "engines": {
+    "node": ">=14"
   },
   "eslintConfig": {
     "root": true,
     "env": {
       "node": true
     },
-    "extends": ["plugin:vue/vue3-essential", "eslint:recommended"],
+    "extends": [
+      "plugin:vue/vue3-essential",
+      "eslint:recommended"
+    ],
     "parserOptions": {
       "parser": "babel-eslint"
     },
     "rules": {}
   },
-  "browserslist": ["> 1%", "last 2 versions", "not dead"]
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
 }

@@ -1,8 +1,12 @@
 <template>
-  <v-layer x="0" y="0" id="app">
-    <HelloWorld />
-    <v-circle x="120" y="220" />
-  </v-layer>
+  <h1>Demo</h1>
+  <p>This is a demo</p>
+  <v-surface width="400" height="500">
+    <v-layer>
+      <v-circle x="80" y="180" r="150" fill="ffffff" stroke="ff00ff"/>
+      <HelloWorld />
+    </v-layer>
+  </v-surface>
 </template>
 
 <script>

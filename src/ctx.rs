@@ -1,13 +1,12 @@
 use std::cell::RefCell;
-use neon::{prelude::*, types::buffer::TypedArray};
+use neon::{prelude::*};
 use skia_safe::{
-    Data, EncodedImageFormat, Paint, Rect, RRect, PaintStyle, Path, PathDirection,
-    Point, scalar, Budgeted, ImageInfo, ColorType, Size, Surface,
+    EncodedImageFormat, Paint, Rect, RRect, PaintStyle, Path, PathDirection,
+    Point, Surface,
 };
 use skia_safe::{Color};
 use colorsys::Rgb;
 use std::cmp;
-use std::mem;
 use std::fs::File;
 use std::io::Write;
 use core::ops::Range;
@@ -54,21 +53,6 @@ pub fn string_arg<'a>(cx: &mut FunctionContext<'a>, idx: usize) -> NeonResult<St
 
 pub struct Context2d{
     pub(crate) surface: Surface,
-    cc:String,
-    path: Path,
-    paint: Paint,
-}
-
-impl Context2d {
-  pub fn new() -> Self {
-    let surface = Surface::new_raster_n32_premul((200, 300)).expect("no surface!");
-    Context2d {
-      surface,
-      cc:"qqqq".to_string(),
-      path: Path::new(),
-      paint: Paint::default()
-    }
-  }
 }
 
 impl Finalize for Context2d {}
@@ -79,18 +63,28 @@ pub type BoxedContext2d = JsBox<RefCell<Context2d>>;
 
 
 pub fn new(mut cx: FunctionContext) -> JsResult<BoxedContext2d> {
-    let ctx2d = Context2d::new();
-    let this = RefCell::new(ctx2d);
-    Ok(cx.boxed(this))
+    let args_0_2 = opt_float_args(&mut cx, 0..2);
+    if let [width, height] = args_0_2.as_slice(){
+      let surface = Surface::new_raster_n32_premul((*width as i32, *height as i32)).expect("Failed to create surface!");
+      let ctx2d = Context2d {
+        surface,
+      };
+      let this = RefCell::new(ctx2d);
+      Ok(cx.boxed(this))
+    } else {
+      Ok(
+        cx.boxed(
+          RefCell::new(
+            Context2d {
+              surface: Surface::new_raster_n32_premul((100, 100)).expect("Failed to create surface!"),
+            }
+          )
+        )
+      )
+    }
   }
 
-pub fn read_cc(mut cx: FunctionContext) -> JsResult<JsString> {
-    let this = cx.argument::<BoxedContext2d>(0)?;
-    let this = this.borrow();
-    Ok(cx.string(this.cc.clone() as String))
-}
-
-pub fn save(mut cx: FunctionContext) -> JsResult<JsUndefined> {
+pub fn encode_png(mut cx: FunctionContext) -> JsResult<JsUndefined> {
     let this = cx.argument::<BoxedContext2d>(0)?;
     let mut this = this.borrow_mut();
     let file_path = string_arg(&mut cx, 1)?;
@@ -141,9 +135,9 @@ pub fn create_triangle(mut cx: FunctionContext) -> JsResult<JsUndefined> {
       path.line_to((*ax, *ay));
       paint.set_style(PaintStyle::Fill);
       canvas.draw_path(&path, &paint);
-      if let Some(strokeColor) = stroke {
+      if let Some(stroke_color) = stroke {
         paint.set_style(PaintStyle::Stroke);
-        let color = Rgb::from_hex_str(&strokeColor).expect("Failed to create color");
+        let color = Rgb::from_hex_str(&stroke_color).expect("Failed to create color");
         paint.set_color(Color::from_rgb(color.red() as u8, color.green() as u8, color.blue() as u8));
         canvas.draw_path(&path, &paint);
       }
@@ -188,9 +182,9 @@ pub fn create_rect(mut cx: FunctionContext) -> JsResult<JsUndefined> {
       path.line_to((*x, *y));
       paint.set_style(PaintStyle::Fill);
       canvas.draw_path(&path, &paint);
-      if let Some(strokeColor) = stroke {
+      if let Some(stroke_color) = stroke {
         paint.set_style(PaintStyle::Stroke);
-        let color = Rgb::from_hex_str(&strokeColor).expect("Failed to create color");
+        let color = Rgb::from_hex_str(&stroke_color).expect("Failed to create color");
         paint.set_color(Color::from_rgb(color.red() as u8, color.green() as u8, color.blue() as u8));
         canvas.draw_path(&path, &paint);
       }
@@ -233,9 +227,9 @@ pub fn create_round_rect(mut cx: FunctionContext) -> JsResult<JsUndefined> {
     path.add_rrect(rrect, Some((PathDirection::CW, 0)));
     paint.set_style(PaintStyle::Fill);
     canvas.draw_path(&path, &paint);
-    if let Some(strokeColor) = stroke {
+    if let Some(stroke_color) = stroke {
       paint.set_style(PaintStyle::Stroke);
-      let color = Rgb::from_hex_str(&strokeColor).expect("Failed to create color");
+      let color = Rgb::from_hex_str(&stroke_color).expect("Failed to create color");
       paint.set_color(Color::from_rgb(color.red() as u8, color.green() as u8, color.blue() as u8));
       canvas.draw_path(&path, &paint);
     }
@@ -272,13 +266,13 @@ pub fn create_circle(mut cx: FunctionContext) -> JsResult<JsUndefined> {
       paint.set_anti_alias(true);
       paint.set_stroke_width(2.0);
 
-      path.arc_to(Rect::new(*x, *y, *x + 40.0, *y + 40.0), 0.0, 180.0, false);
-      path.arc_to(Rect::new(*x, *y, *x + 40.0, *y + 40.0), 180.0, 180.0, false);
+      path.arc_to(Rect::new(*x, *y, *x + *r * 2.0, *y + *r * 2.0), 0.0, 180.0, false);
+      path.arc_to(Rect::new(*x, *y, *x + *r * 2.0, *y + *r * 2.0), 180.0, 180.0, false);
       paint.set_style(PaintStyle::Fill);
       canvas.draw_path(&path, &paint);
-      if let Some(strokeColor) = stroke {
+      if let Some(stroke_color) = stroke {
         paint.set_style(PaintStyle::Stroke);
-        let color = Rgb::from_hex_str(&strokeColor).expect("Failed to create color");
+        let color = Rgb::from_hex_str(&stroke_color).expect("Failed to create color");
         paint.set_color(Color::from_rgb(color.red() as u8, color.green() as u8, color.blue() as u8));
         canvas.draw_path(&path, &paint);
       }

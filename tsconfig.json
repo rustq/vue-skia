@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "module": "esnext",
+    "module": "UMD",
     "target": "es5",
     "lib": [
       "es6",
@@ -27,7 +27,6 @@
     "allowSyntheticDefaultImports": true
   },
   "include": [
-    "./plugin/index.ts",
-    "./renderer/node/index.ts"
+    "./renderer/node/index.ts",
   ]
 }

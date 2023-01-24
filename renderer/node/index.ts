@@ -1,53 +1,88 @@
+import { App as VueApp, createSSRApp } from "vue";
+import vsk from "../../plugin";
+
 const { renderToString } = require("@vue/server-renderer");
-const { createSSRApp } = require("vue");
 const { parse } = require('node-html-parser');
-const vsk = require('../../plugin/').default;
 const core = require('../../core');
 
-function render(App: any, path: string) {
-
-  const app = createSSRApp(App);
-  app.use(vsk);
-  
-  renderToString(app).then((appContent: string) => {
-    console.log('[appContent]', appContent);
-  
-    const ctx = core.createContext();
-    const root = parse(appContent);
-    function recursiveTraceChild(root: any) {
-      root.childNodes.forEach((child: any) => {
-        console.log(child.rawTagName)
-        if (child.rawTagName === 'Circle') {
-          const x = Number(child.getAttribute("x"));
-          const y = Number(child.getAttribute("y"));
-          core.createCircle(ctx, x, y, 30, "003333", "000011");
-        }
-        if (child.rawTagName === 'Rect') {
-          const x = Number(child.getAttribute("x"));
-          const y = Number(child.getAttribute("y"));
-          core.createTriangle(ctx, x, y, x + Math.random() * 60, y + Math.random() * 20, x - Math.random() * 20, y - Math.random() * 20, "ff3eff", "ffffff");
-        }
-        if (child.rawTagName === 'Layer') {
-          const x = Number(child.getAttribute("x"));
-          const y = Number(child.getAttribute("y"));
-          core.createRect(ctx, x, y, 120, 120, "cccccc", "ffffff");
-        }
-        return recursiveTraceChild(child);
-      })
+function getSurface(root) {
+  for (let i = 0; i < root.childNodes.length; i++) {
+    const child = root.childNodes[i];
+    if (!child?.rawTagName) {
+      continue;
     }
-    recursiveTraceChild(root as any)
-  
-    core.createRoundRect(ctx, 0, 0, 80, 80, 20, "0000ff", "ffffff");
-    core.createRect(ctx, 56, 14, 20, 20, "ffffff", "ff22aa");
-    core.createRect(ctx, 156, 114, 20, 20, "ffffff", "ff22aa");
-  
-    core.save(ctx, path);
-    console.log('vrender done pl 🌟')
-  });
-  
-  
+    if (child.rawTagName === 'Surface') {
+      return child;
+    } else {
+      getSurface(child);
+    }
+  }
 }
 
-module.exports = {
-  render
+function recursivePaintChild(root, ctx) {
+  for (let i = 0; i < root.childNodes.length; i++) {
+    const child = root.childNodes[i];
+    if (!child?.rawTagName) {
+      continue;
+    }
+    const x = Number(child.getAttribute("x"));
+    const y = Number(child.getAttribute("y"));
+    const fill = child.getAttribute("fill") || "000000";
+    const stroke = child.getAttribute("stroke");
+    switch (child.rawTagName) {
+      case 'Circle': {
+        const r = Number(child.getAttribute("r"));
+        core.createCircle(ctx, x, y, r, fill, stroke);
+        break;
+      }
+      case 'Rect': {
+        const width = Number(child.getAttribute("width"));
+        const height = Number(child.getAttribute("height"));
+        core.createRect(ctx, x, y, width, height, fill, stroke);
+        break;
+      }
+      case 'RoundRect': {
+        const width = Number(child.getAttribute("width"));
+        const height = Number(child.getAttribute("height"));
+        const radius = Number(child.getAttribute("radius"));
+        core.createRoundRect(ctx, x, y, width, height, radius, fill, stroke);
+        break;
+      }
+      case 'Triangle': {
+        const width = Number(child.getAttribute("width"));
+        const height = Number(child.getAttribute("height"));
+        core.createTriangle(ctx, x, y + height, x + width, y + height, x + width / 2, y, fill, stroke);
+        break;
+      }
+      default: {
+      }
+    }
+    recursivePaintChild(child, ctx);
+  }
+}
+
+export function render(App: VueApp): Promise<{ encodePNG: (path: string) => void }> {
+
+  return new Promise(resolve => {
+    const app = createSSRApp(App);
+    app.use(vsk);
+    renderToString(app).then((appContent: string) => {
+      const root = parse(appContent);
+      const surface = getSurface(root);
+      if (!surface) {
+        console.error('No surface');
+        return;
+      }
+      const width = Number(surface.getAttribute("width"));
+      const height = Number(surface.getAttribute("height"));
+      const ctx = core.createContext(width, height);
+      recursivePaintChild(surface, ctx);
+      resolve({
+        encodePNG: (path: string) => {
+          core.encodePNG(ctx, path);
+        }
+      })
+    });
+  })
+  
 }
