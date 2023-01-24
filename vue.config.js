@@ -26,3 +26,6 @@ exports.chainWebpack = webpackConfig => {
   webpackConfig.plugins.delete("friendly-errors");
 
 };
+
+exports.outputDir = "./demo/dist"
+exports.productionSourceMap = false

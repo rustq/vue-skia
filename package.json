@@ -5,7 +5,7 @@
   "main": "./lib/renderer/node/index.js",
   "typings": "./typings/renderer/node/index.d.ts",
   "scripts": {
-    "build": "npm run build:core; npm run build:tsc; npm run build:demo;",
+    "build": "npm run build:core; npm run build:tsc;",
     "build:core": "cargo-cp-artifact -nc lib/core.node -- cargo build --message-format=json-render-diagnostics",
     "build:tsc": "npx tsc",
     "build:demo": "vue-cli-service build",
@@ -48,6 +48,7 @@
     "@vue/compiler-sfc": "^3.1.1",
     "babel-eslint": "^10.1.0",
     "cross-env": "^7.0.2",
+    "error-stack-parser": "2.0.6",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.0.0-0",
     "ts-node": "^10.9.1",
