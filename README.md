@@ -11,26 +11,20 @@
 ![slogan](https://user-images.githubusercontent.com/11075892/214504036-8e28819e-0cc8-4177-a681-8a2d1680274f.png)
 
 
-## v0.1.0 TODO
 
-- [x] in Node.js
-
-- [ ] in Mobile
-
-- [ ] in Web
-
-## Usage
+## Install
 
 ```shell
+# It depends on cargo-cp-artifact for postinstall compile, so you need to install cargo first.
+# 因为在安装后的编译阶段需要 cargo-cp-artifact 需要确保已经安装了 cargo
+
 $ npm i vue-skia
 ```
 
-It depends on `cargo-cp-artifact` for postinstall compile, so you need to install `cargo` first.
-
-因为在安装后的编译阶段需要 `cargo-cp-artifact` 需要确保已经安装了 `cargo`
 
 
-## Demo
+
+## Usage
 
 ```vue
 <template>
@@ -40,21 +34,49 @@ It depends on `cargo-cp-artifact` for postinstall compile, so you need to instal
 </template>
 ```
 
-Demo Code: [App.vue](./demo/App.vue)
+```typescript
+import { render } from "vue-skia";
 
-#### Build Demo
+render(App).then(({ encodePNG }) => {
+    encodePNG("./demo.spec.png")
+})
+```
+## Demo
 
-```shell
-$ npm run build:demo
+https://github.com/rustq/vue-skia/blob/477825ba3ba4f3102db183eb260f060c0b9193fa/demo/App.vue#L1-L21
+
+https://github.com/rustq/vue-skia/blob/477825ba3ba4f3102db183eb260f060c0b9193fa/test/demo.spec.ts#L1-L11
+
+
+## APIs
+
+#### surface
+
+```vue
+<v-surface width="400" height="500">
+</v-surface>
 ```
 
-#### Run Test
+#### rect
 
-```shell
-$ npm run test
+```vue
+<v-rect x="40" y="40" width="100" height="100" fill="000000" stroke="ffffff" />
 ```
 
-## Building
+#### round rect
+
+```vue
+<v-round-rect x="220" y="50" width="80" height="80" radius="10" fill="ee22ee" stroke="ffffff" />
+```
+
+#### circle
+
+```vue
+<v-circle x="80" y="180" r="150" fill="ffffff" stroke="ff00ff" />
+```
+
+
+## Development
 
 ```shell
 $ git clone git@github.com:rustq/vue-skia.git
@@ -73,6 +95,16 @@ $ npm run build:demo
 
 $ npm run test
 ```
+
+
+## v0.1.0 TODO
+
+- [x] in Node.js
+
+- [ ] in Mobile
+
+- [ ] in Web
+
 
 ## License
 
