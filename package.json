@@ -1,7 +1,7 @@
 {
   "name": "vue-skia",
-  "version": "0.0.1-dev.18",
-  "description": "vue skia",
+  "version": "0.0.1-rc",
+  "description": "High-performance 2d Graphics for Vue using Skia",
   "main": "./lib/renderer/node/index.js",
   "typings": "./typings/renderer/node/index.d.ts",
   "scripts": {
@@ -29,7 +29,7 @@
     "package.json",
     "README.md"
   ],
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/rustq/vue-skia/issues"
   },
