@@ -22,3 +22,4 @@ package-lock.json
 *.node
 lib/
 typings/
+.idea
