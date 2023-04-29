@@ -1,5 +1,6 @@
 mod utils;
 mod tree;
+mod color;
 
 use wasm_bindgen::prelude::*;
 

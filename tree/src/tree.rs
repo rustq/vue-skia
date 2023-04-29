@@ -1,4 +1,5 @@
 static mut MAX_ID: usize = 0;
+use crate::color::Color;
 
 pub struct Tree {
     root: Option<Box<Node>>
@@ -6,7 +7,11 @@ pub struct Tree {
 
 pub struct Node {
     pub id: usize,
-    value: i32,
+    x: i32,
+    y: i32,
+    width: i32,
+    height: i32,
+    background_color: Color,
     node_vec: Vec<Box<Node>>
 }
 
@@ -33,7 +38,11 @@ impl Node {
                 MAX_ID += 1;
                 MAX_ID
             },
-            value: 0,
+            x: 0,
+            y: 0,
+            width: 0,
+            height: 0,
+            background_color: Color::from_argb(100, 0, 0, 0),
             node_vec: Vec::new()
         }
     }
@@ -58,12 +67,28 @@ impl Node {
         Some(self.node_vec[index].as_mut())
     }
 
-    pub fn update_value(&mut self, value: i32) {
-        self.value = value;
+    pub fn get_background_color(&self) -> &Color {
+        &self.background_color
     }
 
-    pub fn get_value(&mut self) -> i32 {
-        self.value
+    pub fn set_background_color(&mut self, color: Color) {
+        self.background_color = color;
+    }
+
+    pub fn set_width(&mut self, width: i32) {
+        self.width = width;
+    }
+
+    pub fn set_height(&mut self, height: i32) {
+        self.height = height;
+    }
+
+    pub fn get_width(&self) -> i32 {
+        self.width
+    }
+
+    pub fn get_height(&self) -> i32 {
+        self.height
     }
 }
 
@@ -71,6 +96,7 @@ impl Node {
 mod test {
     use super::Tree;
     use super::Node;
+    use super::Color;
     #[test]
     fn test_tree() {
         let mut tree = Tree::new();
@@ -105,19 +131,34 @@ mod test {
         assert_eq!(root_child_1.id, 3);
         let id = root_child_1.id;
         root.remove_by_id(id);
-        root.update_value(8);
         assert_eq!(root.get_children_len(), 2);
-        assert_eq!(root.get_value(), 8);
 
         root.remove_by_id(5);
         root.remove_by_id(5);
         root.remove_by_id(5);
-        root.update_value(10);
         assert_eq!(root.get_children_len(), 2);
-        assert_eq!(root.get_value(), 10);
 
-        let boxed_node_4 = Box::new(Node::new());
+        let mut boxed_node_4 = Box::new(Node::new());
         assert_eq!(boxed_node_4.id, 5);
+        assert_eq!(boxed_node_4.get_background_color().a(), 100);
+        assert_eq!(boxed_node_4.get_background_color().r(), 0);
+        assert_eq!(boxed_node_4.get_background_color().g(), 0);
+        assert_eq!(boxed_node_4.get_background_color().b(), 0);
+
+        boxed_node_4.set_background_color(Color::from_argb(99, 255, 255, 255));
+        assert_eq!(boxed_node_4.get_background_color().a(), 99);
+        assert_eq!(boxed_node_4.get_background_color().r(), 255);
+        assert_eq!(boxed_node_4.get_background_color().g(), 255);
+        assert_eq!(boxed_node_4.get_background_color().b(), 255);
+
+        assert_eq!(boxed_node_4.get_width(), 0);
+        boxed_node_4.set_width(100);
+        assert_eq!(boxed_node_4.get_width(), 100);
+
+        assert_eq!(boxed_node_4.get_height(), 0);
+        boxed_node_4.set_height(50);
+        assert_eq!(boxed_node_4.get_height(), 50);
+
         root.append_boxed(boxed_node_4);
         assert_eq!(root.get_children_len(), 3);
     }
