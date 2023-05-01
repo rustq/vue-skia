@@ -5,10 +5,11 @@ pub struct Tree {
     root: Option<Box<Node>>
 }
 
+#[derive(Debug)]
 pub struct Node {
     pub id: usize,
     x: i32,
-    y: i32,
+    y: std::cell::Cell<i32>,
     width: i32,
     height: i32,
     background_color: Color,
@@ -39,7 +40,7 @@ impl Node {
                 MAX_ID
             },
             x: 0,
-            y: 0,
+            y: std::cell::Cell::new(0i32),
             width: 0,
             height: 0,
             background_color: Color::from_argb(100, 0, 0, 0),
@@ -90,6 +91,27 @@ impl Node {
     pub fn get_height(&self) -> i32 {
         self.height
     }
+
+    pub fn find_node_by_id(&self, id: usize) -> Option<&Node> {
+        Self::recursive_find_child_node_by_id(self, id)
+    }
+
+    fn recursive_find_child_node_by_id(parent: &Node, child_node_id: usize) -> Option<&Node> {
+        if parent.node_vec.len() == 0 {
+            return None;
+        }
+        for i in 0..parent.node_vec.len() {
+            if parent.node_vec[i].id == child_node_id {
+                return Some(&(parent.node_vec[i]));
+            }
+            match Self::recursive_find_child_node_by_id(&(parent.node_vec[i]), child_node_id) {
+                Some(target) => return Some(target),
+                None => { continue }
+            }
+        }
+        None
+    }
+
 }
 
 #[cfg(test)]
@@ -97,6 +119,8 @@ mod test {
     use super::Tree;
     use super::Node;
     use super::Color;
+    use std::borrow::BorrowMut;
+
     #[test]
     fn test_tree() {
         let mut tree = Tree::new();
@@ -129,6 +153,10 @@ mod test {
 
         let root_child_1 = root.get_child_by_index(1).unwrap();
         assert_eq!(root_child_1.id, 3);
+        assert_eq!(root_child_1.get_height(), 0);
+        root_child_1.set_height(200);
+        assert_eq!(root_child_1.get_height(), 200);
+
         let id = root_child_1.id;
         root.remove_by_id(id);
         assert_eq!(root.get_children_len(), 2);
@@ -159,7 +187,19 @@ mod test {
         boxed_node_4.set_height(50);
         assert_eq!(boxed_node_4.get_height(), 50);
 
+        assert_eq!(boxed_node_4.id, 5);
         root.append_boxed(boxed_node_4);
         assert_eq!(root.get_children_len(), 3);
+
+        let child_id_5 = root.find_node_by_id(5).unwrap();
+        assert_eq!(child_id_5.id, 5);
+        assert_eq!(child_id_5.get_width(), 100);
+
+        assert_eq!(child_id_5.y.get(), 0);
+        child_id_5.y.set(100);
+        assert_eq!(child_id_5.y.get(), 100);
+
+        // child_id_5.set_width(200);
+        // assert_eq!(child_id_5.get_width(), 200);
     }
 }
