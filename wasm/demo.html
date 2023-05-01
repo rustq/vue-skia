@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+<script type="module">
+    const wasm = import("./pkg/wasm.js");
+    wasm.then(v_sk => {
+        window.v_sk = v_sk;
+        v_sk.default().then(() => {
+            const container = new v_sk.Container();
+            container.initialQ();
+            console.log(container.getWidth())
+            container.setWidth200()
+            console.log(container.getWidth())
+        })
+    });
+</script>
+</html>

@@ -9,7 +9,7 @@ pub struct Tree {
 pub struct Node {
     pub id: usize,
     x: i32,
-    y: std::cell::Cell<i32>,
+    y: i32,
     width: i32,
     height: i32,
     background_color: Color,
@@ -40,7 +40,7 @@ impl Node {
                 MAX_ID
             },
             x: 0,
-            y: std::cell::Cell::new(0i32),
+            y: 0,
             width: 0,
             height: 0,
             background_color: Color::from_argb(100, 0, 0, 0),
@@ -92,19 +92,20 @@ impl Node {
         self.height
     }
 
-    pub fn find_node_by_id(&self, id: usize) -> Option<&Node> {
+    pub fn find_node_by_id(&mut self, id: usize) -> Option<&mut Node> {
         Self::recursive_find_child_node_by_id(self, id)
     }
 
-    fn recursive_find_child_node_by_id(parent: &Node, child_node_id: usize) -> Option<&Node> {
+    fn recursive_find_child_node_by_id(parent: &mut Node, child_node_id: usize) -> Option<&mut Node> {
         if parent.node_vec.len() == 0 {
             return None;
         }
-        for i in 0..parent.node_vec.len() {
-            if parent.node_vec[i].id == child_node_id {
-                return Some(&(parent.node_vec[i]));
+        for item in parent.node_vec.iter_mut() {
+            if item.id == child_node_id {
+                return Some(item)
             }
-            match Self::recursive_find_child_node_by_id(&(parent.node_vec[i]), child_node_id) {
+
+            match Self::recursive_find_child_node_by_id(item, child_node_id) {
                 Some(target) => return Some(target),
                 None => { continue }
             }
@@ -119,7 +120,6 @@ mod test {
     use super::Tree;
     use super::Node;
     use super::Color;
-    use std::borrow::BorrowMut;
 
     #[test]
     fn test_tree() {
@@ -195,11 +195,7 @@ mod test {
         assert_eq!(child_id_5.id, 5);
         assert_eq!(child_id_5.get_width(), 100);
 
-        assert_eq!(child_id_5.y.get(), 0);
-        child_id_5.y.set(100);
-        assert_eq!(child_id_5.y.get(), 100);
-
-        // child_id_5.set_width(200);
-        // assert_eq!(child_id_5.get_width(), 200);
+        child_id_5.set_width(200);
+        assert_eq!(child_id_5.get_width(), 200);
     }
 }
