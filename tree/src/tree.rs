@@ -1,6 +1,7 @@
 static mut MAX_ID: usize = 0;
 use crate::color::Color;
 
+#[derive(Debug)]
 pub struct Tree {
     root: Option<Box<Node>>
 }
@@ -92,19 +93,35 @@ impl Node {
         self.height
     }
 
+    pub fn set_x(&mut self, x: i32) {
+        self.x = x;
+    }
+
+    pub fn set_y(&mut self, y: i32) {
+        self.y = y;
+    }
+
+    pub fn get_x(&self) -> i32 {
+        self.x
+    }
+
+    pub fn get_y(&self) -> i32 {
+        self.y
+    }
+
+
     pub fn find_node_by_id(&mut self, id: usize) -> Option<&mut Node> {
         Self::recursive_find_child_node_by_id(self, id)
     }
 
     fn recursive_find_child_node_by_id(parent: &mut Node, child_node_id: usize) -> Option<&mut Node> {
+        if parent.id == child_node_id {
+            return Some(parent)
+        }
         if parent.node_vec.len() == 0 {
             return None;
         }
         for item in parent.node_vec.iter_mut() {
-            if item.id == child_node_id {
-                return Some(item)
-            }
-
             match Self::recursive_find_child_node_by_id(item, child_node_id) {
                 Some(target) => return Some(target),
                 None => { continue }
@@ -197,5 +214,17 @@ mod test {
 
         child_id_5.set_width(200);
         assert_eq!(child_id_5.get_width(), 200);
+
+        assert_eq!(child_id_5.get_x(), 0);
+        child_id_5.set_x(80);
+        assert_eq!(child_id_5.get_x(), 80);
+
+        assert_eq!(child_id_5.get_y(), 0);
+        child_id_5.set_y(80);
+        assert_eq!(child_id_5.get_y(), 80);
+
+
+        let child_id_6 = root.find_node_by_id(6);
+        assert_eq!(child_id_6.is_none(), true);
     }
 }

@@ -13,10 +13,17 @@
         window.v_sk = v_sk;
         v_sk.default().then(() => {
             const container = new v_sk.Container();
-            container.initialQ();
-            console.log(container.getWidth())
-            container.setWidth200()
-            console.log(container.getWidth())
+            console.log(container);
+            console.log(container.debug())
+            console.log(container.createNodeOnParentReturnNodeID(1))
+            console.log(container.createNodeOnParentReturnNodeID(1))
+            console.log(container.createNodeOnParentReturnNodeID(1))
+            console.log(container.createNodeOnParentReturnNodeID(4))
+            console.log(container.createNodeOnParentReturnNodeID(4))
+            console.log(container.createNodeOnParentReturnNodeID(4))
+            container.setXYWHBByNodeID(5, 100, 100, 400, 200, 100, 255, 0, 0);
+            container.setXYWHBByNodeID(7, 100, 100, 400, 200, 100, 255, 0, 0);
+            console.log(container.debug())
         })
     });
 </script>

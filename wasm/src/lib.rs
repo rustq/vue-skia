@@ -3,6 +3,7 @@ mod utils;
 
 use wasm_bindgen::prelude::*;
 use tree::tree::Tree;
+use tree::color::Color;
 use tree::tree::Node;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
@@ -18,29 +19,41 @@ extern {
 
 
 #[wasm_bindgen]
-pub struct Container {
-    inner: Tree,
-}
+pub struct Container(Tree);
 
 #[wasm_bindgen]
 impl Container {
     #[wasm_bindgen(constructor)]
     pub fn new() -> Self {
-        Container { inner: Tree::new() }
+        let mut container = Container(Tree::new());
+        container.0.set_root(Node::new());
+        container
     }
 
-    #[wasm_bindgen(js_name = initialQ)]
-    pub fn initial_q(&mut self) {
-        self.inner.set_root(Node::new());
+    #[wasm_bindgen(js_name = createNodeOnParentReturnNodeID)]
+    pub fn create_node_on_parent_ret_node_id(&mut self, parent_id: usize) -> usize {
+        let root: &mut Node = self.0.get_root().unwrap();
+        let parent = root.find_node_by_id(parent_id).unwrap();
+        let node = Box::new(Node::new());
+        let id = node.id;
+        parent.append_boxed(node);
+        id
     }
 
-    #[wasm_bindgen(js_name = getWidth)]
-    pub fn get_width(&mut self) -> i32 {
-        self.inner.get_root().expect("must").get_width()
+    #[wasm_bindgen(js_name = setXYWHBByNodeID)]
+    pub fn set_x_y_width_height_background_color_by_node_id(&mut self, node_id: usize, x: i32, y: i32, width: i32, height: i32, a: u8, r: u8, g: u8, b: u8) {
+        let root: &mut Node = self.0.get_root().unwrap();
+        let node = root.find_node_by_id(node_id).unwrap();
+        node.set_x(x);
+        node.set_y(y);
+        node.set_width(width);
+        node.set_height(height);
+        node.set_background_color(Color::from_argb(a, r, g, b));
     }
 
-    #[wasm_bindgen(js_name = setWidth200)]
-    pub fn set_width_200(&mut self) {
-        self.inner.get_root().expect("must").set_width(200);
+    #[wasm_bindgen(js_name = debug)]
+    pub fn debug(&self) -> String {
+        format!("{:?}", self.0)
     }
+
 }
