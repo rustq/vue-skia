@@ -62,66 +62,34 @@ impl Container {
 
     #[wasm_bindgen(js_name = renderRootToStream)]
     pub fn render_root_to_stream(&mut self) -> Vec<u8> {
-
-        let mut pixmap = Pixmap::new(400, 400).unwrap();
-
-        let mut paint = PixmapPaint::default();
-        paint.quality = FilterQuality::Bicubic;
-
         let root: &mut Node = self.0.get_root().unwrap();
-        let mut result_vec: Vec<Pixmap> = Vec::new();
+        let mut pixmap = Pixmap::new(root.get_width() as u32, root.get_height() as u32).unwrap();
 
-        let mut result_vec = Self::recursive_node_to_pixmap_vec(root, &mut result_vec);
+        Self::recursive_node_to_pixmap_vec(root, &mut pixmap);
 
-        let transform = Transform::default();
-
-
-        for pix in result_vec.iter_mut() {
-            pixmap.draw_pixmap(0, 0, pix.as_ref(), &paint, transform, None);
-        }
         pixmap.clone().take()
-        //
-        // let data = pixmap.clone().take();
-        // let data_url = base64::encode(data);
-        // format!("data:image/png;base64,{}", data_url.as_str())
     }
 
     #[wasm_bindgen(js_name = renderRootToBase64)]
     pub fn render_root_to_base64(&mut self) -> String {
-
-        let mut pixmap = Pixmap::new(400, 400).unwrap();
-
-        let mut paint = PixmapPaint::default();
-        paint.quality = FilterQuality::Bicubic;
-
         let root: &mut Node = self.0.get_root().unwrap();
-        let mut result_vec: Vec<Pixmap> = Vec::new();
+        let mut pixmap = Pixmap::new(root.get_width() as u32, root.get_height() as u32).unwrap();
 
-        let mut result_vec = Self::recursive_node_to_pixmap_vec(root, &mut result_vec);
+        Self::recursive_node_to_pixmap_vec(root, &mut pixmap);
 
-        let transform = Transform::default();
-
-
-        for pix in result_vec.iter_mut() {
-            pixmap.draw_pixmap(0, 0, pix.as_ref(), &paint, transform, None);
-        }
-        // pixmap.clone().take()
-        //
         let data = pixmap.clone().encode_png().unwrap();
         let data_url = base64::encode(&data);
         format!("data:image/png;base64,{}", data_url)
     }
 
-    fn recursive_node_to_pixmap_vec<'a>(node: &mut Node, result_vec: &'a mut Vec<Pixmap>) -> &'a mut Vec<Pixmap> {
+    fn recursive_node_to_pixmap_vec<'a>(node: &mut Node, pixmap: &mut Pixmap) -> () {
         for item in node.node_vec_iter_mut() {
-            let rect: Pixmap = Self::create_rect(item.get_x(), item.get_y(), item.get_width(), item.get_height(), item.get_background_color());
-            result_vec.push(rect);
-            Self::recursive_node_to_pixmap_vec(&mut (*item), result_vec);
+            Self::create_rect(item.get_x(), item.get_y(), item.get_width(), item.get_height(), item.get_background_color(), pixmap);
+            Self::recursive_node_to_pixmap_vec(&mut (*item), pixmap);
         }
-        result_vec
     }
 
-    fn create_rect(x: i32, y: i32, width: i32, height: i32, background_color: &Color) -> Pixmap {
+    fn create_rect(x: i32, y: i32, width: i32, height: i32, background_color: &Color, pixmap: &mut Pixmap) -> () {
         let mut paint = Paint::default();
         paint.set_color_rgba8(background_color.r(), background_color.g(), background_color.b(), background_color.a());
         paint.anti_alias = true;
@@ -135,8 +103,6 @@ impl Container {
         pb.close();
         let path = pb.finish().unwrap();
 
-        let mut pixmap = Pixmap::new(400, 400).unwrap();
-
         pixmap.fill_path(
             &path,
             &paint,
@@ -145,13 +111,10 @@ impl Container {
             None,
         );
 
-        let path = PathBuilder::from_rect(Rect::from_ltrb(x as f32, y as f32, x as f32 + width as f32, y as f32 + height as f32).unwrap());
         let stroke = Stroke::default();
         paint.set_color_rgba8(0, 0, 0, 255);
 
-        pixmap.stroke_path(&path, &paint, &stroke, Transform::identity(), None); // TODO: stroke_rect
-
-        pixmap
+        pixmap.stroke_path(&path, &paint, &stroke, Transform::identity(), None);
     }
 
 }
