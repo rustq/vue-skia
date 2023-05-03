@@ -1,4 +1,6 @@
 static mut MAX_ID: usize = 0;
+
+use std::slice::IterMut;
 use crate::color::Color;
 
 #[derive(Debug)]
@@ -107,6 +109,10 @@ impl Node {
 
     pub fn get_y(&self) -> i32 {
         self.y
+    }
+
+    pub fn node_vec_iter_mut(&mut self) -> IterMut<Box<Node>> {
+        self.node_vec.iter_mut()
     }
 
 
