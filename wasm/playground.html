@@ -38,8 +38,20 @@
             console.log(container.renderRootToStream())
 
             const base64 = container.renderRootToBase64();
-            window.b = base64;
             document.getElementById("img").setAttribute("src", base64);
+
+            setTimeout(() => {
+                container.setXYWHBByNodeID(10, 160, 160, 100, 200, 100, 0, 0, 255);
+                const base64 = container.renderRootToBase64();
+                document.getElementById("img").setAttribute("src", base64);
+            }, 1000);
+
+
+            setTimeout(() => {
+                container.removeNodeByNodeID(4);
+                const base64 = container.renderRootToBase64();
+                document.getElementById("img").setAttribute("src", base64);
+            }, 2000);
         })
     });
 </script>

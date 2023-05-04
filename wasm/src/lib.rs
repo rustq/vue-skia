@@ -44,6 +44,12 @@ impl Container {
         id
     }
 
+    #[wasm_bindgen(js_name = removeNodeByNodeID)]
+    pub fn remove_node_by_node_id(&mut self, node_id: usize) -> () {
+        let root: &mut Node = self.0.get_root().unwrap();
+        root.remove_by_id(node_id);
+    }
+
     #[wasm_bindgen(js_name = setXYWHBByNodeID)]
     pub fn set_x_y_width_height_background_color_by_node_id(&mut self, node_id: usize, x: i32, y: i32, width: i32, height: i32, a: u8, r: u8, g: u8, b: u8) {
         let root: &mut Node = self.0.get_root().unwrap();
