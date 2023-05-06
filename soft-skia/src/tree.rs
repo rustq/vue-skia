@@ -143,9 +143,10 @@ mod test {
 
         for item in node.children_iter_mut() {
             match item.shape {
-                Shape::Circle { c, r, color } => {
-                    assert_eq!(c, 100);
-                    item.shape = Shape::Circle { c: 200, r, color };
+                Shape::Circle { ref mut c, r, color } => {
+                    assert_eq!(*c, 100);
+                    *c = 200;
+                    assert_eq!(*c, 200);
                 },
                 _ => panic!(),
             }
