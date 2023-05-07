@@ -30,33 +30,25 @@ export default {
         const container = ref(null);
         const instance = getCurrentInstance();
         // @ts-ignore
-        const v_sk = window.v_sk;
-        const core = new v_sk.Container();
-        instance.__vsk_core = core; // Save on component instance
-        console.log('setup Surface', v_sk, instance)
-        core.setXYWHBByNodeID(1, 0, 0, 400, 400, 255, 0, 0, 100)
+        const ssw = global.ssw;
+        const core = new ssw.SoftSkiaWASM();
+        instance.ssw = core; // Save on component instance
+        console.log(core)
+        core.setShapeToChild(0, 0, 0, 400, 400, 0, 0, 0, 0)
 
 
         onMounted(() => {
-            //
-            // @ts-ignore
-            console.log('mounted surface');
-            console.log(core.debug())
-            console.log(core.renderRootToStream())
-
-            const base64 = core.renderRootToBase64();
-            console.log(container.value)
+            const base64 = core.toBase64();
             container.value.setAttribute("src", base64);
         });
 
         onUpdated(() => {
-            const base64 = core.renderRootToBase64();
-            console.log(container.value)
+            const base64 = core.toBase64();
+            console.log(core.toDebug())
             container.value.setAttribute("src", base64);
         });
 
         onBeforeUnmount(() => {
-            console.log('surface destroy')
         });
 
 

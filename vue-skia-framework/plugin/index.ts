@@ -11,6 +11,9 @@ const {
 } = require('vue');
 import Surface from "../surface";
 
+let _SELF_INCREASE_COUNT = 1;
+let SELF_INCREASE_COUNT = () => _SELF_INCREASE_COUNT++
+
 const WidgetList = [
     'Surface',
     'Layer',
@@ -37,45 +40,38 @@ const VSKNode = (name: string) => {
             },
         },
         setup(props: any, { attrs, slots, expose }: any) {
-            console.log('setup', name, props)
 
             onMounted(() => {
                 const instance = getCurrentInstance();
                 var root = instance;
-                while (!root.__vsk_core) {
+                while (!root.ssw) {
                     root = root.parent;
                 }
-                const core = root.__vsk_core;
-
-                const child_id = core.createNodeOnParentReturnNodeID(1);
-                instance.__child_id = child_id;
-                core.setXYWHBByNodeID(child_id, attrs.x, attrs.y, attrs.width, attrs.height, attrs.a, attrs.r, attrs.g, attrs.b);
+                const core = root.ssw;
+                instance._ssw_id = SELF_INCREASE_COUNT();
+                core.createChildAppendToContainer(instance._ssw_id, 0);
+                core.setShapeToChild(instance._ssw_id, attrs.x, attrs.y, attrs.width, attrs.height, attrs.r, attrs.g, attrs.b, attrs.a);
             });
 
             onUpdated(() => {
-                // const base64 = core.renderRootToBase64();
-                // console.log(container.value)
-                // container.value.setAttribute("src", base64);
                 const instance = getCurrentInstance();
                 var root = instance;
-                while (!root.__vsk_core) {
+                while (!root.ssw) {
                     root = root.parent;
                 }
-                const core = root.__vsk_core;
-                const child_id = instance.__child_id;
-                core.setXYWHBByNodeID(child_id, attrs.x, attrs.y, attrs.width, attrs.height, attrs.a, attrs.r, attrs.g, attrs.b);
+                const core = root.ssw;
+                core.setShapeToChild(instance._ssw_id, attrs.x, attrs.y, attrs.width, attrs.height, attrs.r, attrs.g, attrs.b, attrs.a);
             });
 
             onBeforeUnmount(() => {
                 const instance = getCurrentInstance();
                 var root = instance;
-                while (!root.__vsk_core) {
+                while (!root.ssw) {
                     root = root.parent;
                 }
-                const core = root.__vsk_core;
-                const child_id = instance.__child_id;
-                core.removeNodeByNodeID(child_id)
-                console.log('remove', child_id)
+                const core = root.ssw;
+                const child_id = instance._ssw_id;
+                core.removeChildFromContainer(child_id, root.parent._ssw_id)
             });
 
             return () => h(name, {}, slots.default?.())

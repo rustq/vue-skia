@@ -7,7 +7,7 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [workspace]
-members = ["tree", "wasm", "soft-skia"]
+members = ["soft-skia", "soft-skia-wasm"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

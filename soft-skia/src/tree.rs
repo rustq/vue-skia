@@ -1,7 +1,10 @@
 use std::slice::Iter;
 use std::slice::IterMut;
 use tiny_skia::{ColorU8};
+use crate::shape::Rect;
+use crate::shape::Circle;
 use crate::shape::Shape;
+use crate::shape::Shapes;
 
 #[derive(Debug)]
 pub struct Tree {
@@ -10,15 +13,15 @@ pub struct Tree {
 
 #[derive(Debug)]
 pub struct Node {
-    id: usize,
-    shape: Shape,
-    children: Vec<Box<Node>>
+    pub id: usize,
+    pub shape: Shapes,
+    pub children: Vec<Box<Node>>
 }
 
 impl Tree {
-    pub fn new(id: usize) -> Self {
+    pub fn default(id: usize) -> Self {
         Tree {
-            root: Box::new(Node { id, shape: Shape::Rect { x: 0, y: 0, width: 0, height: 0, color: ColorU8::from_rgba(0, 0, 0, 255) }, children: Vec::new() })
+            root: Box::new(Node { id, shape: Shapes::RectShape(Rect::default()), children: Vec::new() })
         }
     }
 
@@ -28,6 +31,10 @@ impl Tree {
 }
 
 impl Node {
+    pub fn default(id: usize, shape: Shapes) -> Self {
+        Node { id, shape, children: Vec::new() }
+    }
+
     pub fn append_node(&mut self, node: Node) {
         self.children.push(Box::new(node));
     }
@@ -69,12 +76,14 @@ impl Node {
 mod test {
     use super::Tree;
     use super::Node;
-    use super::Shape;
+    use super::Shapes;
+    use super::Rect;
+    use super::Circle;
     use super::ColorU8;
 
     #[test]
     fn test_tree() {
-        let mut tree = Tree::new(0);
+        let mut tree = Tree::default(0);
         let mut root = tree.get_root();
 
         assert_eq!(root.id, 0);
@@ -84,7 +93,7 @@ mod test {
         assert_eq!(root.id, 10086);
 
         match root.shape {
-            Shape::Rect { x, y, width, height, color } => {
+            Shapes::RectShape(Rect { x, y, width, height, color }) => {
                 assert_eq!(width, 0);
                 assert_eq!(height, 0);
             },
@@ -93,9 +102,9 @@ mod test {
             }
         }
 
-        root.shape = Shape::Rect { x: 0, y: 0, width: 400, height: 400, color: ColorU8::from_rgba(0, 0, 0, 255) };
+        root.shape = Shapes::RectShape(Rect { x: 0, y: 0, width: 400, height: 400, color: ColorU8::from_rgba(0, 0, 0, 255) });
         match root.shape {
-            Shape::Rect { x, y, width, height, color } => {
+            Shapes::RectShape(Rect { x, y, width, height, color }) => {
                 assert_eq!(width, 400);
                 assert_eq!(height, 400);
             },
@@ -107,19 +116,19 @@ mod test {
 
     #[test]
     fn test_node() {
-        let mut node = Node { id: 0, shape: Shape::Rect { x: 0, y: 0, width: 400, height: 400, color: ColorU8::from_rgba(0, 0, 0, 255) }, children: Vec::new() };
+        let mut node = Node { id: 0, shape: Shapes::RectShape(Rect { x: 0, y: 0, width: 400, height: 400, color: ColorU8::from_rgba(0, 0, 0, 255) }), children: Vec::new() };
 
         assert_eq!(node.id, 0);
         assert_eq!(node.get_children_len(), 0);
 
-        node.append_node(Node { id: 1, shape: Shape::Circle { c: 100, r: 50, color: ColorU8::from_rgba(0, 0, 0, 255) }, children: Vec::new() });
+        node.append_node(Node { id: 1, shape: Shapes::CircleShape(Circle { c: 100, r: 50, color: ColorU8::from_rgba(0, 0, 0, 255) }), children: Vec::new() });
         assert_eq!(node.get_children_len(), 1);
 
-        node.append_node(Node { id: 2, shape: Shape::Circle { c: 100, r: 50, color: ColorU8::from_rgba(0, 0, 0, 255) }, children: Vec::new() });
+        node.append_node(Node { id: 2, shape: Shapes::CircleShape(Circle { c: 100, r: 50, color: ColorU8::from_rgba(0, 0, 0, 255) }), children: Vec::new() });
         assert_eq!(node.get_children_len(), 2);
 
-        node.append_boxed_node(Box::new(Node { id: 3, shape: Shape::Circle { c: 100, r: 50, color: ColorU8::from_rgba(0, 0, 0, 255) }, children: Vec::new() }));
-        node.append_boxed_node(Box::new(Node { id: 4, shape: Shape::Circle { c: 100, r: 50, color: ColorU8::from_rgba(0, 0, 0, 255) }, children: Vec::new() }));
+        node.append_boxed_node(Box::new(Node { id: 3, shape: Shapes::CircleShape(Circle { c: 100, r: 50, color: ColorU8::from_rgba(0, 0, 0, 255) }), children: Vec::new() }));
+        node.append_boxed_node(Box::new(Node { id: 4, shape: Shapes::CircleShape(Circle { c: 100, r: 50, color: ColorU8::from_rgba(0, 0, 0, 255) }), children: Vec::new() }));
         assert_eq!(node.get_children_len(), 4);
 
         let child_index_0 = node.get_child_by_index(0).unwrap();
@@ -143,7 +152,7 @@ mod test {
 
         for item in node.children_iter_mut() {
             match item.shape {
-                Shape::Circle { ref mut c, r, color } => {
+                Shapes::CircleShape(Circle { ref mut c, r, color }) => {
                     assert_eq!(*c, 100);
                     *c = 200;
                     assert_eq!(*c, 200);
@@ -154,7 +163,7 @@ mod test {
 
         for item in node.children_iter() {
             match item.shape {
-                Shape::Circle { c, r, color } => {
+                Shapes::CircleShape(Circle { c, r, color }) => {
                     assert_eq!(c, 200);
                 },
                 _ => panic!(),

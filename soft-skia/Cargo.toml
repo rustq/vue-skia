@@ -1,5 +1,5 @@
 [package]
-name = "soft-skia"
+name = "soft_skia"
 version = "0.1.0"
 edition = "2021"
 

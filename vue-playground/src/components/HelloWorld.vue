@@ -1,9 +1,9 @@
 <template>
   <div class="hello">
-    <h1>
+    <h2>
       {{ msg }}<button @click="count += 1">+</button
-      ><button @click="count -= 1">-</button>{{ count }}
-    </h1>
+      ><button @click="count -= 1">-</button>
+    </h2>
     <p v-if="loading">wasm loading</p>
     <v-surface v-if="!loading">
       <template :key="index" v-for="(_, index) in new Array(count).fill(true)">
@@ -24,6 +24,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import launch from '../../../vue-skia-framework/launch';
 
 export default defineComponent({
   name: "HelloWorld",
@@ -34,19 +35,13 @@ export default defineComponent({
     return {
       loading: true,
       count: 2,
-    }
+    };
   },
   mounted() {
-    const wasm = import("../../../wasm/pkg/wasm.js");
-    wasm.then((v_sk: any) => {
-      v_sk.default().then(() => {
-
-        // @ts-ignore
-        window.v_sk = v_sk;
-        this.loading = false
-      })
-    })
-  }
+    launch().then(() => {
+      this.loading = false;
+    });
+  },
 });
 </script>
 

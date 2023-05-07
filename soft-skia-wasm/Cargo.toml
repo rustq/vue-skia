@@ -1,5 +1,5 @@
 [package]
-name = "wasm"
+name = "soft-skia-wasm"
 version = "0.1.0"
 authors = ["meloalright <meloalright@gmail.com>"]
 edition = "2018"
@@ -12,15 +12,8 @@ default = ["console_error_panic_hook"]
 
 [dependencies]
 wasm-bindgen = "0.2.63"
-tree = { path = "../tree" }
-png = "0.17.5"
-colorsys = "0.6.5"
-tiny-skia-path = "0.8.1"
-ttf-parser = "0.17.0"
-svg = "0.10.0"
-tiny-skia = "0.8.1"
 base64 = "0.21.0"
-
+soft_skia = { path = "../soft-skia" }
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
