@@ -2,8 +2,8 @@ pub use tiny_skia::{ColorU8, Paint, PathBuilder, Pixmap, Stroke, Transform, Fill
 
 #[derive(Debug)]
 pub enum Shapes {
-    RectShape(Rect),
-    CircleShape(Circle)
+    R(Rect),
+    C(Circle)
 }
 
 pub trait Shape {
@@ -27,7 +27,14 @@ pub struct Circle {
     pub color: ColorU8
 }
 
-
+impl Shapes {
+    pub fn draw(&self, pixmap: &mut Pixmap) -> () {
+        match self {
+            Shapes::R(rect) => rect.draw(pixmap),
+            Shapes::C(circle) => circle.draw(pixmap),
+        }
+    }
+}
 
 impl Shape for Rect {
     fn default() -> Self {

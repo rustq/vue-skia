@@ -5,7 +5,7 @@
       ><button @click="count -= 1">-</button>
     </h2>
     <p v-if="loading">wasm loading</p>
-    <v-surface v-if="!loading">
+    <v-surface v-if="!loading" :width="600" :height="400">
       <template :key="index" v-for="(_, index) in new Array(count).fill(true)">
         <v-circle
           :x="(index % 7) * 10 + 100"

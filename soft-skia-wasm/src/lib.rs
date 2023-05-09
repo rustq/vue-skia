@@ -34,7 +34,7 @@ impl SoftSkiaWASM {
 
     #[wasm_bindgen(js_name = setShapeToChild)]
     pub fn set_shape_rect_to_child(&mut self, child_id: usize, x: u32, y: u32, width: u32, height: u32, r: u8, g: u8, b: u8, a: u8) {
-        self.0.set_shape_to_child(child_id, Shapes::RectShape(Rect { x, y, width, height, color: ColorU8::from_rgba(r, g, b, a) }))
+        self.0.set_shape_to_child(child_id, Shapes::R(Rect { x, y, width, height, color: ColorU8::from_rgba(r, g, b, a) }))
     }
 
     #[wasm_bindgen(js_name = removeChildFromContainer)]
@@ -51,7 +51,7 @@ impl SoftSkiaWASM {
     pub fn to_base64(&mut self) -> String {
         let root = self.0.tree.get_root();
         let mut pixmap = match root.shape {
-            Shapes::RectShape( Rect { x, y, width, height, color }) => {
+            Shapes::R( Rect { x, y, width, height, color }) => {
                 Pixmap::new(width, height).unwrap()
             },
             _ => {
@@ -71,10 +71,7 @@ impl SoftSkiaWASM {
     ///
     fn __debug_recursive_node_to_pixmap_vec<'a>(node: &mut Node, pixmap: &mut Pixmap) -> () {
         for item in node.children_iter_mut() {
-            match &item.shape {
-                Shapes::RectShape(rect) => rect.draw(pixmap),
-                Shapes::CircleShape(circle) => circle.draw(pixmap),
-            }
+            item.shape.draw(pixmap);
             Self::__debug_recursive_node_to_pixmap_vec(&mut (*item), pixmap);
         }
     }

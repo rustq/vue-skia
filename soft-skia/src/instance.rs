@@ -18,7 +18,7 @@ impl Instance {
     }
 
     pub fn create_child_append_to_container(&mut self, child_id: usize, container_id: usize) {
-        let child = Node::default(child_id, Shapes::RectShape(Rect::default()));
+        let child = Node::default(child_id, Shapes::R(Rect::default()));
         let container = self.debug__get_tree_node_by_id(container_id).unwrap();
         container.append_node(child);
     }
@@ -109,7 +109,7 @@ mod test {
         assert_eq!(instance.debug__get_tree_node_by_id(0).unwrap().get_children_len(), 1);
 
         match instance.debug__get_tree_node_by_id(1).unwrap().shape {
-            Shapes::RectShape(Rect { x, y, width, height, color }) => {
+            Shapes::R(Rect { x, y, width, height, color }) => {
                 assert_eq!(x, 0);
                 assert_eq!(y, 0);
             },
@@ -118,10 +118,10 @@ mod test {
             }
         }
 
-        instance.set_shape_to_child(1, Shapes::RectShape(Rect { x: 20, y: 20, width: 200, height: 200, color: ColorU8::from_rgba(0, 100, 0, 255) }));
+        instance.set_shape_to_child(1, Shapes::R(Rect { x: 20, y: 20, width: 200, height: 200, color: ColorU8::from_rgba(0, 100, 0, 255) }));
 
         match instance.debug__get_tree_node_by_id(1).unwrap().shape {
-            Shapes::RectShape(Rect { x, y, width, height, color }) => {
+            Shapes::R(Rect { x, y, width, height, color }) => {
                 assert_eq!(x, 20);
                 assert_eq!(y, 20);
                 assert_eq!(width, 200);

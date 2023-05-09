@@ -34,7 +34,7 @@ export default {
         const core = new ssw.SoftSkiaWASM();
         instance.ssw = core; // Save on component instance
         console.log(core)
-        core.setShapeToChild(0, 0, 0, 400, 400, 0, 0, 0, 0)
+        core.setShapeToChild(0, 0, 0, attrs.width, attrs.height, 0, 0, 0, 0)
 
 
         onMounted(() => {
