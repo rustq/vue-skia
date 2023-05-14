@@ -4,7 +4,7 @@ mod utils;
 use base64;
 use wasm_bindgen::prelude::*;
 use soft_skia::instance::Instance;
-use soft_skia::shape::Shapes;
+use soft_skia::shape::{Circle, Shapes};
 use soft_skia::shape::Rect;
 use soft_skia::shape::ColorU8;
 use soft_skia::tree::Node;
@@ -28,6 +28,7 @@ pub struct WASMRectAttr {
     height: u32,
     x: u32,
     y: u32,
+    color: [u8; 4]
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -40,6 +41,10 @@ pub struct WASMCircleAttr {
 pub enum WASMShapesAttr {
     R(WASMRectAttr),
     C(WASMCircleAttr)
+}
+
+impl WASMShapesAttr {
+
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -121,7 +126,7 @@ impl SoftSkiaWASM {
         let example = Example {
             field2: vec![vec![1., 2.], vec![3., 4.]],
             field3: [1., 2., 3., 4.],
-            attr: WASMShapesAttr::R(WASMRectAttr{ width: 16, height: 22, x: 90, y: 0 })
+            attr: WASMShapesAttr::R(WASMRectAttr{ width: 16, height: 22, x: 90, y: 0, color: [100, 0, 0, 20] })
         };
 
         serde_wasm_bindgen::to_value(&example).unwrap()
@@ -137,6 +142,48 @@ impl SoftSkiaWASM {
     pub fn receive_node_shape_from_js(&mut self, node_id: usize, val: JsValue) -> String {
         let example: Example = serde_wasm_bindgen::from_value(val).unwrap();
         format!("{:?}", example)
+    }
+
+    #[wasm_bindgen(js_name = setShapeBySerde)]
+    pub fn set_shape_by_serde(&mut self, id: usize, value: JsValue) {
+        let message: Example = serde_wasm_bindgen::from_value(value).unwrap();
+
+        match message.attr {
+            WASMShapesAttr::R(WASMRectAttr{ width, height, x, y , color}) => {
+                self.0.set_shape_to_child(id, Shapes::R(Rect { x, y, width, height, color: ColorU8::from_rgba(color[0], color[1], color[2], color[3]) }))
+            },
+            WASMShapesAttr::C(WASMCircleAttr{ c, r }) => {
+                self.0.set_shape_to_child(id, Shapes::C(Circle { c, r, color: ColorU8::from_rgba(100, 0, 0, 100) }))
+            }
+        };
+    }
+}
+
+/// Debug
+///
+///
+#[wasm_bindgen]
+pub struct LittleTree {
+    id: usize,
+    children: Vec<LittleTree>
+}
+
+///
+/// Debug
+///
+#[wasm_bindgen]
+impl LittleTree {
+    #[wasm_bindgen]
+    pub fn default(id: usize) -> Self {
+        LittleTree {
+            id,
+            children: Vec::new()
+        }
+    }
+
+    #[wasm_bindgen]
+    pub fn add_a_default(&mut self, id: usize) {
+        self.children.push(Self::default(id))
     }
 
 }
