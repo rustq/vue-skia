@@ -44,7 +44,17 @@ export default {
 
         onUpdated(() => {
             const base64 = core.toBase64();
-            console.log(core.toDebug())
+            console.log(core.toDebug?.())
+            let buffer = new Uint8Array(10);
+            buffer.set([1,2,3,4])
+            console.log(core.setShapeToChildByStream(buffer))
+            const a = core.send_example_to_js();
+            console.log(a)
+            a.field2.push([999]);
+            console.log(a.attr.R.width)
+            a.attr.R.width++;
+            console.log(a.attr.R.width)
+            console.log(core.receive_example_from_js(a))
             container.value.setAttribute("src", base64);
         });
 
