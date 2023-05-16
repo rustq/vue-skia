@@ -121,14 +121,14 @@ mod test {
         assert_eq!(node.id, 0);
         assert_eq!(node.get_children_len(), 0);
 
-        node.append_node(Node { id: 1, shape: Shapes::C(Circle { c: 100, r: 50, color: ColorU8::from_rgba(0, 0, 0, 255) }), children: Vec::new() });
+        node.append_node(Node { id: 1, shape: Shapes::C(Circle { cx: 100, cy: 100, r: 50, color: ColorU8::from_rgba(0, 0, 0, 255) }), children: Vec::new() });
         assert_eq!(node.get_children_len(), 1);
 
-        node.append_node(Node { id: 2, shape: Shapes::C(Circle { c: 100, r: 50, color: ColorU8::from_rgba(0, 0, 0, 255) }), children: Vec::new() });
+        node.append_node(Node { id: 2, shape: Shapes::C(Circle { cx: 100, cy: 100, r: 50, color: ColorU8::from_rgba(0, 0, 0, 255) }), children: Vec::new() });
         assert_eq!(node.get_children_len(), 2);
 
-        node.append_boxed_node(Box::new(Node { id: 3, shape: Shapes::C(Circle { c: 100, r: 50, color: ColorU8::from_rgba(0, 0, 0, 255) }), children: Vec::new() }));
-        node.append_boxed_node(Box::new(Node { id: 4, shape: Shapes::C(Circle { c: 100, r: 50, color: ColorU8::from_rgba(0, 0, 0, 255) }), children: Vec::new() }));
+        node.append_boxed_node(Box::new(Node { id: 3, shape: Shapes::C(Circle { cx: 100, cy: 100, r: 50, color: ColorU8::from_rgba(0, 0, 0, 255) }), children: Vec::new() }));
+        node.append_boxed_node(Box::new(Node { id: 4, shape: Shapes::C(Circle { cx: 100, cy: 100, r: 50, color: ColorU8::from_rgba(0, 0, 0, 255) }), children: Vec::new() }));
         assert_eq!(node.get_children_len(), 4);
 
         let child_index_0 = node.get_child_by_index(0).unwrap();
@@ -152,10 +152,10 @@ mod test {
 
         for item in node.children_iter_mut() {
             match item.shape {
-                Shapes::C(Circle { ref mut c, r, color }) => {
-                    assert_eq!(*c, 100);
-                    *c = 200;
-                    assert_eq!(*c, 200);
+                Shapes::C(Circle { ref mut cx, cy, r, color }) => {
+                    assert_eq!(*cx, 100);
+                    *cx = 200;
+                    assert_eq!(*cx, 200);
                 },
                 _ => panic!(),
             }
@@ -163,8 +163,8 @@ mod test {
 
         for item in node.children_iter() {
             match item.shape {
-                Shapes::C(Circle { c, r, color }) => {
-                    assert_eq!(c, 200);
+                Shapes::C(Circle { cx, cy, r, color }) => {
+                    assert_eq!(cx, 200);
                 },
                 _ => panic!(),
             }

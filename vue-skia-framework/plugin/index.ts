@@ -50,8 +50,12 @@ const VSKNode = (name: string) => {
                 const core = root.ssw;
                 instance._ssw_id = SELF_INCREASE_COUNT();
                 core.createChildAppendToContainer(instance._ssw_id, 0);
-                core.setShapeBySerde(instance._ssw_id, { field2: [[0]], field3: [0,0,0,0], attr: { R: { x: attrs.x, y: attrs.y, width: attrs.width, height: attrs.height, color: [240, 230, 0, 100] } } })
-                // core.setShapeToChild(instance._ssw_id, attrs.x, attrs.y, attrs.width, attrs.height, attrs.r, attrs.g, attrs.b, attrs.a);
+                if (name === 'Rect') {
+                    core.setShapeBySerde(instance._ssw_id, { field2: [[0]], field3: [0,0,0,0], attr: { R: { x: attrs.x, y: attrs.y, width: attrs.width, height: attrs.height, color: [attrs.r, attrs.g, attrs.b, attrs.a] } } })
+                }
+                if (name === 'Circle') {
+                    core.setShapeBySerde(instance._ssw_id, { field2: [[0]], field3: [0,0,0,0], attr: { C: { cx: attrs.cx, cy: attrs.cy, r: attrs.r, color: [attrs.r, attrs.g, attrs.b, attrs.a] } } })
+                }
             });
 
             onUpdated(() => {
@@ -61,8 +65,6 @@ const VSKNode = (name: string) => {
                     root = root.parent;
                 }
                 const core = root.ssw;
-                core.setShapeBySerde(instance._ssw_id, { field2: [], field3: [], attr: { R: { x: attrs.x, y: attrs.y, width: attrs.width, height: attrs.height } } })
-                // core.setShapeToChild(instance._ssw_id, attrs.x, attrs.y, attrs.width, attrs.height, attrs.r, attrs.g, attrs.b, attrs.a);
             });
 
             onBeforeUnmount(() => {

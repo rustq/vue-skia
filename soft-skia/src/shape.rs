@@ -22,7 +22,8 @@ pub struct Rect {
 
 #[derive(Debug)]
 pub struct Circle {
-    pub c: u32,
+    pub cx: u32,
+    pub cy: u32,
     pub r: u32,
     pub color: ColorU8
 }
@@ -78,7 +79,29 @@ impl Shape for Circle {
     }
 
     fn draw(&self, pixmap: &mut Pixmap) -> () {
-        todo!()
+        let mut paint = Paint::default();
+        let mut pb = PathBuilder::new();
+
+        paint.set_color_rgba8(self.color.red(), self.color.green(), self.color.blue(), self.color.alpha());
+        paint.anti_alias = true;
+
+        pb.push_circle(self.cx as f32, self.cy as f32, self.r as f32);
+        pb.close();
+
+        let path = pb.finish().unwrap();
+
+        pixmap.fill_path(
+            &path,
+            &paint,
+            FillRule::Winding,
+            Transform::identity(),
+            None,
+        );
+
+        let stroke = Stroke::default();
+
+        paint.set_color_rgba8(0, 0, 0, 255);
+        pixmap.stroke_path(&path, &paint, &stroke, Transform::identity(), None);
     }
 }
 

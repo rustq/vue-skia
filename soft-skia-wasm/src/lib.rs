@@ -33,8 +33,10 @@ pub struct WASMRectAttr {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct WASMCircleAttr {
-    c: u32,
+    cx: u32,
+    cy: u32,
     r: u32,
+    color: [u8; 4]
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -152,8 +154,8 @@ impl SoftSkiaWASM {
             WASMShapesAttr::R(WASMRectAttr{ width, height, x, y , color}) => {
                 self.0.set_shape_to_child(id, Shapes::R(Rect { x, y, width, height, color: ColorU8::from_rgba(color[0], color[1], color[2], color[3]) }))
             },
-            WASMShapesAttr::C(WASMCircleAttr{ c, r }) => {
-                self.0.set_shape_to_child(id, Shapes::C(Circle { c, r, color: ColorU8::from_rgba(100, 0, 0, 100) }))
+            WASMShapesAttr::C(WASMCircleAttr{ cx, cy, r, color }) => {
+                self.0.set_shape_to_child(id, Shapes::C(Circle { cx, cy, r, color: ColorU8::from_rgba(color[0], color[1], color[2], color[3]) }))
             }
         };
     }
