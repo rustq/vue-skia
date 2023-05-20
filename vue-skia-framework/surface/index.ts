@@ -33,8 +33,10 @@ export default {
         const ssw = global.ssw;
         const core = new ssw.SoftSkiaWASM();
         instance.ssw = core; // Save on component instance
-        console.log(core)
-        core.setShapeToChild(0, 0, 0, attrs.width, attrs.height, 0, 0, 0, 0)
+        instance._ssw_id = 0; //!!! TODO
+        // @ts-ignore
+        global.core = core;
+        core.setShapeBySerde(0, { attr: { R: { x: 0, y: 0, width: attrs.width, height: attrs.height, color: [0, 0, 0, 100] } } })
 
 
         onMounted(() => {
@@ -45,20 +47,13 @@ export default {
         onUpdated(() => {
             const base64 = core.toBase64();
             console.log(core.toDebug?.())
-            let buffer = new Uint8Array(10);
-            buffer.set([1,2,3,4])
-            console.log(core.setShapeToChildByStream(buffer))
-            const a = core.send_example_to_js();
-            console.log(a)
-            a.field2.push([999]);
-            console.log(a.attr.R.width)
-            a.attr.R.width++;
-            console.log(a.attr.R.width)
-            console.log(core.receive_example_from_js(a))
             container.value.setAttribute("src", base64);
         });
 
         onBeforeUnmount(() => {
+            const instance = getCurrentInstance();
+            const core = instance.ssw;
+            core.free();
         });
 
 

@@ -50,9 +50,7 @@ impl WASMShapesAttr {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct Example {
-    pub field2: Vec<Vec<f32>>,
-    pub field3: [f32; 4],
+pub struct WASMShape {
     pub attr: WASMShapesAttr
 }
 
@@ -69,14 +67,9 @@ impl SoftSkiaWASM {
         self.0.create_child_append_to_container(child_id, container_id)
     }
 
-    #[wasm_bindgen(js_name = setShapeToChild)]
-    pub fn set_shape_rect_to_child(&mut self, child_id: usize, x: u32, y: u32, width: u32, height: u32, r: u8, g: u8, b: u8, a: u8) {
-        self.0.set_shape_to_child(child_id, Shapes::R(Rect { x, y, width, height, color: ColorU8::from_rgba(r, g, b, a) }))
-    }
-
-    #[wasm_bindgen(js_name = setShapeToChildByStream)]
-    pub fn set_shape_rect_to_child_by_stream(&mut self, stream: Box<[u8]>) -> usize {
-        stream.len()
+    #[wasm_bindgen(js_name = createChildInsertBeforeElementOfContainer)]
+    pub fn create_child_insert_before_element_of_container(&mut self, child_id: usize, insert_before_id: usize, container_id: usize) {
+        self.0.create_child_insert_before_element_of_container(child_id, insert_before_id, container_id);
     }
 
     #[wasm_bindgen(js_name = removeChildFromContainer)]
@@ -120,35 +113,9 @@ impl SoftSkiaWASM {
     }
 
 
-    ///
-    /// DEBUG
-    ///
-    #[wasm_bindgen]
-    pub fn send_example_to_js(&mut self) -> JsValue {
-        let example = Example {
-            field2: vec![vec![1., 2.], vec![3., 4.]],
-            field3: [1., 2., 3., 4.],
-            attr: WASMShapesAttr::R(WASMRectAttr{ width: 16, height: 22, x: 90, y: 0, color: [100, 0, 0, 20] })
-        };
-
-        serde_wasm_bindgen::to_value(&example).unwrap()
-    }
-
-    #[wasm_bindgen]
-    pub fn receive_example_from_js(&mut self, val: JsValue) -> String {
-        let example: Example = serde_wasm_bindgen::from_value(val).unwrap();
-        format!("{:?}", example)
-    }
-
-    #[wasm_bindgen]
-    pub fn receive_node_shape_from_js(&mut self, node_id: usize, val: JsValue) -> String {
-        let example: Example = serde_wasm_bindgen::from_value(val).unwrap();
-        format!("{:?}", example)
-    }
-
     #[wasm_bindgen(js_name = setShapeBySerde)]
     pub fn set_shape_by_serde(&mut self, id: usize, value: JsValue) {
-        let message: Example = serde_wasm_bindgen::from_value(value).unwrap();
+        let message: WASMShape = serde_wasm_bindgen::from_value(value).unwrap();
 
         match message.attr {
             WASMShapesAttr::R(WASMRectAttr{ width, height, x, y , color}) => {
@@ -159,33 +126,4 @@ impl SoftSkiaWASM {
             }
         };
     }
-}
-
-/// Debug
-///
-///
-#[wasm_bindgen]
-pub struct LittleTree {
-    id: usize,
-    children: Vec<LittleTree>
-}
-
-///
-/// Debug
-///
-#[wasm_bindgen]
-impl LittleTree {
-    #[wasm_bindgen]
-    pub fn default(id: usize) -> Self {
-        LittleTree {
-            id,
-            children: Vec::new()
-        }
-    }
-
-    #[wasm_bindgen]
-    pub fn add_a_default(&mut self, id: usize) {
-        self.children.push(Self::default(id))
-    }
-
 }

@@ -6,7 +6,10 @@
     </h2>
     <p v-if="loading">wasm loading</p>
     <v-surface v-if="!loading" :width="600" :height="400">
-      <template :key="index" v-for="(_, index) in new Array(count).fill(true)">
+      <template
+        :key="70 + index"
+        v-for="(_, index) in new Array(count).fill(true)"
+      >
         <v-rect
           :x="(index % 7) * 10 + 100"
           :y="(index % 3) * 10 + 100"
@@ -18,11 +21,14 @@
           :b="0"
         />
       </template>
-      <template :key="10 + index" v-for="(_, index) in new Array(10 - count).fill(true)">
+      <template
+        :key="100 + index"
+        v-for="(_, index) in new Array(10 - count).fill(true)"
+      >
         <v-circle
           :cx="(index % 7) * 10 + 300"
           :cy="200"
-          :r="10"
+          :r="10 + ((count === 8 && true) ? 30 : 0)"
           :a="100"
           :g="50"
           :b="200"

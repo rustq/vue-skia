@@ -23,6 +23,12 @@ impl Instance {
         container.append_node(child);
     }
 
+    pub fn create_child_insert_before_element_of_container(&mut self, child_id: usize, insert_before_id: usize, container_id: usize) {
+        let child = Node::default(child_id, Shapes::R(Rect::default()));
+        let container = self.debug__get_tree_node_by_id(container_id).unwrap();
+        container.insert_node_before_id(insert_before_id, child);
+    }
+
     pub fn set_shape_to_child(&mut self, child_id: usize, shape: Shapes) {
         let mut child = self.debug__get_tree_node_by_id(child_id).unwrap();
         child.shape = shape;

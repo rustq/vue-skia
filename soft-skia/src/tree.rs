@@ -39,6 +39,11 @@ impl Node {
         self.children.push(Box::new(node));
     }
 
+    pub fn insert_node_before_id(&mut self, before_id: usize, node: Node) {
+        let before_index = self.children.iter().position(|t| t.id == before_id).unwrap();
+        self.children.insert(before_index, Box::new(node));
+    }
+
     pub fn append_boxed_node(&mut self, boxed_node: Box<Node>) {
         self.children.push(boxed_node);
     }
@@ -149,6 +154,19 @@ mod test {
         assert_eq!(node.get_children_len(), 2);
         assert_eq!(node.children[0].id, 1);
         assert_eq!(node.children[1].id, 4);
+
+        node.insert_node_before_id(4, Node { id: 200, shape: Shapes::C(Circle { cx: 100, cy: 100, r: 50, color: ColorU8::from_rgba(0, 0, 0, 255) }), children: Vec::new() });
+        assert_eq!(node.get_children_len(), 3);
+        assert_eq!(node.children[0].id, 1);
+        assert_eq!(node.children[1].id, 200);
+        assert_eq!(node.children[2].id, 4);
+
+        node.insert_node_before_id(4, Node { id: 300, shape: Shapes::C(Circle { cx: 100, cy: 100, r: 50, color: ColorU8::from_rgba(0, 0, 0, 255) }), children: Vec::new() });
+        assert_eq!(node.get_children_len(), 4);
+        assert_eq!(node.children[0].id, 1);
+        assert_eq!(node.children[1].id, 200);
+        assert_eq!(node.children[2].id, 300);
+        assert_eq!(node.children[3].id, 4);
 
         for item in node.children_iter_mut() {
             match item.shape {
