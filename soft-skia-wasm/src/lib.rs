@@ -4,7 +4,7 @@ mod utils;
 use base64;
 use wasm_bindgen::prelude::*;
 use soft_skia::instance::Instance;
-use soft_skia::shape::{Circle, Shapes};
+use soft_skia::shape::{Circle, RoundRect, Shapes};
 use soft_skia::shape::Rect;
 use soft_skia::shape::ColorU8;
 use soft_skia::tree::Node;
@@ -40,9 +40,20 @@ pub struct WASMCircleAttr {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+pub struct WASMRoundRectAttr {
+    width: u32,
+    height: u32,
+    r: u32,
+    x: u32,
+    y: u32,
+    color: [u8; 4]
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub enum WASMShapesAttr {
     R(WASMRectAttr),
-    C(WASMCircleAttr)
+    C(WASMCircleAttr),
+    RR(WASMRoundRectAttr)
 }
 
 impl WASMShapesAttr {
@@ -123,7 +134,10 @@ impl SoftSkiaWASM {
             },
             WASMShapesAttr::C(WASMCircleAttr{ cx, cy, r, color }) => {
                 self.0.set_shape_to_child(id, Shapes::C(Circle { cx, cy, r, color: ColorU8::from_rgba(color[0], color[1], color[2], color[3]) }))
-            }
+            },
+            WASMShapesAttr::RR(WASMRoundRectAttr{ width, height, r, x, y , color}) => {
+                self.0.set_shape_to_child(id, Shapes::RR(RoundRect { x, y, r, width, height, color: ColorU8::from_rgba(color[0], color[1], color[2], color[3]) }))
+            },
         };
     }
 }

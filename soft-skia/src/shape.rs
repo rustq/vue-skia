@@ -3,7 +3,8 @@ pub use tiny_skia::{ColorU8, Paint, PathBuilder, Pixmap, Stroke, Transform, Fill
 #[derive(Debug)]
 pub enum Shapes {
     R(Rect),
-    C(Circle)
+    C(Circle),
+    RR(RoundRect)
 }
 
 pub trait Shape {
@@ -28,11 +29,22 @@ pub struct Circle {
     pub color: ColorU8
 }
 
+#[derive(Debug)]
+pub struct RoundRect {
+    pub x: u32,
+    pub y: u32,
+    pub width: u32,
+    pub height: u32,
+    pub r: u32,
+    pub color: ColorU8
+}
+
 impl Shapes {
     pub fn draw(&self, pixmap: &mut Pixmap) -> () {
         match self {
             Shapes::R(rect) => rect.draw(pixmap),
             Shapes::C(circle) => circle.draw(pixmap),
+            Shapes::RR(round_rect) => round_rect.draw(pixmap),
         }
     }
 }
@@ -86,6 +98,46 @@ impl Shape for Circle {
         paint.anti_alias = true;
 
         pb.push_circle(self.cx as f32, self.cy as f32, self.r as f32);
+        pb.close();
+
+        let path = pb.finish().unwrap();
+
+        pixmap.fill_path(
+            &path,
+            &paint,
+            FillRule::Winding,
+            Transform::identity(),
+            None,
+        );
+
+        let stroke = Stroke::default();
+
+        paint.set_color_rgba8(0, 0, 0, 255);
+        pixmap.stroke_path(&path, &paint, &stroke, Transform::identity(), None);
+    }
+}
+
+impl Shape for RoundRect {
+    fn default() -> Self {
+        RoundRect { x: 0, y: 0, width: 0, height: 0, r: 0, color: ColorU8::from_rgba(0, 0, 0, 255) }
+    }
+
+    fn draw(&self, pixmap: &mut Pixmap) -> () {
+        let mut paint = Paint::default();
+        let mut pb = PathBuilder::new();
+
+        paint.set_color_rgba8(self.color.red(), self.color.green(), self.color.blue(), self.color.alpha());
+        paint.anti_alias = true;
+
+        pb.move_to((self.x + self.r) as f32, self.y as f32);
+        pb.line_to((self.x + self.width - self.r) as f32, self.y as f32);
+        pb.quad_to((self.x as f32 + self.width as f32 - (self.r as f32) * 0.293) as f32, (self.y as f32 + (self.r as f32) * 0.293) as f32, (self.x + self.width) as f32, (self.y + self.r) as f32);
+        pb.line_to((self.x + self.width) as f32, (self.y + self.height - self.r) as f32);
+        pb.quad_to((self.x as f32 + self.width as f32 - (self.r as f32) * 0.293) as f32, (self.y as f32 + self.height as f32 - (self.r as f32) * 0.293) as f32, (self.x + self.width - self.r) as f32, (self.y + self.height) as f32);
+        pb.line_to((self.x + self.r) as f32, (self.y + self.height) as f32);
+        pb.quad_to((self.x as f32 + (self.r as f32) * 0.293) as f32, (self.y as f32 + self.height as f32 - (self.r as f32) * 0.293) as f32, (self.x) as f32, (self.y + self.height - self.r) as f32);
+        pb.line_to(self.x as f32, (self.y + self.r) as f32);
+        pb.quad_to((self.x as f32 + (self.r as f32) * 0.293) as f32, (self.y as f32 + (self.r as f32) * 0.293) as f32, (self.x + self.r) as f32, (self.y) as f32);
         pb.close();
 
         let path = pb.finish().unwrap();

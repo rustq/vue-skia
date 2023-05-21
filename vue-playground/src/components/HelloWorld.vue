@@ -38,13 +38,23 @@
           />
         </template>
       </template>
+      <v-roundRect
+        :x="120"
+        :y="70"
+        :r="10"
+        :width="100"
+        :height="60"
+        :a="100"
+        :g="0"
+        :b="10"
+      ></v-roundRect>
     </v-surface>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import launch from '../../../vue-skia-framework/launch';
+import launch from "../../../vue-skia-framework/launch";
 
 export default defineComponent({
   name: "HelloWorld",

@@ -62,6 +62,9 @@ const VSKNode = (name: string) => {
                 if (name === 'Circle') {
                     core.setShapeBySerde(instance._ssw_id, { attr: { C: { cx: attrs.cx, cy: attrs.cy, r: attrs.r, color: [attrs.r, attrs.g, attrs.b, attrs.a] } } })
                 }
+                if (name === 'RoundRect') {
+                    core.setShapeBySerde(instance._ssw_id, { attr: { RR: { x: attrs.x, y: attrs.y, r: attrs.r, width: attrs.width, height: attrs.height, color: [attrs.r, attrs.g, attrs.b, attrs.a] } } })
+                }
             });
 
             onUpdated(() => {
