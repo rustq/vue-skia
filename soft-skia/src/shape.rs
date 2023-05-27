@@ -1,10 +1,13 @@
 pub use tiny_skia::{ColorU8, Paint, PathBuilder, Pixmap, Stroke, Transform, FillRule};
+use tiny_skia::{LineCap, LineJoin};
 
 #[derive(Debug)]
 pub enum Shapes {
     R(Rect),
     C(Circle),
-    RR(RoundRect)
+    RR(RoundRect),
+    L(Line),
+    P(Points),
 }
 
 pub trait Shape {
@@ -39,12 +42,28 @@ pub struct RoundRect {
     pub color: ColorU8
 }
 
+#[derive(Debug)]
+pub struct Line {
+    pub p1: [u32; 2],
+    pub p2: [u32; 2],
+    pub color: ColorU8,
+}
+
+#[derive(Debug)]
+pub struct Points {
+    pub points: Vec<[u32; 2]>,
+    pub color: ColorU8,
+    pub stroke_width: u32
+}
+
 impl Shapes {
     pub fn draw(&self, pixmap: &mut Pixmap) -> () {
         match self {
             Shapes::R(rect) => rect.draw(pixmap),
             Shapes::C(circle) => circle.draw(pixmap),
             Shapes::RR(round_rect) => round_rect.draw(pixmap),
+            Shapes::L(line) => line.draw(pixmap),
+            Shapes::P(points) => points.draw(pixmap),
         }
     }
 }
@@ -153,6 +172,57 @@ impl Shape for RoundRect {
         let stroke = Stroke::default();
 
         paint.set_color_rgba8(0, 0, 0, 255);
+        pixmap.stroke_path(&path, &paint, &stroke, Transform::identity(), None);
+    }
+}
+
+
+impl Shape for Line {
+    fn default() -> Self {
+        Line { p1: [0, 0], p2: [30, 30], color: ColorU8::from_rgba(0, 0, 0, 255) }
+    }
+
+    fn draw(&self, pixmap: &mut Pixmap) -> () {
+        let mut pb = PathBuilder::new();
+        let mut paint = Paint::default();
+
+        pb.move_to(self.p1[0] as f32, self.p1[1] as f32);
+        pb.line_to(self.p2[0] as f32, self.p2[1] as f32);
+        pb.close();
+
+        let path = pb.finish().unwrap();
+        let stroke = Stroke::default();
+
+        paint.set_color_rgba8(self.color.red(), self.color.green(), self.color.blue(), self.color.alpha());
+        pixmap.stroke_path(&path, &paint, &stroke, Transform::identity(), None);
+    }
+}
+
+impl Shape for Points {
+    fn default() -> Self {
+        Points { points: Vec::from([[10, 10], [100, 100], [40, 200]]), color: ColorU8::from_rgba(0, 0, 0, 255), stroke_width: 1 }
+    }
+
+    fn draw(&self, pixmap: &mut Pixmap) -> () {
+        let mut pb = PathBuilder::new();
+        let mut paint = Paint::default();
+
+        pb.move_to(self.points[0][0] as f32, self.points[0][1] as f32);
+        for i in 1..self.points.len() {
+            pb.line_to(self.points[i][0] as f32, self.points[i][1] as f32);
+        }
+        pb.close();
+
+        let path = pb.finish().unwrap();
+        let stroke = Stroke {
+            width: self.stroke_width as f32,
+            miter_limit: 4.0,
+            line_cap: LineCap::Butt,
+            line_join: LineJoin::Miter,
+            dash: None,
+        };
+
+        paint.set_color_rgba8(self.color.red(), self.color.green(), self.color.blue(), self.color.alpha());
         pixmap.stroke_path(&path, &paint, &stroke, Transform::identity(), None);
     }
 }

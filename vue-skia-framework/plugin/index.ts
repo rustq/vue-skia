@@ -18,7 +18,8 @@ let SELF_INCREASE_COUNT = () => _SELF_INCREASE_COUNT++
 const WidgetList = [
     'Surface',
     'Layer',
-    'Triangle',
+    'Points',
+    'Line',
     'RoundRect',
     'Rect',
     'Circle',
@@ -65,6 +66,12 @@ const VSKNode = (name: string) => {
                 if (name === 'RoundRect') {
                     core.setShapeBySerde(instance._ssw_id, { attr: { RR: { x: attrs.x, y: attrs.y, r: attrs.r, width: attrs.width, height: attrs.height, color: [attrs.r, attrs.g, attrs.b, attrs.a] } } })
                 }
+                if (name === 'Line') {
+                    core.setShapeBySerde(instance._ssw_id, { attr: { L: { p1: attrs.p1, p2: attrs.p2, color: [attrs.r, attrs.g, attrs.b, attrs.a] } } })
+                }
+                if (name === 'Points') {
+                    core.setShapeBySerde(instance._ssw_id, { attr: { P: { points: attrs.points, stroke_width: attrs.strokeWidth, color: [attrs.r, attrs.g, attrs.b, attrs.a] } } })
+                }
             });
 
             onUpdated(() => {
@@ -79,6 +86,15 @@ const VSKNode = (name: string) => {
                 }
                 if (name === 'Circle') {
                     core.setShapeBySerde(instance._ssw_id, { attr: { C: { cx: attrs.cx, cy: attrs.cy, r: attrs.r, color: [attrs.r, attrs.g, attrs.b, attrs.a] } } })
+                }
+                if (name === 'RoundRect') {
+                    core.setShapeBySerde(instance._ssw_id, { attr: { RR: { x: attrs.x, y: attrs.y, r: attrs.r, width: attrs.width, height: attrs.height, color: [attrs.r, attrs.g, attrs.b, attrs.a] } } })
+                }
+                if (name === 'Line') {
+                    core.setShapeBySerde(instance._ssw_id, { attr: { L: { p1: attrs.p1, p2: attrs.p2, color: [attrs.r, attrs.g, attrs.b, attrs.a] } } })
+                }
+                if (name === 'Points') {
+                    core.setShapeBySerde(instance._ssw_id, { attr: { P: { points: attrs.points, stroke_width: attrs.strokeWidth, color: [attrs.r, attrs.g, attrs.b, attrs.a] } } })
                 }
             });
 
