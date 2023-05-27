@@ -47,6 +47,7 @@ pub struct Line {
     pub p1: [u32; 2],
     pub p2: [u32; 2],
     pub color: ColorU8,
+    pub stroke_width: u32
 }
 
 #[derive(Debug)]
@@ -179,7 +180,7 @@ impl Shape for RoundRect {
 
 impl Shape for Line {
     fn default() -> Self {
-        Line { p1: [0, 0], p2: [30, 30], color: ColorU8::from_rgba(0, 0, 0, 255) }
+        Line { p1: [0, 0], p2: [30, 30], color: ColorU8::from_rgba(0, 0, 0, 255), stroke_width: 1 }
     }
 
     fn draw(&self, pixmap: &mut Pixmap) -> () {
@@ -191,7 +192,13 @@ impl Shape for Line {
         pb.close();
 
         let path = pb.finish().unwrap();
-        let stroke = Stroke::default();
+        let stroke = Stroke {
+            width: self.stroke_width as f32,
+            miter_limit: 4.0,
+            line_cap: LineCap::Butt,
+            line_join: LineJoin::Miter,
+            dash: None,
+        };
 
         paint.set_color_rgba8(self.color.red(), self.color.green(), self.color.blue(), self.color.alpha());
         pixmap.stroke_path(&path, &paint, &stroke, Transform::identity(), None);

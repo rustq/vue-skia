@@ -67,7 +67,7 @@ const VSKNode = (name: string) => {
                     core.setShapeBySerde(instance._ssw_id, { attr: { RR: { x: attrs.x, y: attrs.y, r: attrs.r, width: attrs.width, height: attrs.height, color: [attrs.r, attrs.g, attrs.b, attrs.a] } } })
                 }
                 if (name === 'Line') {
-                    core.setShapeBySerde(instance._ssw_id, { attr: { L: { p1: attrs.p1, p2: attrs.p2, color: [attrs.r, attrs.g, attrs.b, attrs.a] } } })
+                    core.setShapeBySerde(instance._ssw_id, { attr: { L: { p1: attrs.p1, p2: attrs.p2, stroke_width: attrs.strokeWidth, color: [attrs.r, attrs.g, attrs.b, attrs.a] } } })
                 }
                 if (name === 'Points') {
                     core.setShapeBySerde(instance._ssw_id, { attr: { P: { points: attrs.points, stroke_width: attrs.strokeWidth, color: [attrs.r, attrs.g, attrs.b, attrs.a] } } })
@@ -91,7 +91,7 @@ const VSKNode = (name: string) => {
                     core.setShapeBySerde(instance._ssw_id, { attr: { RR: { x: attrs.x, y: attrs.y, r: attrs.r, width: attrs.width, height: attrs.height, color: [attrs.r, attrs.g, attrs.b, attrs.a] } } })
                 }
                 if (name === 'Line') {
-                    core.setShapeBySerde(instance._ssw_id, { attr: { L: { p1: attrs.p1, p2: attrs.p2, color: [attrs.r, attrs.g, attrs.b, attrs.a] } } })
+                    core.setShapeBySerde(instance._ssw_id, { attr: { L: { p1: attrs.p1, p2: attrs.p2, stroke_width: attrs.strokeWidth, color: [attrs.r, attrs.g, attrs.b, attrs.a] } } })
                 }
                 if (name === 'Points') {
                     core.setShapeBySerde(instance._ssw_id, { attr: { P: { points: attrs.points, stroke_width: attrs.strokeWidth, color: [attrs.r, attrs.g, attrs.b, attrs.a] } } })

@@ -53,7 +53,8 @@ pub struct WASMRoundRectAttr {
 pub struct WASMLineAttr {
     p1: [u32; 2],
     p2: [u32; 2],
-    color: [u8; 4]
+    color: [u8; 4],
+    stroke_width: u32
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -154,8 +155,8 @@ impl SoftSkiaWASM {
             WASMShapesAttr::RR(WASMRoundRectAttr{ width, height, r, x, y , color}) => {
                 self.0.set_shape_to_child(id, Shapes::RR(RoundRect { x, y, r, width, height, color: ColorU8::from_rgba(color[0], color[1], color[2], color[3]) }))
             },
-            WASMShapesAttr::L(WASMLineAttr{ p1, p2 , color}) => {
-                self.0.set_shape_to_child(id, Shapes::L(Line { p1, p2, color: ColorU8::from_rgba(color[0], color[1], color[2], color[3]) }))
+            WASMShapesAttr::L(WASMLineAttr{ p1, p2, stroke_width, color}) => {
+                self.0.set_shape_to_child(id, Shapes::L(Line { p1, p2, stroke_width, color: ColorU8::from_rgba(color[0], color[1], color[2], color[3]) }))
             },
             WASMShapesAttr::P(WASMPointsAttr{ points , color, stroke_width }) => {
                 self.0.set_shape_to_child(id, Shapes::P(Points { points, stroke_width, color: ColorU8::from_rgba(color[0], color[1], color[2], color[3]) }))
