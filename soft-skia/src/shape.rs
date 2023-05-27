@@ -131,13 +131,13 @@ impl Shape for RoundRect {
 
         pb.move_to((self.x + self.r) as f32, self.y as f32);
         pb.line_to((self.x + self.width - self.r) as f32, self.y as f32);
-        pb.quad_to((self.x as f32 + self.width as f32 - (self.r as f32) * 0.293) as f32, (self.y as f32 + (self.r as f32) * 0.293) as f32, (self.x + self.width) as f32, (self.y + self.r) as f32);
+        pb.quad_to((self.x + self.width) as f32, self.y as f32, (self.x + self.width) as f32, (self.y + self.r) as f32);
         pb.line_to((self.x + self.width) as f32, (self.y + self.height - self.r) as f32);
-        pb.quad_to((self.x as f32 + self.width as f32 - (self.r as f32) * 0.293) as f32, (self.y as f32 + self.height as f32 - (self.r as f32) * 0.293) as f32, (self.x + self.width - self.r) as f32, (self.y + self.height) as f32);
+        pb.quad_to((self.x + self.width) as f32, (self.y + self.height) as f32, (self.x + self.width - self.r) as f32, (self.y + self.height) as f32);
         pb.line_to((self.x + self.r) as f32, (self.y + self.height) as f32);
-        pb.quad_to((self.x as f32 + (self.r as f32) * 0.293) as f32, (self.y as f32 + self.height as f32 - (self.r as f32) * 0.293) as f32, (self.x) as f32, (self.y + self.height - self.r) as f32);
+        pb.quad_to(self.x as f32, (self.y + self.height) as f32, self.x as f32, (self.y + self.height - self.r) as f32);
         pb.line_to(self.x as f32, (self.y + self.r) as f32);
-        pb.quad_to((self.x as f32 + (self.r as f32) * 0.293) as f32, (self.y as f32 + (self.r as f32) * 0.293) as f32, (self.x + self.r) as f32, (self.y) as f32);
+        pb.quad_to(self.x as f32, self.y as f32, (self.x + self.r) as f32, self.y as f32);
         pb.close();
 
         let path = pb.finish().unwrap();
