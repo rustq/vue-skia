@@ -11,6 +11,8 @@ use soft_skia::tree::Node;
 use soft_skia::shape::Shape;
 use soft_skia::shape::Pixmap;
 
+use cssparser::{Color as CSSColor, Parser, ParserInput, RGBA};
+
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
 #[cfg(feature = "wee_alloc")]
@@ -60,7 +62,8 @@ pub struct WASMLineAttr {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct WASMPointsAttr {
     points: Vec<[u32; 2]>,
-    color: [u8; 4],
+    // color: [u8; 4],
+    color: String,
     stroke_width: u32
 }
 
@@ -159,7 +162,21 @@ impl SoftSkiaWASM {
                 self.0.set_shape_to_child(id, Shapes::L(Line { p1, p2, stroke_width, color: ColorU8::from_rgba(color[0], color[1], color[2], color[3]) }))
             },
             WASMShapesAttr::P(WASMPointsAttr{ points , color, stroke_width }) => {
-                self.0.set_shape_to_child(id, Shapes::P(Points { points, stroke_width, color: ColorU8::from_rgba(color[0], color[1], color[2], color[3]) }))
+
+                let mut parser_input = ParserInput::new(&color);
+                let mut parser = Parser::new(&mut parser_input);
+                let color = CSSColor::parse(&mut parser).expect("should");
+                match color {
+                    CSSColor::RGBA(rgba) => {
+                        drop(parser_input);
+                        self.0.set_shape_to_child(id, Shapes::P(Points { points, stroke_width, color: ColorU8::from_rgba(rgba.red, rgba.green, rgba.blue, rgba.alpha) }))
+                    }
+                    _ => {
+                        // todo
+                    }
+                }
+
+                // self.0.set_shape_to_child(id, Shapes::P(Points { points, stroke_width, color: ColorU8::from_rgba(color[0], color[1], color[2], color[3]) }))
             },
         };
     }

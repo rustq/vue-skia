@@ -66,10 +66,7 @@
           [170, 120],
         ]"
         :strokeWidth="4"
-        :r="200"
-        :g="50"
-        :b="200"
-        :a="100"
+        :color="`orange`"
       ></v-points>
       <v-points
         :points="[
@@ -86,10 +83,7 @@
           [128, 0],
         ]"
         :strokeWidth="4"
-        :r="20"
-        :g="20"
-        :b="250"
-        :a="100"
+        :color="`rgba(255, 25, 255, 0.1)`"
       ></v-points>
     </v-surface>
   </div>

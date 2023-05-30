@@ -17,7 +17,6 @@ let SELF_INCREASE_COUNT = () => _SELF_INCREASE_COUNT++
 
 const WidgetList = [
     'Surface',
-    'Layer',
     'Points',
     'Line',
     'RoundRect',
@@ -70,7 +69,7 @@ const VSKNode = (name: string) => {
                     core.setShapeBySerde(instance._ssw_id, { attr: { L: { p1: attrs.p1, p2: attrs.p2, stroke_width: attrs.strokeWidth, color: [attrs.r, attrs.g, attrs.b, attrs.a] } } })
                 }
                 if (name === 'Points') {
-                    core.setShapeBySerde(instance._ssw_id, { attr: { P: { points: attrs.points, stroke_width: attrs.strokeWidth, color: [attrs.r, attrs.g, attrs.b, attrs.a] } } })
+                    core.setShapeBySerde(instance._ssw_id, { attr: { P: { points: attrs.points, stroke_width: attrs.strokeWidth, color: attrs.color } } })
                 }
             });
 
@@ -94,7 +93,7 @@ const VSKNode = (name: string) => {
                     core.setShapeBySerde(instance._ssw_id, { attr: { L: { p1: attrs.p1, p2: attrs.p2, stroke_width: attrs.strokeWidth, color: [attrs.r, attrs.g, attrs.b, attrs.a] } } })
                 }
                 if (name === 'Points') {
-                    core.setShapeBySerde(instance._ssw_id, { attr: { P: { points: attrs.points, stroke_width: attrs.strokeWidth, color: [attrs.r, attrs.g, attrs.b, attrs.a] } } })
+                    core.setShapeBySerde(instance._ssw_id, { attr: { P: { points: attrs.points, stroke_width: attrs.strokeWidth, color: attrs.color } } })
                 }
             });
 
