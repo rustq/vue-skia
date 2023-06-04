@@ -16,10 +16,7 @@
             :y="(index % 3) * 10 + 100"
             :width="200"
             :height="200"
-            :a="100"
-            :r="index % 5 ? 0 : 200"
-            :g="255"
-            :b="0"
+            :color="`rgba(${index % 5 ? 0 : 200}, 255, 0, 0.6)`"
           />
         </template>
       </template>
@@ -32,9 +29,7 @@
             :cx="(index % 7) * 10 + 300"
             :cy="200"
             :r="10 + (count >= 7 && true ? 30 : index)"
-            :a="100"
-            :g="50"
-            :b="200"
+            :color="`rgba(${index % 5 ? 0 : 200}, 0, 200, 0.6)`"
           />
         </template>
       </template>
@@ -44,18 +39,13 @@
         :r="10"
         :width="100"
         :height="60"
-        :a="100"
-        :g="0"
-        :b="10"
+        :color="`#ff0022`"
       ></v-roundRect>
       <v-line
         :p1="[130, 30]"
         :p2="[230, 130]"
         :strokeWidth="4"
-        :r="10"
-        :g="50"
-        :b="200"
-        :a="100"
+        :color="`#003022`"
       ></v-line>
       <v-points
         :points="[

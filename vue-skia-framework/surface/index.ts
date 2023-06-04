@@ -36,7 +36,7 @@ export default {
         instance._ssw_id = 0; //!!! TODO
         // @ts-ignore
         global.core = core;
-        core.setShapeBySerde(0, { attr: { R: { x: 0, y: 0, width: attrs.width, height: attrs.height, color: [0, 0, 0, 100] } } })
+        core.setShapeBySerde(0, { attr: { R: { x: 0, y: 0, width: attrs.width, height: attrs.height, color: 'transparent' } } })
 
 
         onMounted(() => {

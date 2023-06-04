@@ -30,7 +30,7 @@ pub struct WASMRectAttr {
     height: u32,
     x: u32,
     y: u32,
-    color: [u8; 4]
+    color: String
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -38,7 +38,7 @@ pub struct WASMCircleAttr {
     cx: u32,
     cy: u32,
     r: u32,
-    color: [u8; 4]
+    color: String
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -48,21 +48,20 @@ pub struct WASMRoundRectAttr {
     r: u32,
     x: u32,
     y: u32,
-    color: [u8; 4]
+    color: String
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct WASMLineAttr {
     p1: [u32; 2],
     p2: [u32; 2],
-    color: [u8; 4],
+    color: String,
     stroke_width: u32
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct WASMPointsAttr {
     points: Vec<[u32; 2]>,
-    // color: [u8; 4],
     color: String,
     stroke_width: u32
 }
@@ -150,33 +149,88 @@ impl SoftSkiaWASM {
 
         match message.attr {
             WASMShapesAttr::R(WASMRectAttr{ width, height, x, y , color}) => {
-                self.0.set_shape_to_child(id, Shapes::R(Rect { x, y, width, height, color: ColorU8::from_rgba(color[0], color[1], color[2], color[3]) }))
+
+                let mut parser_input = ParserInput::new(&color);
+                let mut parser = Parser::new(&mut parser_input);
+                let color = CSSColor::parse(&mut parser);
+
+                match color {
+                    Ok(CSSColor::RGBA(rgba)) => {
+                        drop(parser_input);
+                        self.0.set_shape_to_child(id, Shapes::R(Rect { x, y, width, height, color: ColorU8::from_rgba(rgba.red, rgba.green, rgba.blue, rgba.alpha) }))
+                    }
+                    _ => {
+                        // 
+                    }
+                }
+
             },
             WASMShapesAttr::C(WASMCircleAttr{ cx, cy, r, color }) => {
-                self.0.set_shape_to_child(id, Shapes::C(Circle { cx, cy, r, color: ColorU8::from_rgba(color[0], color[1], color[2], color[3]) }))
+
+                let mut parser_input = ParserInput::new(&color);
+                let mut parser = Parser::new(&mut parser_input);
+                let color = CSSColor::parse(&mut parser);
+
+                match color {
+                    Ok(CSSColor::RGBA(rgba)) => {
+                        drop(parser_input);
+                        self.0.set_shape_to_child(id, Shapes::C(Circle { cx, cy, r, color: ColorU8::from_rgba(rgba.red, rgba.green, rgba.blue, rgba.alpha) }))
+                    }
+                    _ => {
+                        // 
+                    }
+                }
+
             },
             WASMShapesAttr::RR(WASMRoundRectAttr{ width, height, r, x, y , color}) => {
-                self.0.set_shape_to_child(id, Shapes::RR(RoundRect { x, y, r, width, height, color: ColorU8::from_rgba(color[0], color[1], color[2], color[3]) }))
+
+                let mut parser_input = ParserInput::new(&color);
+                let mut parser = Parser::new(&mut parser_input);
+                let color = CSSColor::parse(&mut parser);
+
+                match color {
+                    Ok(CSSColor::RGBA(rgba)) => {
+                        drop(parser_input);
+                        self.0.set_shape_to_child(id, Shapes::RR(RoundRect { x, y, r, width, height, color: ColorU8::from_rgba(rgba.red, rgba.green, rgba.blue, rgba.alpha) }))
+                    }
+                    _ => {
+                        // 
+                    }
+                }
+
             },
             WASMShapesAttr::L(WASMLineAttr{ p1, p2, stroke_width, color}) => {
-                self.0.set_shape_to_child(id, Shapes::L(Line { p1, p2, stroke_width, color: ColorU8::from_rgba(color[0], color[1], color[2], color[3]) }))
+
+                let mut parser_input = ParserInput::new(&color);
+                let mut parser = Parser::new(&mut parser_input);
+                let color = CSSColor::parse(&mut parser);
+
+                match color {
+                    Ok(CSSColor::RGBA(rgba)) => {
+                        drop(parser_input);
+                        self.0.set_shape_to_child(id, Shapes::L(Line { p1, p2, stroke_width, color: ColorU8::from_rgba(rgba.red, rgba.green, rgba.blue, rgba.alpha) }))
+                    }
+                    _ => {
+                        // 
+                    }
+                }
+
             },
             WASMShapesAttr::P(WASMPointsAttr{ points , color, stroke_width }) => {
 
                 let mut parser_input = ParserInput::new(&color);
                 let mut parser = Parser::new(&mut parser_input);
-                let color = CSSColor::parse(&mut parser).expect("should");
+                let color = CSSColor::parse(&mut parser);
+
                 match color {
-                    CSSColor::RGBA(rgba) => {
+                    Ok(CSSColor::RGBA(rgba)) => {
                         drop(parser_input);
                         self.0.set_shape_to_child(id, Shapes::P(Points { points, stroke_width, color: ColorU8::from_rgba(rgba.red, rgba.green, rgba.blue, rgba.alpha) }))
                     }
                     _ => {
-                        // todo
+                        // 
                     }
                 }
-
-                // self.0.set_shape_to_child(id, Shapes::P(Points { points, stroke_width, color: ColorU8::from_rgba(color[0], color[1], color[2], color[3]) }))
             },
         };
     }
