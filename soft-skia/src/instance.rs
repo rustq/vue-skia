@@ -73,6 +73,7 @@ mod test {
     use crate::shape::Circle;
     use crate::shape::Shape;
     use crate::shape::Shapes;
+    use crate::shape::PaintStyle;
     use crate::tree::Node;
     use super::Instance;
     use super::{ColorU8, Paint, PathBuilder, Pixmap, Stroke, Transform, FillRule};
@@ -115,7 +116,7 @@ mod test {
         assert_eq!(instance.debug__get_tree_node_by_id(0).unwrap().get_children_len(), 1);
 
         match instance.debug__get_tree_node_by_id(1).unwrap().shape {
-            Shapes::R(Rect { x, y, width, height, color }) => {
+            Shapes::R(Rect { x, y, width, height, color, style }) => {
                 assert_eq!(x, 0);
                 assert_eq!(y, 0);
             },
@@ -124,10 +125,10 @@ mod test {
             }
         }
 
-        instance.set_shape_to_child(1, Shapes::R(Rect { x: 20, y: 20, width: 200, height: 200, color: ColorU8::from_rgba(0, 100, 0, 255) }));
+        instance.set_shape_to_child(1, Shapes::R(Rect { x: 20, y: 20, width: 200, height: 200, color: ColorU8::from_rgba(0, 100, 0, 255), style: PaintStyle::Fill }));
 
         match instance.debug__get_tree_node_by_id(1).unwrap().shape {
-            Shapes::R(Rect { x, y, width, height, color }) => {
+            Shapes::R(Rect { x, y, width, height, color, style }) => {
                 assert_eq!(x, 20);
                 assert_eq!(y, 20);
                 assert_eq!(width, 200);
