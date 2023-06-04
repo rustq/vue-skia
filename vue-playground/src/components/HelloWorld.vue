@@ -16,6 +16,7 @@
             :y="(index % 3) * 10 + 100"
             :width="200"
             :height="200"
+            :style="`fill`"
             :color="`rgba(${index % 5 ? 0 : 200}, 255, 0, 0.6)`"
           />
         </template>
@@ -28,6 +29,7 @@
           <v-circle
             :cx="(index % 7) * 10 + 300"
             :cy="200"
+            :style="`fill`"
             :r="10 + (count >= 7 && true ? 30 : index)"
             :color="`rgba(${index % 5 ? 0 : 200}, 0, 200, 0.6)`"
           />
@@ -39,12 +41,13 @@
         :r="10"
         :width="100"
         :height="60"
+        :style="`stroke`"
         :color="`#ff0022`"
       ></v-roundRect>
       <v-line
         :p1="[130, 30]"
-        :p2="[230, 130]"
-        :strokeWidth="4"
+        :p2="[280, 180]"
+        :strokeWidth="1"
         :color="`#003022`"
       ></v-line>
       <v-points
@@ -52,11 +55,12 @@
           [260, 190],
           [250, 240],
           [210, 300],
-          [150, 170],
+          [150, 170 + (count % 3) * 10],
           [170, 120],
         ]"
-        :strokeWidth="4"
-        :color="`orange`"
+        :style="`stroke`"
+        :strokeWidth="2"
+        :color="`rgba(255, 205, 25, 0.8)`"
       ></v-points>
       <v-points
         :points="[
@@ -72,7 +76,8 @@
           [88, 80],
           [128, 0],
         ]"
-        :strokeWidth="4"
+        :style="`fill`"
+        :strokeWidth="1"
         :color="`rgba(255, 25, 255, 0.1)`"
       ></v-points>
     </v-surface>

@@ -98,7 +98,7 @@ mod test {
         assert_eq!(root.id, 10086);
 
         match root.shape {
-            Shapes::R(Rect { x, y, width, height, color }) => {
+            Shapes::R(Rect { x, y, width, height, color, style }) => {
                 assert_eq!(width, 0);
                 assert_eq!(height, 0);
             },

@@ -4,7 +4,7 @@ mod utils;
 use base64;
 use wasm_bindgen::prelude::*;
 use soft_skia::instance::Instance;
-use soft_skia::shape::{Circle, Line, Points, RoundRect, Shapes};
+use soft_skia::shape::{Circle, Line, Points, RoundRect, Shapes, PaintStyle};
 use soft_skia::shape::Rect;
 use soft_skia::shape::ColorU8;
 use soft_skia::tree::Node;
@@ -30,7 +30,8 @@ pub struct WASMRectAttr {
     height: u32,
     x: u32,
     y: u32,
-    color: String
+    color: String,
+    style: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -38,7 +39,8 @@ pub struct WASMCircleAttr {
     cx: u32,
     cy: u32,
     r: u32,
-    color: String
+    color: String,
+    style: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -48,7 +50,8 @@ pub struct WASMRoundRectAttr {
     r: u32,
     x: u32,
     y: u32,
-    color: String
+    color: String,
+    style: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -63,7 +66,8 @@ pub struct WASMLineAttr {
 pub struct WASMPointsAttr {
     points: Vec<[u32; 2]>,
     color: String,
-    stroke_width: u32
+    stroke_width: u32,
+    style: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -117,7 +121,7 @@ impl SoftSkiaWASM {
     pub fn to_base64(&mut self) -> String {
         let root = self.0.tree.get_root();
         let mut pixmap = match root.shape {
-            Shapes::R( Rect { x, y, width, height, color }) => {
+            Shapes::R( Rect { x, y, width, height, color, style }) => {
                 Pixmap::new(width, height).unwrap()
             },
             _ => {
@@ -148,7 +152,7 @@ impl SoftSkiaWASM {
         let message: WASMShape = serde_wasm_bindgen::from_value(value).unwrap();
 
         match message.attr {
-            WASMShapesAttr::R(WASMRectAttr{ width, height, x, y , color}) => {
+            WASMShapesAttr::R(WASMRectAttr{ width, height, x, y , color, style}) => {
 
                 let mut parser_input = ParserInput::new(&color);
                 let mut parser = Parser::new(&mut parser_input);
@@ -157,7 +161,18 @@ impl SoftSkiaWASM {
                 match color {
                     Ok(CSSColor::RGBA(rgba)) => {
                         drop(parser_input);
-                        self.0.set_shape_to_child(id, Shapes::R(Rect { x, y, width, height, color: ColorU8::from_rgba(rgba.red, rgba.green, rgba.blue, rgba.alpha) }))
+                        let style = match style.as_str() {
+                            "stroke" => {
+                                PaintStyle::Stroke
+                            },
+                            "fill" => {
+                                PaintStyle::Fill
+                            },
+                            _ => {
+                                PaintStyle::Stroke
+                            }
+                        };
+                        self.0.set_shape_to_child(id, Shapes::R(Rect { x, y, width, height, color: ColorU8::from_rgba(rgba.red, rgba.green, rgba.blue, rgba.alpha), style }))
                     }
                     _ => {
                         // 
@@ -165,7 +180,7 @@ impl SoftSkiaWASM {
                 }
 
             },
-            WASMShapesAttr::C(WASMCircleAttr{ cx, cy, r, color }) => {
+            WASMShapesAttr::C(WASMCircleAttr{ cx, cy, r, color, style }) => {
 
                 let mut parser_input = ParserInput::new(&color);
                 let mut parser = Parser::new(&mut parser_input);
@@ -174,7 +189,18 @@ impl SoftSkiaWASM {
                 match color {
                     Ok(CSSColor::RGBA(rgba)) => {
                         drop(parser_input);
-                        self.0.set_shape_to_child(id, Shapes::C(Circle { cx, cy, r, color: ColorU8::from_rgba(rgba.red, rgba.green, rgba.blue, rgba.alpha) }))
+                        let style = match style.as_str() {
+                            "stroke" => {
+                                PaintStyle::Stroke
+                            },
+                            "fill" => {
+                                PaintStyle::Fill
+                            },
+                            _ => {
+                                PaintStyle::Stroke
+                            }
+                        };
+                        self.0.set_shape_to_child(id, Shapes::C(Circle { cx, cy, r, color: ColorU8::from_rgba(rgba.red, rgba.green, rgba.blue, rgba.alpha), style }))
                     }
                     _ => {
                         // 
@@ -182,7 +208,7 @@ impl SoftSkiaWASM {
                 }
 
             },
-            WASMShapesAttr::RR(WASMRoundRectAttr{ width, height, r, x, y , color}) => {
+            WASMShapesAttr::RR(WASMRoundRectAttr{ width, height, r, x, y , color, style}) => {
 
                 let mut parser_input = ParserInput::new(&color);
                 let mut parser = Parser::new(&mut parser_input);
@@ -191,7 +217,18 @@ impl SoftSkiaWASM {
                 match color {
                     Ok(CSSColor::RGBA(rgba)) => {
                         drop(parser_input);
-                        self.0.set_shape_to_child(id, Shapes::RR(RoundRect { x, y, r, width, height, color: ColorU8::from_rgba(rgba.red, rgba.green, rgba.blue, rgba.alpha) }))
+                        let style = match style.as_str() {
+                            "stroke" => {
+                                PaintStyle::Stroke
+                            },
+                            "fill" => {
+                                PaintStyle::Fill
+                            },
+                            _ => {
+                                PaintStyle::Stroke
+                            }
+                        };
+                        self.0.set_shape_to_child(id, Shapes::RR(RoundRect { x, y, r, width, height, color: ColorU8::from_rgba(rgba.red, rgba.green, rgba.blue, rgba.alpha), style }))
                     }
                     _ => {
                         // 
@@ -216,7 +253,7 @@ impl SoftSkiaWASM {
                 }
 
             },
-            WASMShapesAttr::P(WASMPointsAttr{ points , color, stroke_width }) => {
+            WASMShapesAttr::P(WASMPointsAttr{ points , color, stroke_width, style }) => {
 
                 let mut parser_input = ParserInput::new(&color);
                 let mut parser = Parser::new(&mut parser_input);
@@ -225,7 +262,18 @@ impl SoftSkiaWASM {
                 match color {
                     Ok(CSSColor::RGBA(rgba)) => {
                         drop(parser_input);
-                        self.0.set_shape_to_child(id, Shapes::P(Points { points, stroke_width, color: ColorU8::from_rgba(rgba.red, rgba.green, rgba.blue, rgba.alpha) }))
+                        let style = match style.as_str() {
+                            "stroke" => {
+                                PaintStyle::Stroke
+                            },
+                            "fill" => {
+                                PaintStyle::Fill
+                            },
+                            _ => {
+                                PaintStyle::Stroke
+                            }
+                        };
+                        self.0.set_shape_to_child(id, Shapes::P(Points { points, stroke_width, color: ColorU8::from_rgba(rgba.red, rgba.green, rgba.blue, rgba.alpha), style }))
                     }
                     _ => {
                         // 
