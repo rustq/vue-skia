@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+      "module": "esnext",
+      "moduleResolution": "node",
+      "target": "esnext",
+      "noImplicitAny": true,
+      "removeComments": true,
+      "preserveConstEnums": true,
+      "outDir": "lib",
+      "declaration": true,
+      "declarationDir": "lib"
+    },
+    "files": [
+      "plugin/index.ts",
+      "surface/index.ts",
+      "launch.ts",
+    ]
+  }

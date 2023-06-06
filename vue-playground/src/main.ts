@@ -1,6 +1,6 @@
 import { createApp } from "vue";
 import App from "./App.vue";
-import VueSkia from '../../vue-skia-framework/plugin/index'
+import VueSkia from '../../vue-skia-framework/lib/plugin'
 
 const app = createApp(App);
 app.use(VueSkia);

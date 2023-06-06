@@ -86,7 +86,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import launch from "../../../vue-skia-framework/launch";
+import launch from "../../../vue-skia-framework/lib/launch";
 
 export default defineComponent({
   name: "HelloWorld",

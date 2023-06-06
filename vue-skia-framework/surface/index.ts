@@ -1,4 +1,4 @@
-const {
+import {
     h,
     withDirectives,
     ref,
@@ -8,7 +8,7 @@ const {
     onUpdated,
     getCurrentInstance,
     reactive,
-} = require('vue');
+} from 'vue';
 
 export default {
     props: {
@@ -32,7 +32,9 @@ export default {
         // @ts-ignore
         const ssw = global.ssw;
         const core = new ssw.SoftSkiaWASM();
+        // @ts-ignore
         instance.ssw = core; // Save on component instance
+        // @ts-ignore
         instance._ssw_id = 0; //!!! TODO
         // @ts-ignore
         global.core = core;
@@ -52,6 +54,7 @@ export default {
 
         onBeforeUnmount(() => {
             const instance = getCurrentInstance();
+            // @ts-ignore
             const core = instance.ssw;
             core.free();
         });
