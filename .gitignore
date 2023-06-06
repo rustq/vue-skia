@@ -18,7 +18,6 @@ package-lock.json
 .DS_Store
 
 # Output
-*.png
 *.node
 lib/
 typings/

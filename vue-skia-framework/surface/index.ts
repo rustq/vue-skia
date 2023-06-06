@@ -1,14 +1,12 @@
 import {
     h,
-    withDirectives,
     ref,
-    watch,
     onMounted,
     onBeforeUnmount,
     onUpdated,
     getCurrentInstance,
-    reactive,
 } from 'vue';
+import { ComponentInternalInstanceWithSoftSkiaWASM } from "../type";
 
 export default {
     props: {
@@ -28,15 +26,11 @@ export default {
     setup(props: any, {attrs, slots, expose, emits}: any) {
 
         const container = ref(null);
-        const instance = getCurrentInstance();
-        // @ts-ignore
+        const instance = getCurrentInstance() as ComponentInternalInstanceWithSoftSkiaWASM;
         const ssw = global.ssw;
         const core = new ssw.SoftSkiaWASM();
-        // @ts-ignore
         instance.ssw = core; // Save on component instance
-        // @ts-ignore
         instance._ssw_id = 0; //!!! TODO
-        // @ts-ignore
         global.core = core;
         core.setShapeBySerde(0, { attr: { R: { x: 0, y: 0, width: attrs.width, height: attrs.height, color: 'transparent', style: "fill" } } })
 
@@ -48,13 +42,12 @@ export default {
 
         onUpdated(() => {
             const base64 = core.toBase64();
-            console.log(core.toDebug?.())
+            // console.log(core.toDebug?.())
             container.value.setAttribute("src", base64);
         });
 
         onBeforeUnmount(() => {
-            const instance = getCurrentInstance();
-            // @ts-ignore
+            const instance = getCurrentInstance() as ComponentInternalInstanceWithSoftSkiaWASM;
             const core = instance.ssw;
             core.free();
         });

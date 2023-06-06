@@ -32,3 +32,16 @@ jobs:
           cd soft-skia-wasm
           cargo install wasm-pack
           wasm-pack build --release --target web
+
+      - name: vue-skia-framework
+        run: |
+          cd vue-skia-framework
+          npm i
+          npm run build
+          npm run dev-build
+
+      - name: vue-playground
+        run: |
+          cd vue-playground
+          npm i
+          npm run build

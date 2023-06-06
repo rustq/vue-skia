@@ -6,7 +6,8 @@
     "soft-skia-wasm/pkg"
   ],
   "scripts": {
-    "build": "rm -rf lib; tsc; rm -rf soft-skia-wasm; mkdir soft-skia-wasm; cp -rf ../soft-skia-wasm/pkg ./soft-skia-wasm/pkg; rm ./soft-skia-wasm/pkg/.gitignore; rm -rf node_modules"
+    "build": "rm -rf lib; tsc; rm -rf soft-skia-wasm; mkdir soft-skia-wasm; cp -rf ../soft-skia-wasm/pkg ./soft-skia-wasm/pkg; rm ./soft-skia-wasm/pkg/.gitignore",
+    "dev-build": "npm run build; rm -rf node_modules"
   },
   "module": "./lib/launch.js",
   "devDependencies": {
