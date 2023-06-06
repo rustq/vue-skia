@@ -1,15 +1,19 @@
 {
   "name": "vue-skia",
-  "version": "0.0.2-dev.6",
+  "version": "0.0.2-dev.19",
   "files": [
     "lib",
-    "soft-skia-wasm/pkg"
+    "soft-skia-wasm/pkg",
+    "main.js",
+    "main.d.ts",
+    "components"
   ],
   "scripts": {
-    "build": "rm -rf lib; tsc; rm -rf soft-skia-wasm; mkdir soft-skia-wasm; cp -rf ../soft-skia-wasm/pkg ./soft-skia-wasm/pkg; rm ./soft-skia-wasm/pkg/.gitignore",
+    "build": "rm -rf lib; tsc; rm -rf soft-skia-wasm; mkdir soft-skia-wasm; cp -rf ../soft-skia-wasm/pkg ./soft-skia-wasm/pkg; rm ./soft-skia-wasm/pkg/.gitignore; cp main.js main.d.ts",
     "dev-build": "npm run build; rm -rf node_modules"
   },
-  "module": "./lib/launch.js",
+  "main": "./main.js",
+  "module": "./main.js",
   "devDependencies": {
     "@babel/types": "^7.22.4",
     "@webpack-cli/generators": "^3.0.6",

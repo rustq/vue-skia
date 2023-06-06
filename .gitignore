@@ -14,6 +14,9 @@ target
 node_modules
 package-lock.json
 
+# defination
+*.d.ts
+
 # MacOS
 .DS_Store
 

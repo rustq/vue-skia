@@ -35,7 +35,7 @@
           />
         </template>
       </template>
-      <v-roundRect
+      <v-round-rect
         :x="120"
         :y="70"
         :r="10"
@@ -43,7 +43,7 @@
         :height="60"
         :style="`stroke`"
         :color="`#ff0022`"
-      ></v-roundRect>
+      ></v-round-rect>
       <v-line
         :p1="[130, 30]"
         :p2="[280, 180]"
@@ -86,12 +86,20 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import launch from "../../../vue-skia-framework/lib/launch";
+import launch, { VSurface, VRect, VCircle, VRoundRect, VLine, VPoints } from "vue-skia";
 
 export default defineComponent({
   name: "HelloWorld",
   props: {
     msg: String,
+  },
+  components: {
+    VSurface,
+    VRect,
+    VCircle,
+    VRoundRect,
+    VLine,
+    VPoints
   },
   data() {
     return {

@@ -53,21 +53,7 @@ const VSKNode = (name: string) => {
                 } else {
                     core.createChildAppendToContainer(instance._ssw_id, 0);
                 }
-                if (name === 'Rect') {
-                    core.setShapeBySerde(instance._ssw_id, { attr: { R: { x: attrs.x, y: attrs.y, width: attrs.width, height: attrs.height, color: attrs.color, style: attrs.style } } })
-                }
-                if (name === 'Circle') {
-                    core.setShapeBySerde(instance._ssw_id, { attr: { C: { cx: attrs.cx, cy: attrs.cy, r: attrs.r, color: attrs.color, style: attrs.style } } })
-                }
-                if (name === 'RoundRect') {
-                    core.setShapeBySerde(instance._ssw_id, { attr: { RR: { x: attrs.x, y: attrs.y, r: attrs.r, width: attrs.width, height: attrs.height, color: attrs.color, style: attrs.style } } })
-                }
-                if (name === 'Line') {
-                    core.setShapeBySerde(instance._ssw_id, { attr: { L: { p1: attrs.p1, p2: attrs.p2, stroke_width: attrs.strokeWidth, color: attrs.color } } })
-                }
-                if (name === 'Points') {
-                    core.setShapeBySerde(instance._ssw_id, { attr: { P: { points: attrs.points, stroke_width: attrs.strokeWidth, color: attrs.color, style: attrs.style } } })
-                }
+                updateInstance(name, instance, attrs);
             });
 
             onUpdated(() => {
@@ -77,6 +63,16 @@ const VSKNode = (name: string) => {
                     root = root.parent as ComponentInternalInstanceWithSoftSkiaWASM;
                 }
                 const core = root.ssw;
+                updateInstance(name, instance, attrs);
+            });
+
+            /**
+             * updateInstance
+             * @param name 
+             * @param instance 
+             * @param attrs 
+             */
+            function updateInstance(name: string, instance: ComponentInternalInstanceWithSoftSkiaWASM, attrs: any) {
                 if (name === 'Rect') {
                     core.setShapeBySerde(instance._ssw_id, { attr: { R: { x: attrs.x, y: attrs.y, width: attrs.width, height: attrs.height, color: attrs.color, style: attrs.style } } })
                 }
@@ -92,7 +88,7 @@ const VSKNode = (name: string) => {
                 if (name === 'Points') {
                     core.setShapeBySerde(instance._ssw_id, { attr: { P: { points: attrs.points, stroke_width: attrs.strokeWidth, color: attrs.color, style: attrs.style } } })
                 }
-            });
+            }
 
             onBeforeUnmount(() => {
                 const instance = getCurrentInstance() as ComponentInternalInstanceWithSoftSkiaWASM;
@@ -112,11 +108,11 @@ const VSKNode = (name: string) => {
 
 const VueSkiaPlugin = {
     install: (app: App) => {
-        let prefixToUse = 'v';
+        let prefixToUse = 'vSk';
         WidgetList.forEach((name) => {
             app.component(`${prefixToUse}${name}`, VSKNode(name));
         });
     },
-};
+} as { install: (app: App<any>) => any; };
 
 export default VueSkiaPlugin;
