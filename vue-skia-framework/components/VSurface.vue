@@ -5,13 +5,19 @@
 </template>
     
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
 
 export default defineComponent({
     name: "VSurface",
     props: {
-        width: Number,
-        height: Number,
+        width: {
+            type: Number as PropType<number>,
+            required: true
+        },
+        height: {
+            type: Number as PropType<number>,
+            required: true
+        },
     },
 });
 </script>

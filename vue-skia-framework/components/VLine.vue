@@ -3,15 +3,27 @@
 </template>
     
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
 
 export default defineComponent({
     name: "VLine",
     props: {
-        p1: Array,
-        p2: Array,
-        strokeWidth: Number,
-        color: String,
+        p1: {
+            type: Array as PropType<number[]>,
+            required: true
+        },
+        p2: {
+            type: Array as PropType<number[]>,
+            required: true
+        },
+        strokeWidth: {
+            type: Number as PropType<number>,
+            required: true
+        },
+        color: {
+            type: String as PropType<string>,
+            required: true
+        },
     },
 });
 </script>

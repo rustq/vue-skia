@@ -3,16 +3,31 @@
 </template>
     
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
 
 export default defineComponent({
     name: "VCircle",
     props: {
-        cx: Number,
-        cy: Number,
-        r: Number,
-        style: String,
-        color: String,
+        cx: {
+            type: Number as PropType<number>,
+            required: true
+        },
+        cy: {
+            type: Number as PropType<number>,
+            required: true
+        },
+        r: {
+            type: Number as PropType<number>,
+            required: true
+        },
+        style: {
+            type: String as PropType<'fill' | 'stroke'>,
+            required: true
+        },
+        color: {
+            type: String as PropType<string>,
+            required: true
+        },
     },
 });
 </script>
