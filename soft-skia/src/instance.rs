@@ -11,6 +11,13 @@ pub struct Instance {
 }
 
 impl Instance {
+    pub fn new(id: usize) -> Self {
+        Instance {
+            tree: Tree::default(id)
+        }
+    }
+
+    #[deprecated(since="0.0.2", note="please use `new` instead")]
     pub fn default() -> Self {
         Instance {
             tree: Tree::default(0)

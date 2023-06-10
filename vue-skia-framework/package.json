@@ -1,6 +1,6 @@
 {
   "name": "vue-skia",
-  "version": "0.0.2-dev.22",
+  "version": "0.0.2-dev.36",
   "files": [
     "lib",
     "soft-skia-wasm/pkg",
@@ -9,8 +9,7 @@
     "components"
   ],
   "scripts": {
-    "build": "rm -rf lib; tsc; rm -rf soft-skia-wasm; mkdir soft-skia-wasm; cp -rf ../soft-skia-wasm/pkg ./soft-skia-wasm/pkg; rm ./soft-skia-wasm/pkg/.gitignore; cp main.js main.d.ts",
-    "dev-build": "npm run build; rm -rf node_modules"
+    "build": "rm -rf lib; tsc; rm -rf soft-skia-wasm; mkdir soft-skia-wasm; cp -rf ../soft-skia-wasm/pkg ./soft-skia-wasm/pkg; rm ./soft-skia-wasm/pkg/.gitignore; cp main.js main.d.ts"
   },
   "main": "./main.js",
   "module": "./main.js",

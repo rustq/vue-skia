@@ -5,8 +5,11 @@ import {
     onBeforeUnmount,
     onUpdated,
     getCurrentInstance,
+    VNodeProps,
+    SetupContext
 } from 'vue';
 import { ComponentInternalInstanceWithSoftSkiaWASM } from "../type";
+import { SelfIncreaseCount } from "../common"
 
 export default {
     props: {
@@ -23,16 +26,16 @@ export default {
 
     inheritAttrs: false,
 
-    setup(props: any, {attrs, slots, expose, emits}: any) {
+    setup(_props: VNodeProps, { attrs, slots }: SetupContext) {
 
-        const container = ref(null);
+        const container = ref<HTMLImageElement>(null);
         const instance = getCurrentInstance() as ComponentInternalInstanceWithSoftSkiaWASM;
         const ssw = global.ssw;
-        const core = new ssw.SoftSkiaWASM();
+        const rootID = SelfIncreaseCount.count;
+        const core = new ssw.SoftSkiaWASM(rootID);
         instance.ssw = core; // Save on component instance
-        instance._ssw_id = 0; //!!! TODO
-        global.core = core;
-        core.setShapeBySerde(0, { attr: { R: { x: 0, y: 0, width: attrs.width, height: attrs.height, color: 'transparent', style: "fill" } } })
+        instance._ssw_id = rootID;
+        core.setShapeBySerde(rootID, { attr: { R: { x: 0, y: 0, width: attrs.width, height: attrs.height, color: 'transparent', style: "fill" } } })
 
 
         onMounted(() => {

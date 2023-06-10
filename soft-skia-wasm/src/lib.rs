@@ -86,8 +86,8 @@ pub struct WASMShape {
 #[wasm_bindgen]
 impl SoftSkiaWASM {
     #[wasm_bindgen(constructor)]
-    pub fn new() -> Self {
-        let mut instance = Instance::default();
+    pub fn new(id: usize) -> Self {
+        let instance = Instance::new(id);
         SoftSkiaWASM(instance)
     }
 

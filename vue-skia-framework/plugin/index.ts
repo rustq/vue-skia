@@ -5,12 +5,14 @@ import {
     onUpdated,
     getCurrentInstance,
     App,
+    VNodeProps,
+    SetupContext,
+    Plugin
 } from 'vue';
 import Surface from "../surface";
 import { ComponentInternalInstanceWithSoftSkiaWASM } from "../type";
-
-let _SELF_INCREASE_COUNT = 1;
-let SELF_INCREASE_COUNT = () => _SELF_INCREASE_COUNT++
+import { SelfIncreaseCount } from "../common"
+import { SoftSkiaWASM } from '../../soft-skia-wasm/pkg/soft_skia_wasm';
 
 const WidgetList = [
     'Surface',
@@ -37,7 +39,7 @@ const VSKNode = (name: string) => {
                 type: Boolean,
             },
         },
-        setup(props: any, { attrs, slots, expose, ...other }: any) {
+        setup(_props: VNodeProps, { attrs, slots }: SetupContext) {
 
             onMounted(() => {
                 const instance = getCurrentInstance() as ComponentInternalInstanceWithSoftSkiaWASM;
@@ -46,14 +48,18 @@ const VSKNode = (name: string) => {
                     root = root.parent as ComponentInternalInstanceWithSoftSkiaWASM;
                 }
                 const core = root.ssw;
-                instance._ssw_id = SELF_INCREASE_COUNT();
+                instance._ssw_id = SelfIncreaseCount.count;
+                var parent = instance.parent;
+                while (!('_ssw_id' in parent)) {
+                    parent = parent.parent;
+                }
                 const next = instance.vnode.el.nextElementSibling?.__vnode.ctx._ssw_id;
                 if (next) {
-                    core.createChildInsertBeforeElementOfContainer(instance._ssw_id, next, 0)
+                    core.createChildInsertBeforeElementOfContainer(instance._ssw_id, next, (parent as ComponentInternalInstanceWithSoftSkiaWASM)._ssw_id)
                 } else {
-                    core.createChildAppendToContainer(instance._ssw_id, 0);
+                    core.createChildAppendToContainer(instance._ssw_id, (parent as ComponentInternalInstanceWithSoftSkiaWASM)._ssw_id);
                 }
-                updateInstance(name, instance, attrs);
+                updateInstance(core, name, instance, attrs);
             });
 
             onUpdated(() => {
@@ -63,7 +69,7 @@ const VSKNode = (name: string) => {
                     root = root.parent as ComponentInternalInstanceWithSoftSkiaWASM;
                 }
                 const core = root.ssw;
-                updateInstance(name, instance, attrs);
+                updateInstance(core, name, instance, attrs);
             });
 
             /**
@@ -72,7 +78,7 @@ const VSKNode = (name: string) => {
              * @param instance 
              * @param attrs 
              */
-            function updateInstance(name: string, instance: ComponentInternalInstanceWithSoftSkiaWASM, attrs: any) {
+            function updateInstance(core: SoftSkiaWASM, name: string, instance: ComponentInternalInstanceWithSoftSkiaWASM, attrs: SetupContext['attrs']) {
                 if (name === 'Rect') {
                     core.setShapeBySerde(instance._ssw_id, { attr: { R: { x: attrs.x, y: attrs.y, width: attrs.width, height: attrs.height, color: attrs.color, style: attrs.style } } })
                 }
@@ -98,7 +104,11 @@ const VSKNode = (name: string) => {
                 }
                 const core = root.ssw;
                 const child_id = instance._ssw_id;
-                core.removeChildFromContainer(child_id, (instance.parent as ComponentInternalInstanceWithSoftSkiaWASM)._ssw_id)
+                var parent = instance.parent;
+                while (!('_ssw_id' in parent)) {
+                    parent = parent.parent;
+                }
+                core.removeChildFromContainer(child_id, (parent as ComponentInternalInstanceWithSoftSkiaWASM)._ssw_id)
             });
 
             return () => h(name, {}, slots.default?.())
@@ -113,6 +123,6 @@ const VueSkiaPlugin = {
             app.component(`${prefixToUse}${name}`, VSKNode(name));
         });
     },
-} as { install: (app: App<any>) => any; };
+} as Plugin;
 
 export default VueSkiaPlugin;

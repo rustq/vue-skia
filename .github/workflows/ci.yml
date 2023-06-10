@@ -38,7 +38,6 @@ jobs:
           cd vue-skia-framework
           npm i
           npm run build
-          npm run dev-build
 
       - name: vue-playground
         run: |
