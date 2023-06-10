@@ -8,10 +8,9 @@ use soft_skia::shape::{Circle, Line, Points, RoundRect, Shapes, PaintStyle};
 use soft_skia::shape::Rect;
 use soft_skia::shape::ColorU8;
 use soft_skia::tree::Node;
-use soft_skia::shape::Shape;
 use soft_skia::shape::Pixmap;
 
-use cssparser::{Color as CSSColor, Parser, ParserInput, RGBA};
+use cssparser::{Color as CSSColor, Parser, ParserInput};
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
@@ -79,10 +78,6 @@ pub enum WASMShapesAttr {
     P(WASMPointsAttr),
 }
 
-impl WASMShapesAttr {
-
-}
-
 #[derive(Serialize, Deserialize, Debug)]
 pub struct WASMShape {
     pub attr: WASMShapesAttr
@@ -129,20 +124,17 @@ impl SoftSkiaWASM {
             }
         };
 
-        Self::__debug_recursive_node_to_pixmap_vec(root, &mut pixmap);
+        Self::recursive_rasterization_node_to_pixmap(root, &mut pixmap);
 
         let data = pixmap.clone().encode_png().unwrap();
         let data_url = base64::encode(&data);
         format!("data:image/png;base64,{}", data_url)
     }
 
-    ///
-    /// DEBUG
-    ///
-    fn __debug_recursive_node_to_pixmap_vec<'a>(node: &mut Node, pixmap: &mut Pixmap) -> () {
+    fn recursive_rasterization_node_to_pixmap(node: &mut Node, pixmap: &mut Pixmap) -> () {
         for item in node.children_iter_mut() {
             item.shape.draw(pixmap);
-            Self::__debug_recursive_node_to_pixmap_vec(&mut (*item), pixmap);
+            Self::recursive_rasterization_node_to_pixmap(&mut (*item), pixmap);
         }
     }
 
