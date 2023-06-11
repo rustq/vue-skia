@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::tree::Tree;
 use crate::tree::Node;
 use crate::shape::Shapes;
@@ -7,33 +9,40 @@ use tiny_skia::{ColorU8, Paint, PathBuilder, Pixmap, Stroke, Transform, FillRule
 
 #[derive(Debug)]
 pub struct Instance {
-    pub tree: Tree
+    pub tree: Tree,
+    pub node_ptr_map: HashMap<usize, *mut Node>
 }
 
 impl Instance {
     pub fn new(id: usize) -> Self {
         Instance {
-            tree: Tree::default(id)
+            tree: Tree::default(id),
+            node_ptr_map: HashMap::new()
         }
     }
 
     #[deprecated(since="0.0.2", note="please use `new` instead")]
     pub fn default() -> Self {
         Instance {
-            tree: Tree::default(0)
+            tree: Tree::default(0),
+            node_ptr_map: HashMap::new()
         }
     }
 
     pub fn create_child_append_to_container(&mut self, child_id: usize, container_id: usize) {
-        let child = Node::default(child_id, Shapes::R(Rect::default()));
+        let mut child = Box::new(Node::default(child_id, Shapes::R(Rect::default())));
         let container = self.debug__get_tree_node_by_id(container_id).unwrap();
-        container.append_node(child);
+        let raw_child: *mut _ = &mut *child;
+        container.append_boxed_node(child);
+        self.node_ptr_map.insert(child_id, raw_child);
     }
 
     pub fn create_child_insert_before_element_of_container(&mut self, child_id: usize, insert_before_id: usize, container_id: usize) {
-        let child = Node::default(child_id, Shapes::R(Rect::default()));
+        let mut child = Box::new(Node::default(child_id, Shapes::R(Rect::default())));
         let container = self.debug__get_tree_node_by_id(container_id).unwrap();
-        container.insert_node_before_id(insert_before_id, child);
+        let raw_child: *mut _ = &mut *child;
+        container.insert_boxed_node_before_id(insert_before_id, child);
+        self.node_ptr_map.insert(child_id, raw_child);
     }
 
     pub fn set_shape_to_child(&mut self, child_id: usize, shape: Shapes) {
@@ -51,7 +60,21 @@ impl Instance {
     ///
     pub fn debug__get_tree_node_by_id(&mut self, id: usize) -> Option<&mut Node> {
         let root = self.tree.get_root();
-        Self::debug__recursive_find_child_node_by_id(root, id)
+
+        if id == root.id {
+            Some(root)
+        } else {
+            let raw_node = self.node_ptr_map.get(&id);
+            match raw_node {
+                Some(row_node) => {
+                    unsafe {
+                        Some(&mut **row_node)
+                    }
+                },
+                _ => None
+            }
+        }
+        // Self::debug__recursive_find_child_node_by_id(root, id)
     }
 
     ///

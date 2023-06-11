@@ -44,6 +44,11 @@ impl Node {
         self.children.insert(before_index, Box::new(node));
     }
 
+    pub fn insert_boxed_node_before_id(&mut self, before_id: usize, boxed_node: Box<Node>) {
+        let before_index = self.children.iter().position(|t| t.id == before_id).unwrap();
+        self.children.insert(before_index, boxed_node);
+    }
+
     pub fn append_boxed_node(&mut self, boxed_node: Box<Node>) {
         self.children.push(boxed_node);
     }
