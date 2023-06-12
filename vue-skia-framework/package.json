@@ -1,6 +1,6 @@
 {
   "name": "vue-skia",
-  "version": "0.0.2-dev.36",
+  "version": "0.0.2-dev.43",
   "files": [
     "lib",
     "soft-skia-wasm/pkg",
