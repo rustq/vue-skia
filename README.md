@@ -10,18 +10,19 @@
 `基于 Skia 的 2D 图形软件光栅化 Vue 渲染库`
 
 
-## Demo
-
-https://github.com/rustq/vue-skia/blob/2edb1553e47211fb750dc42b63751cec34dde891/vue-playground/src/components/HelloWorld.vue#L8-L21
-
-
-## Getting Started
+## Usage
 
 ```shell
 $ npm i vue-skia
 ```
 
-## Vue Demo Playground
+https://github.com/rustq/vue-skia/blob/2587a6216d98b7d3d093781ec3e8c5740bc7df84/vue-playground/src/main.ts#L1-L7
+
+https://github.com/rustq/vue-skia/blob/2587a6216d98b7d3d093781ec3e8c5740bc7df84/vue-playground/src/components/HelloWorld.vue#L1-L117
+
+![usage](https://user-images.githubusercontent.com/11075892/245521765-e5c8093d-bdd3-41e4-9f10-d3a6650dd55f.png)
+
+## Demo Getting Started
 
 ```shell
 $ git clone git@github.com:rustq/vue-skia.git
@@ -33,21 +34,23 @@ $ npm i
 $ npm run serve
 ```
 
-## Soft Skia Development
+## Library Development
+
+#### Soft Skia Development
 
 ```shell
 $ cd soft-skia
 $ cargo test
 ```
 
-## Soft Skia WASM Development
+#### Soft Skia WASM Development
 
 ```shell
 $ cd soft-skia-wasm
 $ wasm-pack build --release --target web
 ```
 
-## Vue Skia Framework Development
+#### Vue Skia Framework Development
 
 ```shell
 $ cd vue-skia-framework
