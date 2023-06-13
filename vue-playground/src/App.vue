@@ -1,7 +1,4 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Vue Skia " />
-  <HelloWorld msg="Vue Skia " />
   <HelloWorld msg="Vue Skia " />
 </template>
 
