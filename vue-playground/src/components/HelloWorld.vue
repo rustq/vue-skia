@@ -1,82 +1,23 @@
 <template>
-  <div class="hello">
-    <v-surface v-if="!loading" :width="400" :height="400">
-      <v-points :points="[
-          [128, 0],
-          [168, 80],
-          [256, 93],
-          [192, 155],
-          [207, 244],
-          [128, 202],
-          [49, 244],
-          [64, 155],
-          [0, 93],
-          [88, 80],
-          [128, 0],
-        ]" :style="`fill`" :strokeWidth="1" :color="`rgba(200, 255, 0, 0.7)`"></v-points>
-      <v-rect v-for="item in [0, 1, 2]" :x="60 + item * 25" :y="60 + item * 25" :width="20" :height="20" color="#00ffaa" :style="`stroke`">
-        </v-rect>
-      <v-round-rect :x="220" :y="50" :width="80" :height="80" :r="10" color="#ee22ee" :style="`stroke`" />
-      <v-circle :cx="200" :cy="260" :r="80" :style="`stroke`" color="#ee22ee" />
-      <v-points :style="`fill`" :strokeWidth="2" color="#00aaff" :points="[
-        [20, 220],
-        [0, 260],
-        [40, 260],
-      ]" />
-      <v-points :style="`fill`" :strokeWidth="2" color="#00aaff" :points="[
-        [100, 260],
-        [80, 300],
-        [120, 300],
-      ]" />
-    </v-surface>
-    <div>
-      <button @click="count += 1">A</button>
-      <button @click="count -= 1">B</button>
-    </div>
-    <p v-if="loading">wasm loading</p>
-    <v-surface v-if="!loading" :width="600" :height="400">
-      <template v-if="count >= 0">
-        <template :key="70 + index" v-for="(_, index) in new Array(count).fill(true)">
-          <v-rect :x="(index % 7) * 10 + 100" :y="(index % 3) * 10 + 100" :width="200" :height="200" :style="`fill`"
-            :color="`rgba(${index % 5 ? 0 : 200}, 255, 0, 0.6)`" />
-        </template>
-      </template>
-      <template v-if="10 - count >= 0">
-        <template :key="100 + index" v-for="(_, index) in new Array(10 - count).fill(true)">
-          <v-circle :cx="(index % 7) * 10 + 300" :cy="200" :style="`fill`" :r="10 + (count >= 7 && true ? 30 : index)"
-            :color="`rgba(${index % 5 ? 0 : 200}, 0, 200, 0.6)`" />
-        </template>
-      </template>
-      <v-round-rect :x="120" :y="70" :r="10" :width="100" :height="60" :style="`stroke`"
-        :color="`#ff0022`"></v-round-rect>
-      <v-line :p1="[130, 30]" :p2="[280, 180]" :strokeWidth="1" :color="`#003022`"></v-line>
-      <v-points :points="[
-          [260, 190],
-          [250, 240],
-          [210, 300],
-          [150, 170 + (count % 3) * 10],
-          [170, 120],
-        ]" :style="`stroke`" :strokeWidth="2" :color="`rgba(255, 205, 25, 0.8)`"></v-points>
-      <v-points :points="[
-          [128, 0],
-          [168, 80],
-          [256, 93],
-          [192, 155],
-          [207, 244],
-          [128, 202],
-          [49, 244],
-          [64, 155],
-          [0, 93],
-          [88, 80],
-          [128, 0],
-        ]" :style="`fill`" :strokeWidth="1" :color="`rgba(255, 25, 255, 0.1)`"></v-points>
-    </v-surface>
-  </div>
+  <template v-if="!loading">
+    <VueLive :code="code" :components="{
+        VSurface,
+        VRect,
+        VCircle,
+        VRoundRect,
+        VLine,
+        VPoints,
+      }" @error="(e) => { e }" />
+  </template>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import launch, { VSurface, VRect, VCircle, VRoundRect, VLine, VPoints } from "vue-skia";
+import { VueLive } from "vue-live";
+import "vue-live/style.css";
+import "prism-themes/themes/prism-ghcolors.css";
+import code from "./code";
 
 export default defineComponent({
   name: "HelloWorld",
@@ -89,12 +30,21 @@ export default defineComponent({
     VCircle,
     VRoundRect,
     VLine,
-    VPoints
+    VPoints,
+    VueLive,
   },
   data() {
     return {
       loading: true,
       count: 2,
+      VSurface,
+      VRect,
+      VCircle,
+      VRoundRect,
+      VLine,
+      VPoints,
+      code,
+      global: window
     };
   },
   mounted() {
@@ -105,13 +55,3 @@ export default defineComponent({
 });
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-button {
-  margin: 3px;
-}
-
-div {
-  margin: 30px;
-}
-</style>

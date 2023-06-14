@@ -53,7 +53,7 @@ const VSKNode = (name: string) => {
                 while (!('_ssw_id' in parent)) {
                     parent = parent.parent;
                 }
-                const next = instance.vnode.el.nextElementSibling?.__vnode.ctx._ssw_id;
+                const next = instance.vnode.el.nextElementSibling?.__vnode?.ctx?._ssw_id;
                 if (next) {
                     core.createChildInsertBeforeElementOfContainer(instance._ssw_id, next, (parent as ComponentInternalInstanceWithSoftSkiaWASM)._ssw_id)
                 } else {

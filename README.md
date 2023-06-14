@@ -16,23 +16,83 @@
 $ npm i vue-skia
 ```
 
-https://github.com/rustq/vue-skia/blob/2587a6216d98b7d3d093781ec3e8c5740bc7df84/vue-playground/src/main.ts#L1-L7
+`main.ts`
 
-https://github.com/rustq/vue-skia/blob/2587a6216d98b7d3d093781ec3e8c5740bc7df84/vue-playground/src/components/HelloWorld.vue#L1-L117
+```ts
+import { createApp } from "vue";
+import App from "./App.vue";
+import { VueSkia } from 'vue-skia'
+
+const app = createApp(App);
+app.use(VueSkia);
+app.mount("#app");
+```
+
+`App.vue`
+
+```vue
+<template>
+  <v-surface :width="400" :height="400">
+    <v-points :points="[
+      [128, 0],
+      [168, 80],
+      [256, 93],
+      [192, 155],
+      [207, 244],
+      [128, 202],
+      [49, 244],
+      [64, 155],
+      [0, 93],
+      [88, 80],
+      [128, 0],
+    ]" :style="'fill'" :strokeWidth="1" :color="'rgba(200, 255, 0, 0.7)'"></v-points>
+    <v-circle :cx="200" :cy="260" :r="80" :style="'stroke'" color="#ee22ee" />
+    <v-rect :x="10" :y="220" :width="30" :height="30" color="#00aaff"
+        :style="'fill'">
+    </v-rect>
+    <v-round-rect :x="220" :y="50" :width="80" :height="80" :r="10" color="#ee22ee" :style="'stroke'" />
+    <v-points :style="'fill'" :strokeWidth="2" color="#00aaff" :points="[
+        [100, 260],
+        [80, 300],
+        [120, 300],
+        ]" />
+  </v-surface>
+</template>
+
+<script lang="ts">
+import { defineComponent } from "vue";
+import launch, { VSurface, VRect, VCircle, VRoundRect, VLine, VPoints } from "vue-skia";
+
+export default defineComponent({
+  name: "HelloWorld",
+  components: {
+    VSurface,
+    VRect,
+    VCircle,
+    VRoundRect,
+    VLine,
+    VPoints
+  },
+  data() {
+    return {
+      loading: true,
+    };
+  },
+  mounted() {
+    launch().then(() => {
+      this.loading = false;
+    });
+  },
+});
+</script>
+```
+
 
 ![usage](https://user-images.githubusercontent.com/11075892/245521765-e5c8093d-bdd3-41e4-9f10-d3a6650dd55f.png)
 
-## Demo Getting Started
+## Live Demo
 
-```shell
-$ git clone git@github.com:rustq/vue-skia.git
-```
-
-```shell
-$ cd vue-playground
-$ npm i
-$ npm run serve
-```
+[vue-skia.netlify.app](https://vue-skia.netlify.app/)
 
 ## Library Development
 
