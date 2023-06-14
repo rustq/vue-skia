@@ -1,5 +1,5 @@
 <template>
-  <template v-if="!loading">
+  <template v-if="!loading && !debug">
     <VueLive :code="code" :components="{
         VSurface,
         VRect,
@@ -8,6 +8,28 @@
         VLine,
         VPoints,
       }" @error="(e) => { e }" />
+  </template>
+  <template v-if="!loading && debug">
+    <v-surface :width="400" :height="400">
+      <v-points :points="[
+        [128, 0],
+        [168, 80],
+        [256, 93],
+        [192, 155],
+        [207, 244],
+        [128, 202],
+        [49, 244],
+        [64, 155],
+        [0, 93],
+        [88, 80],
+        [128, 0],
+      ]" :style="'fill'" :strokeWidth="1" :color="'rgba(200, 255, 0, 1)'">
+      </v-points>
+      <v-circle :cx="200" :cy="260" :r="80" :style="'stroke'" color="#ee22ee" />
+      <v-rect :x="10" :y="220" :width="30" :height="30" color="#00aaff"
+        :style="'fill'">
+      </v-rect>
+    </v-surface>
   </template>
 </template>
 
@@ -44,7 +66,7 @@ export default defineComponent({
       VLine,
       VPoints,
       code,
-      global: window
+      debug: true,
     };
   },
   mounted() {

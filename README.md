@@ -9,6 +9,9 @@
 
 `基于 Skia 的 2D 图形软件光栅化 Vue 渲染库`
 
+## Demo
+
+[Live Demo](https://vue-skia.netlify.app/)
 
 ## Usage
 
@@ -89,10 +92,6 @@ export default defineComponent({
 
 
 ![usage](https://user-images.githubusercontent.com/11075892/245521765-e5c8093d-bdd3-41e4-9f10-d3a6650dd55f.png)
-
-## Live Demo
-
-[vue-skia.netlify.app](https://vue-skia.netlify.app/)
 
 ## Library Development
 
