@@ -8,7 +8,7 @@ The `vue-skia` is a `skia` based 2d graphics `vue` rendering library. It is base
 基于 `Skia` 的 2D 图形 `Vue` 渲染库 —— 使用 `Rust` 语言实现软件光栅化来执行渲染，相比原生画布占用更少的内存，不过目前仍然是一个实验项目；此外使用层面完全基于 `Vue` 语法。
 
 
-![usage](https://user-images.githubusercontent.com/11075892/245521765-e5c8093d-bdd3-41e4-9f10-d3a6650dd55f.png)
+![usage](https://user-images.githubusercontent.com/11075892/246616677-fecb6c94-b945-4fcc-8c18-44e93d4a9716.png)
 
 ## Demo
 
@@ -35,32 +35,26 @@ app.mount("#app");
 `App.vue`
 
 ```vue
-<template>
-  <v-surface :width="400" :height="400">
+<template v-if="!loading">
+    <v-surface :width="360" :height="360">
+    <v-rect :x="10" :y="220" :width="30" :height="30" color="cyan" :style="'fill'" />
+    <v-line style="fill" :strokeWidth="8" color="black" :p1="[100, 260]" :p2="[50, 285]" />
+    <v-round-rect :x="220" :y="50" :width="80" :height="80" :r="10" color="fuchsia" :style="'stroke'" />
+    <v-circle :cx="200" :cy="260" :r="50" :style="'stroke'" color="fuchsia" />
     <v-points :points="[
-      [128, 0],
-      [168, 80],
-      [256, 93],
-      [192, 155],
-      [207, 244],
-      [128, 202],
-      [49, 244],
-      [64, 155],
-      [0, 93],
-      [88, 80],
-      [128, 0],
-    ]" :style="'fill'" :strokeWidth="1" :color="'rgba(200, 255, 0, 0.7)'"></v-points>
-    <v-circle :cx="200" :cy="260" :r="80" :style="'stroke'" color="#ee22ee" />
-    <v-rect :x="10" :y="220" :width="30" :height="30" color="#00aaff"
-        :style="'fill'">
-    </v-rect>
-    <v-round-rect :x="220" :y="50" :width="80" :height="80" :r="10" color="#ee22ee" :style="'stroke'" />
-    <v-points :style="'fill'" :strokeWidth="2" color="#00aaff" :points="[
-        [100, 260],
-        [80, 300],
-        [120, 300],
-        ]" />
-  </v-surface>
+        [138, 10],
+        [178, 90],
+        [266, 103],
+        [202, 165],
+        [217, 254],
+        [138, 212],
+        [59, 254],
+        [74, 165],
+        [10, 103],
+        [98, 90],
+        [138, 10],
+        ]" :style="'fill'" :strokeWidth="1" :color="'rgba(200, 255, 0, 0.7)'" />
+    </v-surface>
 </template>
 
 <script lang="ts">
