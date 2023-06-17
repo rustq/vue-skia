@@ -11,7 +11,7 @@
 <style>
 .preview-code {
   display: flex;
-  width: 950px;
+  width: 1300px;
   margin: 30px auto;
   border-radius: 10px;
   border: 1px solid #ccc;
@@ -28,7 +28,7 @@
 }
 
 .preview-code > div:last-child {
-  padding: 30px;
+  padding: 30px 0;
   background-color: #fff;
   text-align: center;
   border-radius: 0 10px 10px 0;

@@ -97,9 +97,6 @@ export default defineComponent({
 </script>
   
 <style>
-/* @import url("https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap"); */
-/* @import url("https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap"); */
-
 body {
   background-color: #ded;
 }
@@ -133,8 +130,9 @@ body {
 
 .livebox {
   position: relative;
-  max-width: 950px;
+  max-width: 1300px;
   margin: auto;
+  font-size: 14px;
 }
 
 .hint {
@@ -148,7 +146,7 @@ body {
   transition: transform 0.2s;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 1600px) {
   .hint {
     transform: none;
     top: -35px;

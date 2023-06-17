@@ -1,25 +1,21 @@
-export default `<v-surface :width="400" :height="400">
-    <v-points :points="[
-      [128, 0],
-      [168, 80],
-      [256, 93],
-      [192, 155],
-      [207, 244],
-      [128, 202],
-      [49, 244],
-      [64, 155],
-      [0, 93],
-      [88, 80],
-      [128, 0],
-    ]" :style="'fill'" :strokeWidth="1" :color="'rgba(200, 255, 0, 0.7)'" />
-  <v-circle :cx="200" :cy="260" :r="80" :style="'stroke'" color="#ee22ee" />
-  <v-rect :x="10" :y="220" :width="30" :height="30" color="#00aaff"
-    :style="'fill'" />
-  <v-round-rect :x="220" :y="50" :width="80" :height="80" :r="10" color="#ee22ee" :style="'stroke'" />
-  <v-points :style="'fill'" :strokeWidth="2" color="#00aaff" :points="[
-      [100, 260],
-      [80, 300],
-      [120, 300],
-    ]" />
+export default `<v-surface :width="360" :height="360">
+  <v-rect :x="10" :y="220" :width="30" :height="30" color="cyan" :style="'fill'" />
+  <v-line style="fill" :strokeWidth="8" color="black" :p1="[100, 260]" :p2="[50, 285]" />
+  <v-round-rect
+    :x="220" :y="50" :width="80" :height="80" :r="10" color="fuchsia" :style="'stroke'" />
+  <v-circle :cx="200" :cy="260" :r="50" :style="'stroke'" color="fuchsia" />
+  <v-points :points="[
+    [138, 10],
+    [178, 90],
+    [266, 103],
+    [202, 165],
+    [217, 254],
+    [138, 212],
+    [59, 254],
+    [74, 165],
+    [10, 103],
+    [98, 90],
+    [138, 10],
+  ]" :style="'fill'" :strokeWidth="1" :color="'rgba(200, 255, 0, 0.7)'" />
 </v-surface>
 `
