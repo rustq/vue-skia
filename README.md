@@ -3,9 +3,9 @@
 [![license](https://img.shields.io/npm/l/vue-skia?color=cyan)](https://revolunet.mit-license.org/) [![npm](https://img.shields.io/npm/v/vue-skia?vue-skia?color=lightgreen)](https://www.npmjs.com/package/vue-skia)
 
 
-The vue-skia is a skia-based 2d graphics vue rendering library. It is based on Rust to implement software rasterization to perform rendering. It takes up less memory than the native canvas, however it is still a experiment project. And it's based entirely on vue syntax.
+The `vue-skia` is a `skia` based 2d graphics `vue` rendering library. It is based on `Rust` to implement software rasterization to perform rendering. It takes up less memory than the native canvas, however it is still a experiment project. And it's based entirely on `vue` syntax.
 
-基于 Skia 的 2D 图形 Vue 渲染库 —— 它使用 Rust 语言实现软件光栅化来执行渲染，相比原生画布占用更少的内存；不过目前仍然是一个实验项目，在使用层面完全基于 Vue 语法。
+基于 `Skia` 的 2D 图形 `Vue` 渲染库 —— 使用 `Rust` 语言实现软件光栅化来执行渲染，相比原生画布占用更少的内存，不过目前仍然是一个实验项目；此外使用层面完全基于 `Vue` 语法。
 
 
 ![usage](https://user-images.githubusercontent.com/11075892/245521765-e5c8093d-bdd3-41e4-9f10-d3a6650dd55f.png)
