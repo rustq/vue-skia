@@ -1,32 +1,181 @@
 <template>
-  <HelloWorld msg="Vue Skia " />
+  <main style="text-align: center">
+    <template v-if="true">
+      <h1>Vue Skia</h1>
+      <p class="description">
+        The <em>vue-skia</em> is a skia-based 2d graphics vue rendering library.
+        It is based on Rust to implement software rasterization to perform rendering.
+        It takes up less memory than the native canvas, however it is still a experiment project.
+        And it's based entirely on vue syntax.
+      </p>
+      <p class="description">
+        This super cool editor is based on <em>vue-live</em> !
+      </p>
+      <div class="livebox">
+        <div class="hint">You can edit this <span>-></span></div>
+        <VueLive :editorProps="{ lineNumbers: true }" :code="(!loading && !debug) ? code : LoadingCode"
+          :layout="CustomLayout" :components="{
+              VSurface,
+              VRect,
+              VCircle,
+              VRoundRect,
+              VLine,
+              VPoints,
+            }" @error="(e: any) => void 0" />
+      </div>
+    </template>
+    <template v-if="!loading && debug">
+      <v-surface :width="400" :height="400">
+        <v-points :points="[
+            [128, 0],
+            [168, 80],
+            [256, 93],
+            [192, 155],
+            [207, 244],
+            [128, 202],
+            [49, 244],
+            [64, 155],
+            [0, 93],
+            [88, 80],
+            [128, 0],
+          ]" :style="'fill'" :strokeWidth="1" :color="'rgba(200, 255, 0, 1)'">
+        </v-points>
+        <v-circle :cx="200" :cy="260" :r="80" :style="'stroke'" color="#ee22ee" />
+        <v-rect :x="10" :y="220" :width="30" :height="30" color="#00aaff" :style="'fill'">
+        </v-rect>
+      </v-surface>
+    </template>
+    <github-corners href="https://github.com/rustq/vue-skia" gitColor="#FFFFFF" />
+  </main>
 </template>
-
 <script lang="ts">
-import { defineComponent } from "vue";
-import HelloWorld from "./components/HelloWorld.vue";
+import { defineComponent, markRaw } from "vue";
+import launch, { VSurface, VRect, VCircle, VRoundRect, VLine, VPoints } from "vue-skia";
+import { VueLive } from "vue-live";
+import GithubCorners from "@uivjs/vue-github-corners";
+import CustomLayout from "./CustomLayout.vue";
+import code from "./code";
+import LoadingCode from "./loading-code";
+import "vue-live/style.css";
+import "prism-themes/themes/prism-night-owl.css";
 
 export default defineComponent({
   name: "App",
   components: {
-    HelloWorld,
+    VueLive,
+    GithubCorners,
+    VSurface,
+    VRect,
+    VCircle,
+    VRoundRect,
+    VLine,
+    VPoints,
   },
   data() {
     return {
-      HelloWorld
-    }
-  }
+      CustomLayout: markRaw(CustomLayout),
+      loading: true,
+      count: 2,
+      VSurface,
+      VRect,
+      VCircle,
+      VRoundRect,
+      VLine,
+      VPoints,
+      code,
+      LoadingCode,
+      debug: false,
+      error: undefined,
+    };
+  },
+  mounted() {
+    launch().then(() => {
+      this.loading = false;
+    });
+  },
 });
 </script>
-
+  
 <style>
+/* @import url("https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap"); */
+/* @import url("https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap"); */
+
 body {
-  margin: 20px;
-  padding: 0;
+  background-color: #ded;
 }
 
-textarea {
-  outline: none;
+.prism-editor-wrapper {
+  background-color: #222;
+  color: #eee;
+  padding: 8px 12px;
+  box-sizing: border-box;
 }
 
+.separate {
+  display: flex;
+  flex-direction: column;
+  width: 950px;
+  margin: 30px auto;
+}
+
+.preview-separate {
+  padding: 30px;
+  background-color: #fff;
+  text-align: center;
+  border-radius: 10px 10px 0 0;
+}
+
+.description {
+  max-width: 600px;
+  margin: 30px auto;
+  text-align: left;
+}
+
+.livebox {
+  position: relative;
+  max-width: 950px;
+  margin: auto;
+}
+
+.hint {
+  position: absolute;
+  top: 100px;
+  left: -200px;
+  font-family: "Nanum Pen Script";
+  font-size: 2em;
+  color: rgb(0, 161, 132);
+  transform: rotate(-30deg);
+  transition: transform 0.2s;
+}
+
+@media (max-width: 1400px) {
+  .hint {
+    transform: none;
+    top: -35px;
+    left: 0;
+  }
+
+  .hint span {
+    transform: rotate(80deg) translate(10px, 10px);
+    display: inline-block;
+  }
+
+  .separate {
+    width: 90vw;
+  }
+}
+
+.button-bar {
+  height: 70px;
+  padding: 5px 0;
+  text-align: left;
+}
+
+.button-bar button {
+  font-size: 1.5em;
+  padding: 6px;
+  border-radius: 8px;
+  width: 200px;
+}
 </style>
+  
