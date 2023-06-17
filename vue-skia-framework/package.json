@@ -1,16 +1,18 @@
 {
   "name": "vue-skia",
-  "version": "0.0.2-dev.43",
+  "version": "0.0.2-beta.4",
   "files": [
     "lib",
     "soft-skia-wasm/pkg",
     "main.js",
     "main.d.ts",
-    "components"
+    "components",
+    "LICENSE"
   ],
   "scripts": {
     "build": "rm -rf lib; tsc; rm -rf soft-skia-wasm; mkdir soft-skia-wasm; cp -rf ../soft-skia-wasm/pkg ./soft-skia-wasm/pkg; rm ./soft-skia-wasm/pkg/.gitignore; cp main.js main.d.ts"
   },
+  "license": "MIT",
   "main": "./main.js",
   "module": "./main.js",
   "devDependencies": {

@@ -50,9 +50,9 @@ export default {
         });
 
         onBeforeUnmount(() => {
-            const instance = getCurrentInstance() as ComponentInternalInstanceWithSoftSkiaWASM;
-            const core = instance.ssw;
-            core.free();
+            // const instance = getCurrentInstance() as ComponentInternalInstanceWithSoftSkiaWASM;
+            // const core = instance.ssw;
+            // core.free();
         });
 
 
