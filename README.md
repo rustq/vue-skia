@@ -1,6 +1,6 @@
 # Vue Skia
 
-[![license](https://img.shields.io/npm/l/vue-skia?color=cyan)](https://revolunet.mit-license.org/) [![npm](https://img.shields.io/npm/v/vue-skia?vue-skia?color=lightgreen)](https://www.npmjs.com/package/vue-skia)
+[![license](https://img.shields.io/npm/l/vue-skia?color=cyan)](https://revolunet.mit-license.org/) ![vue-3.x](https://img.shields.io/badge/vue-3.x-lightgreen) [![npm](https://img.shields.io/npm/v/vue-skia?vue-skia)](https://www.npmjs.com/package/vue-skia)
 
 
 The `vue-skia` is a `skia` based 2d graphics `vue` rendering library. It is based on `Rust` to implement software rasterization to perform rendering. It takes up less memory than the native canvas, however it is still a experiment project. And it's based entirely on `vue` syntax.
@@ -10,9 +10,7 @@ The `vue-skia` is a `skia` based 2d graphics `vue` rendering library. It is base
 
 ![usage](https://user-images.githubusercontent.com/11075892/246616677-fecb6c94-b945-4fcc-8c18-44e93d4a9716.png)
 
-## Demo
-
-[Live Demo](https://vue-skia.netlify.app/)
+Live Demo: [https://vue-skia.netlify.app](https://vue-skia.netlify.app)
 
 ## Usage
 
