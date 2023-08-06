@@ -2,6 +2,7 @@ extern crate soft_skia;
 mod utils;
 
 use base64;
+use soft_skia::provider::{Providers, Group, Provider};
 use wasm_bindgen::prelude::*;
 use soft_skia::instance::Instance;
 use soft_skia::shape::{Circle, Line, Points, RoundRect, Shapes, PaintStyle};
@@ -29,8 +30,8 @@ pub struct WASMRectAttr {
     height: u32,
     x: u32,
     y: u32,
-    color: String,
-    style: String,
+    color: Option<String>,
+    style: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -38,8 +39,8 @@ pub struct WASMCircleAttr {
     cx: u32,
     cy: u32,
     r: u32,
-    color: String,
-    style: String,
+    color: Option<String>,
+    style: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -49,24 +50,33 @@ pub struct WASMRoundRectAttr {
     r: u32,
     x: u32,
     y: u32,
-    color: String,
-    style: String,
+    color: Option<String>,
+    style: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct WASMLineAttr {
     p1: [u32; 2],
     p2: [u32; 2],
-    color: String,
-    stroke_width: u32
+    color: Option<String>,
+    stroke_width: Option<u32>
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct WASMPointsAttr {
     points: Vec<[u32; 2]>,
-    color: String,
-    stroke_width: u32,
-    style: String,
+    color: Option<String>,
+    stroke_width: Option<u32>,
+    style: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct WASMGroupAttr {
+    x: Option<u32>,
+    y: Option<u32>,
+    color: Option<String>,
+    style: Option<String>,
+    stroke_width: Option<u32>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -76,6 +86,7 @@ pub enum WASMShapesAttr {
     RR(WASMRoundRectAttr),
     L(WASMLineAttr),
     P(WASMPointsAttr),
+    G(WASMGroupAttr),
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -132,146 +143,98 @@ impl SoftSkiaWASM {
     }
 
     fn recursive_rasterization_node_to_pixmap(node: &mut Node, pixmap: &mut Pixmap) -> () {
-        for item in node.children_iter_mut() {
-            item.shape.draw(pixmap);
-            Self::recursive_rasterization_node_to_pixmap(&mut (*item), pixmap);
+        let context = node.provider.as_ref().and_then(|p| match p {
+            Providers::G(group) => group.context.as_ref(),
+        });
+
+        for item in node.children.iter_mut() {
+            item.draw(pixmap, context);
+
+            if let Some(Providers::G(group)) = item.provider.as_mut() {
+                group.set_context(pixmap, node.provider.as_ref());
+            }
+
+            Self::recursive_rasterization_node_to_pixmap(item, pixmap);
         }
     }
 
-
-    #[wasm_bindgen(js_name = setShapeBySerde)]
-    pub fn set_shape_by_serde(&mut self, id: usize, value: JsValue) {
+    #[wasm_bindgen(js_name = setAttrBySerde)]
+    pub fn set_attr_by_serde(&mut self, id: usize, value: JsValue) {
         let message: WASMShape = serde_wasm_bindgen::from_value(value).unwrap();
 
         match message.attr {
             WASMShapesAttr::R(WASMRectAttr{ width, height, x, y , color, style}) => {
-
-                let mut parser_input = ParserInput::new(&color);
-                let mut parser = Parser::new(&mut parser_input);
-                let color = CSSColor::parse(&mut parser);
-
-                match color {
-                    Ok(CSSColor::RGBA(rgba)) => {
-                        drop(parser_input);
-                        let style = match style.as_str() {
-                            "stroke" => {
-                                PaintStyle::Stroke
-                            },
-                            "fill" => {
-                                PaintStyle::Fill
-                            },
-                            _ => {
-                                PaintStyle::Stroke
-                            }
-                        };
-                        self.0.set_shape_to_child(id, Shapes::R(Rect { x, y, width, height, color: ColorU8::from_rgba(rgba.red, rgba.green, rgba.blue, rgba.alpha), style }))
-                    }
-                    _ => {
-                        // 
-                    }
-                }
-
+                let color = parse_color(color);
+                let style = parse_style(style);
+                self.0.set_shape_to_child(id, Shapes::R(Rect { x, y, width, height, color, style }))
             },
             WASMShapesAttr::C(WASMCircleAttr{ cx, cy, r, color, style }) => {
-
-                let mut parser_input = ParserInput::new(&color);
-                let mut parser = Parser::new(&mut parser_input);
-                let color = CSSColor::parse(&mut parser);
-
-                match color {
-                    Ok(CSSColor::RGBA(rgba)) => {
-                        drop(parser_input);
-                        let style = match style.as_str() {
-                            "stroke" => {
-                                PaintStyle::Stroke
-                            },
-                            "fill" => {
-                                PaintStyle::Fill
-                            },
-                            _ => {
-                                PaintStyle::Stroke
-                            }
-                        };
-                        self.0.set_shape_to_child(id, Shapes::C(Circle { cx, cy, r, color: ColorU8::from_rgba(rgba.red, rgba.green, rgba.blue, rgba.alpha), style }))
-                    }
-                    _ => {
-                        // 
-                    }
-                }
-
+                let color = parse_color(color);
+                let style = parse_style(style);
+                self.0.set_shape_to_child(id, Shapes::C(Circle { cx, cy, r, color, style }))
             },
             WASMShapesAttr::RR(WASMRoundRectAttr{ width, height, r, x, y , color, style}) => {
+                let color = parse_color(color);
+                let style = parse_style(style);
 
-                let mut parser_input = ParserInput::new(&color);
-                let mut parser = Parser::new(&mut parser_input);
-                let color = CSSColor::parse(&mut parser);
-
-                match color {
-                    Ok(CSSColor::RGBA(rgba)) => {
-                        drop(parser_input);
-                        let style = match style.as_str() {
-                            "stroke" => {
-                                PaintStyle::Stroke
-                            },
-                            "fill" => {
-                                PaintStyle::Fill
-                            },
-                            _ => {
-                                PaintStyle::Stroke
-                            }
-                        };
-                        self.0.set_shape_to_child(id, Shapes::RR(RoundRect { x, y, r, width, height, color: ColorU8::from_rgba(rgba.red, rgba.green, rgba.blue, rgba.alpha), style }))
-                    }
-                    _ => {
-                        // 
-                    }
-                }
-
+                self.0.set_shape_to_child(id, Shapes::RR(RoundRect { x, y, r, width, height, color, style }))
             },
             WASMShapesAttr::L(WASMLineAttr{ p1, p2, stroke_width, color}) => {
-
-                let mut parser_input = ParserInput::new(&color);
-                let mut parser = Parser::new(&mut parser_input);
-                let color = CSSColor::parse(&mut parser);
-
-                match color {
-                    Ok(CSSColor::RGBA(rgba)) => {
-                        drop(parser_input);
-                        self.0.set_shape_to_child(id, Shapes::L(Line { p1, p2, stroke_width, color: ColorU8::from_rgba(rgba.red, rgba.green, rgba.blue, rgba.alpha) }))
-                    }
-                    _ => {
-                        // 
-                    }
-                }
-
+                let color = parse_color(color);
+                self.0.set_shape_to_child(id, Shapes::L(Line { p1, p2, stroke_width, color }))
             },
             WASMShapesAttr::P(WASMPointsAttr{ points , color, stroke_width, style }) => {
-
-                let mut parser_input = ParserInput::new(&color);
-                let mut parser = Parser::new(&mut parser_input);
-                let color = CSSColor::parse(&mut parser);
-
-                match color {
-                    Ok(CSSColor::RGBA(rgba)) => {
-                        drop(parser_input);
-                        let style = match style.as_str() {
-                            "stroke" => {
-                                PaintStyle::Stroke
-                            },
-                            "fill" => {
-                                PaintStyle::Fill
-                            },
-                            _ => {
-                                PaintStyle::Stroke
-                            }
-                        };
-                        self.0.set_shape_to_child(id, Shapes::P(Points { points, stroke_width, color: ColorU8::from_rgba(rgba.red, rgba.green, rgba.blue, rgba.alpha), style }))
-                    }
-                    _ => {
-                        // 
-                    }
-                }
+                let color = parse_color(color);
+                let style = parse_style(style);
+                self.0.set_shape_to_child(id, Shapes::P(Points { points, stroke_width, color, style }))
             },
+            WASMShapesAttr::G(WASMGroupAttr {
+                x,
+                y,
+                color,
+                stroke_width,
+                style,
+            }) => {
+                let color = parse_color(color);
+                let style = parse_style(style);
+
+                self.0.set_provider_to_child(
+                    id,
+                    Providers::G(Group {
+                        x,
+                        y,
+                        color,
+                        style,
+                        stroke_width,
+                        clip: None,
+                        context: None,
+                    }),
+                )
+            }
         };
+    }
+}
+
+fn parse_color(color: Option<String>) -> Option<ColorU8> {
+    if let Some(color_str) = color {
+        let mut parser_input = ParserInput::new(&color_str);
+        let mut parser = Parser::new(&mut parser_input);
+
+        if let Ok(css_color) = CSSColor::parse(&mut parser) {
+            if let CSSColor::RGBA(rgba) = css_color {
+                return Some(ColorU8::from_rgba(
+                    rgba.red, rgba.green, rgba.blue, rgba.alpha,
+                ));
+            }
+        }
+    }
+    None
+}
+
+fn parse_style(style: Option<String>) -> Option<PaintStyle> {
+    match style.as_deref() {
+        Some("stroke") => Some(PaintStyle::Stroke),
+        Some("fill") => Some(PaintStyle::Fill),
+        _ => None,
     }
 }

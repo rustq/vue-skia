@@ -60,7 +60,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, markRaw } from "vue";
-import launch, { VSurface, VRect, VCircle, VRoundRect, VLine, VPoints } from "vue-skia";
+import launch, { VSurface, VGroup, VRect, VCircle, VRoundRect, VLine, VPoints } from "vue-skia";
 import { VueLive } from "vue-live";
 import GithubCorners from "@uivjs/vue-github-corners";
 import CustomLayout from "./CustomLayout.vue";
@@ -75,6 +75,7 @@ export default defineComponent({
     VueLive,
     GithubCorners,
     VSurface,
+    VGroup,
     VRect,
     VCircle,
     VRoundRect,
@@ -87,6 +88,7 @@ export default defineComponent({
       loading: true,
       count: 2,
       VSurface,
+      VGroup,
       VRect,
       VCircle,
       VRoundRect,

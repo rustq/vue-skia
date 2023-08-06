@@ -35,7 +35,7 @@ export default {
         const core = new ssw.SoftSkiaWASM(rootID);
         instance.ssw = core; // Save on component instance
         instance._ssw_id = rootID;
-        core.setShapeBySerde(rootID, { attr: { R: { x: 0, y: 0, width: attrs.width, height: attrs.height, color: 'transparent', style: "fill" } } })
+        core.setAttrBySerde(rootID, { attr: { R: { x: 0, y: 0, width: attrs.width, height: attrs.height, color: 'transparent', style: "fill" } } })
 
 
         onMounted(() => {

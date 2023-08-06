@@ -14,15 +14,15 @@ export default defineComponent({
         },
         strokeWidth: {
             type: Number as PropType<number>,
-            required: true
+            required: false
         },
         style: {
             type: String as PropType<'fill' | 'stroke'>,
-            required: true
+            required: false
         },
         color: {
             type: String as PropType<string>,
-            required: true
+            required: false
         },
     },
 });

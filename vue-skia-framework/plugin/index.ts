@@ -1,6 +1,6 @@
 import {
     h,
-    onMounted,
+    onBeforeMount,
     onBeforeUnmount,
     onUpdated,
     getCurrentInstance,
@@ -16,6 +16,7 @@ import { SoftSkiaWASM } from '../../soft-skia-wasm/pkg/soft_skia_wasm';
 
 const WidgetList = [
     'Surface',
+    'Group',
     'Points',
     'Line',
     'RoundRect',
@@ -41,7 +42,7 @@ const VSKNode = (name: string) => {
         },
         setup(_props: VNodeProps, { attrs, slots }: SetupContext) {
 
-            onMounted(() => {
+            onBeforeMount(() => {
                 const instance = getCurrentInstance() as ComponentInternalInstanceWithSoftSkiaWASM;
                 var root = instance as ComponentInternalInstanceWithSoftSkiaWASM;
                 while (!root.ssw) {
@@ -53,12 +54,7 @@ const VSKNode = (name: string) => {
                 while (!('_ssw_id' in parent)) {
                     parent = parent.parent;
                 }
-                const next = instance.vnode.el.nextElementSibling?.__vnode?.ctx?._ssw_id;
-                if (next) {
-                    core.createChildInsertBeforeElementOfContainer(instance._ssw_id, next, (parent as ComponentInternalInstanceWithSoftSkiaWASM)._ssw_id)
-                } else {
-                    core.createChildAppendToContainer(instance._ssw_id, (parent as ComponentInternalInstanceWithSoftSkiaWASM)._ssw_id);
-                }
+                core.createChildAppendToContainer(instance._ssw_id, (parent as ComponentInternalInstanceWithSoftSkiaWASM)._ssw_id);
                 updateInstance(core, name, instance, attrs);
             });
 
@@ -80,19 +76,32 @@ const VSKNode = (name: string) => {
              */
             function updateInstance(core: SoftSkiaWASM, name: string, instance: ComponentInternalInstanceWithSoftSkiaWASM, attrs: SetupContext['attrs']) {
                 if (name === 'Rect') {
-                    core.setShapeBySerde(instance._ssw_id, { attr: { R: { x: attrs.x, y: attrs.y, width: attrs.width, height: attrs.height, color: attrs.color, style: attrs.style } } })
+                    core.setAttrBySerde(instance._ssw_id, { attr: { R: { x: attrs.x, y: attrs.y, width: attrs.width, height: attrs.height, color: attrs.color, style: attrs.style } } })
                 }
                 if (name === 'Circle') {
-                    core.setShapeBySerde(instance._ssw_id, { attr: { C: { cx: attrs.cx, cy: attrs.cy, r: attrs.r, color: attrs.color, style: attrs.style } } })
+                    core.setAttrBySerde(instance._ssw_id, { attr: { C: { cx: attrs.cx, cy: attrs.cy, r: attrs.r, color: attrs.color, style: attrs.style } } })
                 }
                 if (name === 'RoundRect') {
-                    core.setShapeBySerde(instance._ssw_id, { attr: { RR: { x: attrs.x, y: attrs.y, r: attrs.r, width: attrs.width, height: attrs.height, color: attrs.color, style: attrs.style } } })
+                    core.setAttrBySerde(instance._ssw_id, { attr: { RR: { x: attrs.x, y: attrs.y, r: attrs.r, width: attrs.width, height: attrs.height, color: attrs.color, style: attrs.style } } })
                 }
                 if (name === 'Line') {
-                    core.setShapeBySerde(instance._ssw_id, { attr: { L: { p1: attrs.p1, p2: attrs.p2, stroke_width: attrs.strokeWidth, color: attrs.color } } })
+                    core.setAttrBySerde(instance._ssw_id, { attr: { L: { p1: attrs.p1, p2: attrs.p2, stroke_width: attrs.strokeWidth, color: attrs.color } } })
                 }
                 if (name === 'Points') {
-                    core.setShapeBySerde(instance._ssw_id, { attr: { P: { points: attrs.points, stroke_width: attrs.strokeWidth, color: attrs.color, style: attrs.style } } })
+                    core.setAttrBySerde(instance._ssw_id, { attr: { P: { points: attrs.points, stroke_width: attrs.strokeWidth, color: attrs.color, style: attrs.style } } })
+                }
+                if (name === 'Group') {
+                    core.setAttrBySerde(instance._ssw_id, {
+                      attr: {
+                        G: {
+                          x: attrs.x,
+                          y: attrs.y,
+                          color: attrs.color,
+                          stroke_width: attrs.strokeWidth,
+                          style: attrs.style,
+                        },
+                      },
+                    });
                 }
             }
 
