@@ -1,5 +1,7 @@
+use std::collections::HashMap;
+
 pub use tiny_skia::{ColorU8, FillRule, Mask, Paint, PathBuilder, Pixmap, Stroke, Transform};
-use tiny_skia::{LineCap, LineJoin};
+use tiny_skia::{LineCap, LineJoin, Path};
 
 #[derive(Debug)]
 pub enum Shapes {
@@ -18,6 +20,7 @@ pub struct DrawContext {
     pub style: Option<PaintStyle>,
     pub stroke_width: Option<u32>,
     pub mask: Option<Mask>,
+    pub inactive_nodes_map: Option<HashMap<usize, bool>>,
 }
 
 impl DrawContext {
@@ -29,6 +32,7 @@ impl DrawContext {
             style: None,
             stroke_width: None,
             mask: None,
+            inactive_nodes_map: None,
         }
     }
 }
@@ -36,6 +40,7 @@ impl DrawContext {
 pub trait Shape {
     fn default() -> Self;
     fn draw(&self, pixmap: &mut Pixmap, context: &DrawContext) -> ();
+    fn get_path(&self, context: &DrawContext) -> Path;
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -100,6 +105,16 @@ impl Shapes {
             Shapes::P(points) => points.draw(pixmap, context),
         }
     }
+
+    pub fn get_path(&self, context: &DrawContext) -> Path {
+        match self {
+            Shapes::R(rect) => rect.get_path(context),
+            Shapes::C(circle) => circle.get_path(context),
+            Shapes::RR(round_rect) => round_rect.get_path(context),
+            Shapes::L(line) => line.get_path(context),
+            Shapes::P(points) => points.get_path(context),
+        }
+    }
 }
 
 impl Shape for Rect {
@@ -114,27 +129,59 @@ impl Shape for Rect {
         }
     }
 
-    fn draw(
-        &self,
-        pixmap: &mut Pixmap,
-        DrawContext {
-            offset_x,
-            offset_y,
+    fn draw(&self, pixmap: &mut Pixmap, context: &DrawContext) -> () {
+        let DrawContext {
             color,
             style,
             stroke_width,
             mask,
-        }: &DrawContext,
-    ) -> () {
-        let mut pb = PathBuilder::new();
+            ..
+        } = context;
+
+        let path = self.get_path(context);
+
         let mut paint = Paint::default();
-        let x = self.x + offset_x;
-        let y = self.y + offset_y;
         let color = self
             .color
             .unwrap_or(color.unwrap_or(ColorU8::from_rgba(0, 0, 0, 255)));
         let style = self.style.unwrap_or(style.unwrap_or(PaintStyle::Fill));
         let mask = mask.as_ref();
+
+        paint.set_color_rgba8(color.red(), color.green(), color.blue(), color.alpha());
+
+        match style {
+            PaintStyle::Stroke => {
+                let mut stroke = Stroke::default();
+
+                if let &Some(w) = stroke_width {
+                    stroke.width = w as f32
+                }
+
+                pixmap.stroke_path(&path, &paint, &stroke, Transform::identity(), mask);
+            }
+            PaintStyle::Fill => {
+                paint.anti_alias = true;
+                pixmap.fill_path(
+                    &path,
+                    &paint,
+                    FillRule::Winding,
+                    Transform::identity(),
+                    mask,
+                );
+            }
+            _ => {}
+        }
+    }
+
+    fn get_path(
+        &self,
+        DrawContext {
+            offset_x, offset_y, ..
+        }: &DrawContext,
+    ) -> Path {
+        let mut pb = PathBuilder::new();
+        let x = self.x + offset_x;
+        let y = self.y + offset_y;
 
         pb.move_to(x as f32, y as f32);
         pb.line_to((x + self.width) as f32, y as f32);
@@ -143,31 +190,7 @@ impl Shape for Rect {
         pb.line_to(x as f32, y as f32);
         pb.close();
 
-        let path = pb.finish().unwrap();
-        paint.set_color_rgba8(color.red(), color.green(), color.blue(), color.alpha());
-
-        match style {
-            PaintStyle::Stroke => {
-                let mut stroke = Stroke::default();
-
-                if let &Some(w) = stroke_width {
-                    stroke.width = w as f32
-                }
-
-                pixmap.stroke_path(&path, &paint, &stroke, Transform::identity(), mask);
-            }
-            PaintStyle::Fill => {
-                paint.anti_alias = true;
-                pixmap.fill_path(
-                    &path,
-                    &paint,
-                    FillRule::Winding,
-                    Transform::identity(),
-                    mask,
-                );
-            }
-            _ => {}
-        }
+        pb.finish().unwrap()
     }
 }
 
@@ -176,35 +199,26 @@ impl Shape for Circle {
         todo!()
     }
 
-    fn draw(
-        &self,
-        pixmap: &mut Pixmap,
-        DrawContext {
-            offset_x,
-            offset_y,
+    fn draw(&self, pixmap: &mut Pixmap, context: &DrawContext) -> () {
+        let DrawContext {
             color,
             style,
             stroke_width,
             mask,
-        }: &DrawContext,
-    ) -> () {
+            ..
+        } = context;
+
+        let path = self.get_path(context);
+
         let mut paint = Paint::default();
-        let mut pb: PathBuilder = PathBuilder::new();
-        let x = self.cx + offset_x;
-        let y = self.cy + offset_y;
         let color = self
             .color
             .unwrap_or(color.unwrap_or(ColorU8::from_rgba(0, 0, 0, 255)));
         let style = self.style.unwrap_or(style.unwrap_or(PaintStyle::Fill));
-        let mut mask = mask.as_ref();
+        let mask = mask.as_ref();
 
         paint.set_color_rgba8(color.red(), color.green(), color.blue(), color.alpha());
         paint.anti_alias = true;
-
-        pb.push_circle(x as f32, y as f32, self.r as f32);
-        pb.close();
-
-        let path = pb.finish().unwrap();
 
         match style {
             PaintStyle::Stroke => {
@@ -229,6 +243,22 @@ impl Shape for Circle {
             _ => {}
         }
     }
+
+    fn get_path(
+        &self,
+        DrawContext {
+            offset_x, offset_y, ..
+        }: &DrawContext,
+    ) -> Path {
+        let mut pb: PathBuilder = PathBuilder::new();
+        let x = self.cx + offset_x;
+        let y = self.cy + offset_y;
+
+        pb.push_circle(x as f32, y as f32, self.r as f32);
+        pb.close();
+
+        pb.finish().unwrap()
+    }
 }
 
 impl Shape for RoundRect {
@@ -236,22 +266,18 @@ impl Shape for RoundRect {
         todo!()
     }
 
-    fn draw(
-        &self,
-        pixmap: &mut Pixmap,
-        DrawContext {
-            offset_x,
-            offset_y,
+    fn draw(&self, pixmap: &mut Pixmap, context: &DrawContext) -> () {
+        let DrawContext {
             color,
             style,
             stroke_width,
             mask,
-        }: &DrawContext,
-    ) -> () {
+            ..
+        } = context;
+
+        let path = self.get_path(context);
+
         let mut paint = Paint::default();
-        let mut pb = PathBuilder::new();
-        let x = self.x + offset_x;
-        let y = self.y + offset_y;
         let color = self
             .color
             .unwrap_or(color.unwrap_or(ColorU8::from_rgba(0, 0, 0, 255)));
@@ -260,6 +286,40 @@ impl Shape for RoundRect {
 
         paint.set_color_rgba8(color.red(), color.green(), color.blue(), color.alpha());
         paint.anti_alias = true;
+
+        match style {
+            PaintStyle::Stroke => {
+                let mut stroke = Stroke::default();
+
+                if let &Some(w) = stroke_width {
+                    stroke.width = w as f32
+                }
+
+                pixmap.stroke_path(&path, &paint, &stroke, Transform::identity(), mask);
+            }
+            PaintStyle::Fill => {
+                paint.anti_alias = true;
+                pixmap.fill_path(
+                    &path,
+                    &paint,
+                    FillRule::Winding,
+                    Transform::identity(),
+                    mask,
+                );
+            }
+            _ => {}
+        }
+    }
+
+    fn get_path(
+        &self,
+        DrawContext {
+            offset_x, offset_y, ..
+        }: &DrawContext,
+    ) -> Path {
+        let mut pb = PathBuilder::new();
+        let x = self.x + offset_x;
+        let y = self.y + offset_y;
 
         pb.move_to((x + self.r) as f32, y as f32);
         pb.line_to((x + self.width - self.r) as f32, y as f32);
@@ -287,30 +347,7 @@ impl Shape for RoundRect {
         pb.quad_to(x as f32, y as f32, (x + self.r) as f32, y as f32);
         pb.close();
 
-        let path = pb.finish().unwrap();
-
-        match style {
-            PaintStyle::Stroke => {
-                let mut stroke = Stroke::default();
-
-                if let &Some(w) = stroke_width {
-                    stroke.width = w as f32
-                }
-
-                pixmap.stroke_path(&path, &paint, &stroke, Transform::identity(), mask);
-            }
-            PaintStyle::Fill => {
-                paint.anti_alias = true;
-                pixmap.fill_path(
-                    &path,
-                    &paint,
-                    FillRule::Winding,
-                    Transform::identity(),
-                    mask,
-                );
-            }
-            _ => {}
-        }
+        pb.finish().unwrap()
     }
 }
 
@@ -319,33 +356,23 @@ impl Shape for Line {
         todo!()
     }
 
-    fn draw(
-        &self,
-        pixmap: &mut Pixmap,
-        DrawContext {
-            offset_x,
-            offset_y,
+    fn draw(&self, pixmap: &mut Pixmap, context: &DrawContext) -> () {
+        let DrawContext {
             color,
-            style,
             stroke_width,
             mask,
-        }: &DrawContext,
-    ) -> () {
-        let mut pb = PathBuilder::new();
+            ..
+        } = context;
+
+        let path = self.get_path(context);
+
         let mut paint = Paint::default();
-        let p1 = [self.p1[0] + offset_x, self.p1[1] + offset_y];
-        let p2 = [self.p2[0] + offset_x, self.p2[1] + offset_y];
         let color = self
             .color
             .unwrap_or(color.unwrap_or(ColorU8::from_rgba(0, 0, 0, 255)));
         let stroke_width = self.stroke_width.unwrap_or(stroke_width.unwrap_or(1));
-        let mut mask = mask.as_ref();
+        let mask = mask.as_ref();
 
-        pb.move_to(p1[0] as f32, p1[1] as f32);
-        pb.line_to(p2[0] as f32, p2[1] as f32);
-        pb.close();
-
-        let path = pb.finish().unwrap();
         let stroke = Stroke {
             width: stroke_width as f32,
             miter_limit: 4.0,
@@ -357,6 +384,23 @@ impl Shape for Line {
         paint.set_color_rgba8(color.red(), color.green(), color.blue(), color.alpha());
         pixmap.stroke_path(&path, &paint, &stroke, Transform::identity(), mask);
     }
+
+    fn get_path(
+        &self,
+        DrawContext {
+            offset_x, offset_y, ..
+        }: &DrawContext,
+    ) -> Path {
+        let mut pb = PathBuilder::new();
+        let p1 = [self.p1[0] + offset_x, self.p1[1] + offset_y];
+        let p2 = [self.p2[0] + offset_x, self.p2[1] + offset_y];
+
+        pb.move_to(p1[0] as f32, p1[1] as f32);
+        pb.line_to(p2[0] as f32, p2[1] as f32);
+        pb.close();
+
+        pb.finish().unwrap()
+    }
 }
 
 impl Shape for Points {
@@ -364,42 +408,26 @@ impl Shape for Points {
         todo!()
     }
 
-    fn draw(
-        &self,
-        pixmap: &mut Pixmap,
-        DrawContext {
-            offset_x,
-            offset_y,
+    fn draw(&self, pixmap: &mut Pixmap, context: &DrawContext) -> () {
+        let DrawContext {
             color,
             style,
             stroke_width,
             mask,
-        }: &DrawContext,
-    ) -> () {
-        let mut pb = PathBuilder::new();
+            ..
+        } = context;
+
+        let path = self.get_path(context);
+
         let mut paint = Paint::default();
         let color = self
             .color
             .unwrap_or(color.unwrap_or(ColorU8::from_rgba(0, 0, 0, 255)));
         let style = self.style.unwrap_or(style.unwrap_or(PaintStyle::Fill));
         let stroke_width = self.stroke_width.unwrap_or(stroke_width.unwrap_or(1));
-        let mut mask = mask.as_ref();
+        let mask = mask.as_ref();
 
         paint.set_color_rgba8(color.red(), color.green(), color.blue(), color.alpha());
-
-        pb.move_to(
-            (self.points[0][0] + offset_x) as f32,
-            (self.points[0][1] + offset_y) as f32,
-        );
-        for i in 1..self.points.len() {
-            pb.line_to(
-                (self.points[i][0] + offset_x) as f32,
-                (self.points[i][1] + offset_y) as f32,
-            );
-        }
-        pb.close();
-
-        let path = pb.finish().unwrap();
 
         match style {
             PaintStyle::Stroke => {
@@ -424,6 +452,30 @@ impl Shape for Points {
             }
             _ => {}
         }
+    }
+
+    fn get_path(
+        &self,
+        DrawContext {
+            offset_x, offset_y, ..
+        }: &DrawContext,
+    ) -> Path {
+        let mut pb = PathBuilder::new();
+
+        pb.move_to(
+            (self.points[0][0] + offset_x) as f32,
+            (self.points[0][1] + offset_y) as f32,
+        );
+        for i in 1..self.points.len() {
+            pb.line_to(
+                (self.points[i][0] + offset_x) as f32,
+                (self.points[i][1] + offset_y) as f32,
+            );
+        }
+
+        pb.close();
+
+        pb.finish().unwrap()
     }
 }
 

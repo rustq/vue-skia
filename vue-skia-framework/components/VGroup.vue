@@ -1,7 +1,10 @@
 <template>
     <v-sk-group :x="x" :y="y" :color="color" :style="typeof style === 'string' ? style : undefined"
-        :strokeWidth="strokeWidth">
+        :strokeWidth="strokeWidth" :invertClip="invertClip">
         <slot></slot>
+        <v-sk-group-clip>
+            <slot name="clip"></slot>
+        </v-sk-group-clip>
     </v-sk-group>
 </template>
     
@@ -29,6 +32,10 @@ export default defineComponent({
         },
         strokeWidth: {
             type: Number as PropType<number>,
+            required: false
+        },
+        invertClip: {
+            type: Boolean as PropType<boolean>,
             required: false
         },
     },

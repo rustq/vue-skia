@@ -17,6 +17,7 @@ import { SoftSkiaWASM } from '../../soft-skia-wasm/pkg/soft_skia_wasm';
 const WidgetList = [
     'Surface',
     'Group',
+    'GroupClip',
     'Points',
     'Line',
     'RoundRect',
@@ -28,6 +29,56 @@ const VSKNode = (name: string) => {
     if (name === 'Surface') {
         return Surface
     }
+
+    if (name === "GroupClip") {
+      return {
+        props: {
+          config: {
+            type: Object,
+            default: function () {
+              return {};
+            },
+          },
+          __useStrictMode: {
+            type: Boolean,
+          },
+        },
+        setup(_props: VNodeProps, { slots }: SetupContext) {
+          onBeforeMount(() => {
+            const instance =
+              getCurrentInstance() as ComponentInternalInstanceWithSoftSkiaWASM;
+            var root = instance as ComponentInternalInstanceWithSoftSkiaWASM;
+            while (!root.ssw) {
+              root = root.parent as ComponentInternalInstanceWithSoftSkiaWASM;
+            }
+            const core = root.ssw;
+
+            let parent = instance.parent;
+
+            while (!("_ssw_id" in parent)) {
+              parent = parent.parent;
+            }
+
+            instance._ssw_id = (
+              parent as ComponentInternalInstanceWithSoftSkiaWASM
+            )._ssw_id;
+
+            instance._ssw_grouped = (child) => {
+              core.setAttrBySerde(instance._ssw_id, {
+                attr: {
+                  GC: {
+                    clip: child._ssw_id,
+                  },
+                },
+              });
+            };
+          });
+
+          return () => h(name, {}, slots.default?.());
+        },
+      };
+    }
+
     return {
         props: {
             config: {
@@ -54,8 +105,12 @@ const VSKNode = (name: string) => {
                 while (!('_ssw_id' in parent)) {
                     parent = parent.parent;
                 }
+
                 core.createChildAppendToContainer(instance._ssw_id, (parent as ComponentInternalInstanceWithSoftSkiaWASM)._ssw_id);
                 updateInstance(core, name, instance, attrs);
+                (
+                  parent as ComponentInternalInstanceWithSoftSkiaWASM
+                )._ssw_grouped?.(instance);
             });
 
             onUpdated(() => {
@@ -99,6 +154,7 @@ const VSKNode = (name: string) => {
                           color: attrs.color,
                           stroke_width: attrs.strokeWidth,
                           style: attrs.style,
+                          invert_clip: attrs.invertClip,
                         },
                       },
                     });

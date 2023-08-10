@@ -1,11 +1,13 @@
 extern crate soft_skia;
 mod utils;
 
+use std::collections::HashMap;
+
 use base64;
-use soft_skia::provider::{Providers, Group, Provider};
+use soft_skia::provider::{Providers, Group, Provider, GroupClip};
 use wasm_bindgen::prelude::*;
 use soft_skia::instance::Instance;
-use soft_skia::shape::{Circle, Line, Points, RoundRect, Shapes, PaintStyle};
+use soft_skia::shape::{Circle, Line, Points, RoundRect, Shapes, PaintStyle, DrawContext};
 use soft_skia::shape::Rect;
 use soft_skia::shape::ColorU8;
 use soft_skia::tree::Node;
@@ -77,6 +79,12 @@ pub struct WASMGroupAttr {
     color: Option<String>,
     style: Option<String>,
     stroke_width: Option<u32>,
+    invert_clip: Option<bool>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct WASMGroupClipAttr {
+    clip: usize,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -87,6 +95,7 @@ pub enum WASMShapesAttr {
     L(WASMLineAttr),
     P(WASMPointsAttr),
     G(WASMGroupAttr),
+    GC(WASMGroupClipAttr),
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -143,15 +152,40 @@ impl SoftSkiaWASM {
     }
 
     fn recursive_rasterization_node_to_pixmap(node: &mut Node, pixmap: &mut Pixmap) -> () {
-        let context = node.provider.as_ref().and_then(|p| match p {
-            Providers::G(group) => group.context.as_ref(),
-        });
+        let context = node.provider.as_ref().and_then(|p| p.get_context());
 
         for item in node.children.iter_mut() {
+            let inactive = *context
+                .and_then(|c| c.inactive_nodes_map.as_ref().and_then(|m| m.get(&item.id)))
+                .unwrap_or(&false);
+
+            if inactive {
+                continue;
+            }
+
             item.draw(pixmap, context);
 
-            if let Some(Providers::G(group)) = item.provider.as_mut() {
-                group.set_context(pixmap, node.provider.as_ref());
+            if let Some(provider) = item.provider.as_mut() {
+                provider.set_context(pixmap, node.provider.as_ref());
+
+                // 这段感觉放这有点重，想搬走
+                match provider {
+                    Providers::G(group) => {
+                        if let Some(clip) = &group.clip {
+                            if let Some(clip_id) = clip.id {
+                                if let Some(clip_path) = item
+                                    .children
+                                    .iter_mut()
+                                    .find(|n| n.id == clip_id)
+                                    .and_then(|n| Some(n.shape.get_path(group.context.as_ref().unwrap())))
+                                {
+                                    group.set_context_mask(pixmap, &clip_path);
+                                }
+                            }
+                        }
+                    }
+                }
+
             }
 
             Self::recursive_rasterization_node_to_pixmap(item, pixmap);
@@ -194,9 +228,12 @@ impl SoftSkiaWASM {
                 color,
                 stroke_width,
                 style,
+                invert_clip,
             }) => {
                 let color = parse_color(color);
                 let style = parse_style(style);
+                let mut clip = GroupClip::default();
+                clip.invert = invert_clip;
 
                 self.0.set_provider_to_child(
                     id,
@@ -206,10 +243,23 @@ impl SoftSkiaWASM {
                         color,
                         style,
                         stroke_width,
-                        clip: None,
+                        clip: Some(clip),
                         context: None,
                     }),
                 )
+            },
+            WASMShapesAttr::GC(WASMGroupClipAttr { clip }) => {
+                let provider = self
+                    .0
+                    .get_tree_node_by_id(id)
+                    .unwrap()
+                    .provider
+                    .as_mut()
+                    .unwrap();
+
+                match provider {
+                    Providers::G(ref mut group) => group.set_clip_id(clip),
+                }
             }
         };
     }
