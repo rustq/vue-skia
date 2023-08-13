@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use crate::provider::Providers;
 use crate::tree::Tree;
 use crate::tree::Node;
 use crate::shape::Shapes;
@@ -39,6 +40,11 @@ impl Instance {
     pub fn set_shape_to_child(&mut self, child_id: usize, shape: Shapes) {
         let mut child = self.get_tree_node_by_id(child_id).unwrap();
         child.shape = shape;
+    }
+
+    pub fn set_provider_to_child(&mut self, child_id: usize, provider: Providers) {
+        let mut child = self.get_tree_node_by_id(child_id).unwrap();
+        child.provider = Some(provider);
     }
 
     pub fn remove_child_from_container(&mut self, child_id: usize, container_id: usize) {
@@ -116,7 +122,7 @@ mod test {
             }
         }
 
-        instance.set_shape_to_child(1, Shapes::R(Rect { x: 20, y: 20, width: 200, height: 200, color: ColorU8::from_rgba(0, 100, 0, 255), style: PaintStyle::Fill }));
+        instance.set_shape_to_child(1, Shapes::R(Rect { x: 20, y: 20, width: 200, height: 200, color: Some(ColorU8::from_rgba(0, 100, 0, 255)), style: None }));
 
         match instance.get_tree_node_by_id(1).unwrap().shape {
             Shapes::R(Rect { x, y, width, height, color, style }) => {
@@ -124,7 +130,7 @@ mod test {
                 assert_eq!(y, 20);
                 assert_eq!(width, 200);
                 assert_eq!(height, 200);
-                assert_eq!(color.green(), 100);
+                assert_eq!(color.unwrap().green(), 100);
             },
             _ => {
                 panic!()

@@ -12,16 +12,26 @@
         This super cool editor is based on <em>vue-live</em> !
       </p>
       <div class="livebox">
-        <div class="hint">You can edit this <span>-></span></div>
-        <VueLive :editorProps="{ lineNumbers: true }" :code="(!loading && !debug) ? code : LoadingCode"
-          :layout="CustomLayout" :components="{
-              VSurface,
-              VRect,
-              VCircle,
-              VRoundRect,
-              VLine,
-              VPoints,
-            }" @error="(e: any) => void 0" />
+        <div class="hint">
+          You can edit <a title="copy code to clipboard" @click="copy">this</a>
+          <span>-></span>
+        </div>
+        <VueLive
+          :editorProps="{ lineNumbers: true }"
+          :code="!loading && !debug ? code : LoadingCode"
+          :layout="CustomLayout"
+          :components="{
+            VSurface,
+            VGroup,
+            VRect,
+            VCircle,
+            VRoundRect,
+            VLine,
+            VPoints,
+          }"
+          @error="(e: any) => void 0"
+          @input="input"
+        />
       </div>
     </template>
     <template v-if="!loading && debug">
@@ -50,7 +60,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, markRaw } from "vue";
-import launch, { VSurface, VRect, VCircle, VRoundRect, VLine, VPoints } from "vue-skia";
+import launch, { VSurface, VGroup, VRect, VCircle, VRoundRect, VLine, VPoints } from "vue-skia";
 import { VueLive } from "vue-live";
 import GithubCorners from "@uivjs/vue-github-corners";
 import CustomLayout from "./CustomLayout.vue";
@@ -65,6 +75,7 @@ export default defineComponent({
     VueLive,
     GithubCorners,
     VSurface,
+    VGroup,
     VRect,
     VCircle,
     VRoundRect,
@@ -77,6 +88,7 @@ export default defineComponent({
       loading: true,
       count: 2,
       VSurface,
+      VGroup,
       VRect,
       VCircle,
       VRoundRect,
@@ -90,12 +102,48 @@ export default defineComponent({
   },
   mounted() {
     launch().then(() => {
+      try {
+        const code = decodeURIComponent(
+          new URLSearchParams(location.search).get("code") || ""
+        );
+
+        if (code) {
+          this.code = code;
+        }
+      } catch (error) {
+        //
+      }
+
       this.loading = false;
     });
   },
+  methods: {
+    input(event: any) {
+      this.code = event.target._value;
+    },
+    copy() {
+      try {
+        const url = new URL(location.href);
+        url.search = new URLSearchParams({
+          code: encodeURIComponent(this.code),
+        }).toString();
+
+        const input = document.createElement("input");
+        input.setAttribute("value", url.toString());
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand("copy");
+        document.body.removeChild(input);
+
+        alert("🥳 code copied");
+      } catch (error) {
+        //
+      }
+    },
+  },
 });
 </script>
-  
+
 <style>
 body {
   background-color: #ded;
@@ -156,6 +204,11 @@ body {
   .hint span {
     transform: rotate(80deg) translate(10px, 10px);
     display: inline-block;
+  }
+
+  .hint a {
+    cursor: pointer;
+    text-decoration: underline;
   }
 
   .separate {
