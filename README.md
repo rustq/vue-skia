@@ -8,7 +8,7 @@ The `vue-skia` is a `skia` based 2d graphics `vue` rendering library. It is base
 基于 `Skia` 的 2D 图形 `Vue` 渲染库 —— 使用 `Rust` 语言实现纯软件光栅化渲染，相比原生画布占用更少的内存，不过目前仍然是一个实验项目；此外使用层面完全基于 `Vue` 语法。
 
 
-[![usage](https://user-images.githubusercontent.com/11075892/260786583-8958a8a2-2dde-4bf3-ad24-4491c1a36b8d.png)](https://vue-skia.netlify.app)
+[![usage](https://user-images.githubusercontent.com/11075892/260788005-a52fd872-24d1-47ba-b3c1-2f56317673b6.png)](https://vue-skia.netlify.app)
 
 Live Demo: [https://vue-skia.netlify.app](https://vue-skia.netlify.app)
 
