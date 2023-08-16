@@ -159,6 +159,19 @@ const VSKNode = (name: string) => {
                       },
                     });
                 }
+                if (name === "Image") {
+                  core.setAttrBySerde(instance._ssw_id, {
+                    attr: {
+                      I: {
+                        image: attrs.image,
+                        x: attrs.x,
+                        y: attrs.y,
+                        width: attrs.width,
+                        height: attrs.height,
+                      },
+                    },
+                  });
+                }
             }
 
             onBeforeUnmount(() => {
