@@ -14,7 +14,7 @@
     "prismjs": "^1.29.0",
     "vue": "^3.2.13",
     "vue-live": "^2.5.4",
-    "vue-skia": "latest"
+    "vue-skia": "workspace:*"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.4.0",
@@ -28,6 +28,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-vue": "^8.0.3",
+    "file-loader": "^6.2.0",
     "prettier": "^2.4.1",
     "typescript": "~4.5.5"
   }

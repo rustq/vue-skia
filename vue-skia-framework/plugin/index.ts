@@ -23,6 +23,7 @@ const WidgetList = [
     'RoundRect',
     'Rect',
     'Circle',
+    'Image'
 ];
 
 const VSKNode = (name: string) => {

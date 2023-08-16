@@ -10,7 +10,7 @@ pub enum Shapes {
     RR(RoundRect),
     L(Line),
     P(Points),
-    I(Image)
+    I(Image),
 }
 
 #[derive(Debug)]
@@ -113,7 +113,7 @@ impl Shapes {
             Shapes::RR(round_rect) => round_rect.draw(pixmap, context),
             Shapes::L(line) => line.draw(pixmap, context),
             Shapes::P(points) => points.draw(pixmap, context),
-            Shapes::I(image) => image.draw(pixmap, context)
+            Shapes::I(image) => image.draw(pixmap, context),
         }
     }
 
@@ -124,7 +124,7 @@ impl Shapes {
             Shapes::RR(round_rect) => round_rect.get_path(context),
             Shapes::L(line) => line.get_path(context),
             Shapes::P(points) => points.get_path(context),
-            Shapes::I(image) => image.get_path(context)
+            Shapes::I(image) => image.get_path(context),
         }
     }
 }
@@ -497,12 +497,20 @@ impl Shape for Image {
     }
 
     fn draw(&self, pixmap: &mut Pixmap, context: &DrawContext) -> () {
-        let p = Pixmap::load_png(std::path::Path::new(&self.image)).unwrap();
-        pixmap.draw_pixmap(self.x, self.y, p.as_ref(), &PixmapPaint::default(), Transform::identity(), None);
-    } 
+        let u8_array = base64::decode(&self.image).expect("base64 decode failed");
+        let p = Pixmap::decode_png(&u8_array).expect("decode png failed");
+        pixmap.draw_pixmap(
+            self.x,
+            self.y,
+            p.as_ref(),
+            &PixmapPaint::default(),
+            Transform::identity(),
+            None,
+        );
+    }
     fn get_path(&self, context: &DrawContext) -> Path {
-       let pb =  PathBuilder::new();
-       pb.finish().unwrap() 
+        let pb = PathBuilder::new();
+        pb.finish().unwrap()
     }
 }
 

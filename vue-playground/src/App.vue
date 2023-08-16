@@ -72,9 +72,11 @@
         >
         </v-rect>
         <v-image
-          :x="10"
-          :y="10"
-          image="/Users/faga/i/skia-demo/raster.png"
+          :x="0"
+          :y="0"
+          :image="logo"
+          :width="200"
+          :height="200"
         ></v-image>
       </v-surface>
     </template>
@@ -94,6 +96,7 @@ import launch, {
   VRoundRect,
   VLine,
   VPoints,
+  VImage,
 } from "vue-skia";
 import { VueLive } from "vue-live";
 import GithubCorners from "@uivjs/vue-github-corners";
@@ -102,6 +105,7 @@ import code from "./code";
 import LoadingCode from "./loading-code";
 import "vue-live/style.css";
 import "prism-themes/themes/prism-night-owl.css";
+const logo = require("./assets/logo.png");
 
 export default defineComponent({
   name: "App",
@@ -115,6 +119,7 @@ export default defineComponent({
     VRoundRect,
     VLine,
     VPoints,
+    VImage,
   },
   data() {
     return {
@@ -130,11 +135,14 @@ export default defineComponent({
       VPoints,
       code,
       LoadingCode,
-      debug: false,
+      debug: true,
       error: undefined,
+      logo: logo,
     };
   },
   mounted() {
+    console.log(logo);
+
     launch().then(() => {
       try {
         const code = decodeURIComponent(
