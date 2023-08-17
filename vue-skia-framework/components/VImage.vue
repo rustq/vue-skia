@@ -30,7 +30,6 @@ export default defineComponent({
     }
   },
   setup(props){
-    console.log(props.image);
     const base64String = props.image.replace("data:image/png;base64,", "")
     return {
       base64String
