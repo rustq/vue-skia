@@ -134,7 +134,7 @@ export default defineComponent({
       VPoints,
       code,
       LoadingCode,
-      debug: true,
+      debug: false,
       error: undefined,
       logo,
     };
