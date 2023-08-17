@@ -75,8 +75,8 @@
           :x="0"
           :y="0"
           :image="logo"
-          :width="200"
-          :height="200"
+          :width="100"
+          :height="100"
         ></v-image>
       </v-surface>
     </template>
@@ -105,8 +105,7 @@ import code from "./code";
 import LoadingCode from "./loading-code";
 import "vue-live/style.css";
 import "prism-themes/themes/prism-night-owl.css";
-const logo = require("./assets/logo.png");
-
+import logo from "./assets/raster.png";
 export default defineComponent({
   name: "App",
   components: {
@@ -137,12 +136,10 @@ export default defineComponent({
       LoadingCode,
       debug: true,
       error: undefined,
-      logo: logo,
+      logo,
     };
   },
   mounted() {
-    console.log(logo);
-
     launch().then(() => {
       try {
         const code = decodeURIComponent(
