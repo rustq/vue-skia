@@ -1,0 +1,9 @@
+{
+  "name": "monorepo",
+  "version": "0.1.0",
+  "private": "true",
+  "scripts": {
+    "serve": "pnpm -C vue-playground serve"
+  },
+  "packageManager": "pnpm@7.32.0"
+}
