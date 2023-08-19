@@ -23,4 +23,4 @@ export default `<v-surface :width="360" :height="360">
     <v-circle :cx="0" :cy="60" :r="70" />
   </v-group>
 </v-surface>
-`
+`;

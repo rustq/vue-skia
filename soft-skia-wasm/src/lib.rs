@@ -7,7 +7,7 @@ use base64;
 use soft_skia::provider::{Providers, Group, Provider, GroupClip};
 use wasm_bindgen::prelude::*;
 use soft_skia::instance::Instance;
-use soft_skia::shape::{Circle, Line, Points, RoundRect, Shapes, PaintStyle, DrawContext};
+use soft_skia::shape::{Circle, Line, Points, RoundRect, Shapes, PaintStyle, DrawContext, Image};
 use soft_skia::shape::Rect;
 use soft_skia::shape::ColorU8;
 use soft_skia::tree::Node;
@@ -88,6 +88,16 @@ pub struct WASMGroupClipAttr {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+pub struct WASMImageAttr {
+    image: String,
+    x: i32,
+    y: i32,
+    width: u32,
+    height: u32,
+}
+
+
+#[derive(Serialize, Deserialize, Debug)]
 pub enum WASMShapesAttr {
     R(WASMRectAttr),
     C(WASMCircleAttr),
@@ -96,6 +106,7 @@ pub enum WASMShapesAttr {
     P(WASMPointsAttr),
     G(WASMGroupAttr),
     GC(WASMGroupClipAttr),
+    I(WASMImageAttr)
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -260,6 +271,15 @@ impl SoftSkiaWASM {
                 match provider {
                     Providers::G(ref mut group) => group.set_clip_id(clip),
                 }
+            }
+            WASMShapesAttr::I(WASMImageAttr {
+                x,
+                y,
+                image,
+                width,
+                height
+            }) => {
+                self.0.set_shape_to_child(id, Shapes::I(Image { image, x, y, width, height }))
             }
         };
     }

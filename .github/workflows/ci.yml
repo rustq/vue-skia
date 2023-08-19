@@ -27,6 +27,9 @@ jobs:
           cargo build
           cargo test
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+
       - name: soft-skia-wasm
         run: |
           cd soft-skia-wasm
@@ -36,11 +39,11 @@ jobs:
       - name: vue-skia-framework
         run: |
           cd vue-skia-framework
-          npm i
-          npm run build
+          pnpm i
+          pnpm build
 
       - name: vue-playground
         run: |
           cd vue-playground
-          npm i
-          npm run build
+          pnpm i
+          pnpm build

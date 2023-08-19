@@ -4,9 +4,9 @@
       <h1>Vue Skia</h1>
       <p class="description">
         The <em>vue-skia</em> is a skia-based 2d graphics vue rendering library.
-        It is based on Rust to implement software rasterization to perform rendering.
-        It takes up less memory than the native canvas, however it is still a experiment project.
-        And it's based entirely on vue syntax.
+        It is based on Rust to implement software rasterization to perform
+        rendering. It takes up less memory than the native canvas, however it is
+        still a experiment project. And it's based entirely on vue syntax.
       </p>
       <p class="description">
         This super cool editor is based on <em>vue-live</em> !
@@ -36,7 +36,8 @@
     </template>
     <template v-if="!loading && debug">
       <v-surface :width="400" :height="400">
-        <v-points :points="[
+        <v-points
+          :points="[
             [128, 0],
             [168, 80],
             [256, 93],
@@ -48,19 +49,55 @@
             [0, 93],
             [88, 80],
             [128, 0],
-          ]" :style="'fill'" :strokeWidth="1" :color="'rgba(200, 255, 0, 1)'">
+          ]"
+          :style="'fill'"
+          :strokeWidth="1"
+          :color="'rgba(200, 255, 0, 1)'"
+        >
         </v-points>
-        <v-circle :cx="200" :cy="260" :r="80" :style="'stroke'" color="#ee22ee" />
-        <v-rect :x="10" :y="220" :width="30" :height="30" color="#00aaff" :style="'fill'">
+        <v-circle
+          :cx="200"
+          :cy="260"
+          :r="80"
+          :style="'stroke'"
+          color="#ee22ee"
+        />
+        <v-rect
+          :x="10"
+          :y="220"
+          :width="30"
+          :height="30"
+          color="#00aaff"
+          :style="'fill'"
+        >
         </v-rect>
+        <v-image
+          :x="0"
+          :y="0"
+          :image="logo"
+          :width="100"
+          :height="100"
+        ></v-image>
       </v-surface>
     </template>
-    <github-corners href="https://github.com/rustq/vue-skia" gitColor="#FFFFFF" />
+    <github-corners
+      href="https://github.com/rustq/vue-skia"
+      gitColor="#FFFFFF"
+    />
   </main>
 </template>
 <script lang="ts">
 import { defineComponent, markRaw } from "vue";
-import launch, { VSurface, VGroup, VRect, VCircle, VRoundRect, VLine, VPoints } from "vue-skia";
+import launch, {
+  VSurface,
+  VGroup,
+  VRect,
+  VCircle,
+  VRoundRect,
+  VLine,
+  VPoints,
+  VImage,
+} from "vue-skia";
 import { VueLive } from "vue-live";
 import GithubCorners from "@uivjs/vue-github-corners";
 import CustomLayout from "./CustomLayout.vue";
@@ -68,7 +105,7 @@ import code from "./code";
 import LoadingCode from "./loading-code";
 import "vue-live/style.css";
 import "prism-themes/themes/prism-night-owl.css";
-
+import logo from "./assets/raster.png";
 export default defineComponent({
   name: "App",
   components: {
@@ -81,6 +118,7 @@ export default defineComponent({
     VRoundRect,
     VLine,
     VPoints,
+    VImage,
   },
   data() {
     return {
@@ -98,6 +136,7 @@ export default defineComponent({
       LoadingCode,
       debug: false,
       error: undefined,
+      logo,
     };
   },
   mounted() {
@@ -229,4 +268,3 @@ body {
   width: 200px;
 }
 </style>
-  

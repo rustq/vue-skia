@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 pub use tiny_skia::{ColorU8, FillRule, Mask, Paint, PathBuilder, Pixmap, Stroke, Transform};
-use tiny_skia::{LineCap, LineJoin, Path};
+use tiny_skia::{LineCap, LineJoin, Path, PixmapPaint};
 
 #[derive(Debug)]
 pub enum Shapes {
@@ -10,6 +10,7 @@ pub enum Shapes {
     RR(RoundRect),
     L(Line),
     P(Points),
+    I(Image),
 }
 
 #[derive(Debug)]
@@ -95,6 +96,15 @@ pub struct Points {
     pub style: Option<PaintStyle>,
 }
 
+#[derive(Debug)]
+pub struct Image {
+    pub image: String,
+    pub x: i32,
+    pub y: i32,
+    pub width: u32,
+    pub height: u32,
+}
+
 impl Shapes {
     pub fn draw(&self, pixmap: &mut Pixmap, context: &DrawContext) -> () {
         match self {
@@ -103,6 +113,7 @@ impl Shapes {
             Shapes::RR(round_rect) => round_rect.draw(pixmap, context),
             Shapes::L(line) => line.draw(pixmap, context),
             Shapes::P(points) => points.draw(pixmap, context),
+            Shapes::I(image) => image.draw(pixmap, context),
         }
     }
 
@@ -113,6 +124,7 @@ impl Shapes {
             Shapes::RR(round_rect) => round_rect.get_path(context),
             Shapes::L(line) => line.get_path(context),
             Shapes::P(points) => points.get_path(context),
+            Shapes::I(image) => image.get_path(context),
         }
     }
 }
@@ -475,6 +487,31 @@ impl Shape for Points {
 
         pb.close();
 
+        pb.finish().unwrap()
+    }
+}
+
+impl Shape for Image {
+    fn default() -> Self {
+        todo!()
+    }
+
+    fn draw(&self, pixmap: &mut Pixmap, context: &DrawContext) -> () {
+        let u8_array = base64::decode(&self.image).expect("base64 decode failed");
+        let p = Pixmap::decode_png(&u8_array).expect("decode png failed");
+        let scale_x = self.width as f32 / p.width() as f32;
+        let scale_y = self.height as f32 / p.height() as f32;
+        pixmap.draw_pixmap(
+            self.x,
+            self.y,
+            p.as_ref(),
+            &PixmapPaint::default(),
+            Transform::from_row(scale_x, 0.0, 0.0, scale_y, 0.0, 0.0),
+            None,
+        );
+    }
+    fn get_path(&self, context: &DrawContext) -> Path {
+        let pb = PathBuilder::new();
         pb.finish().unwrap()
     }
 }

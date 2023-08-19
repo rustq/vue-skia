@@ -14,9 +14,10 @@
     "prismjs": "^1.29.0",
     "vue": "^3.2.13",
     "vue-live": "^2.5.4",
-    "vue-skia": "latest"
+    "vue-skia": "workspace:*"
   },
   "devDependencies": {
+    "@types/node": "^20.5.0",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "@vue/cli-plugin-babel": "~5.0.0",
@@ -29,6 +30,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-vue": "^8.0.3",
     "prettier": "^2.4.1",
-    "typescript": "~4.5.5"
+    "typescript": "~4.5.5",
+    "url-loader": "^4.1.1"
   }
 }

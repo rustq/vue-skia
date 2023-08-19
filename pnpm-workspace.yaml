@@ -1,0 +1,4 @@
+packages:
+  - vue-skia-framework
+  - vue-playground
+  - soft-skia-wasm/pkg

@@ -30,7 +30,7 @@ export default {
 
         const container = ref<HTMLImageElement>(null);
         const instance = getCurrentInstance() as ComponentInternalInstanceWithSoftSkiaWASM;
-        const ssw = global.ssw;
+        const ssw = window.ssw;
         const rootID = SelfIncreaseCount.count;
         const core = new ssw.SoftSkiaWASM(rootID);
         instance.ssw = core; // Save on component instance
