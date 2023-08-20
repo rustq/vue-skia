@@ -15,6 +15,13 @@ export default `<v-surface :width="360" :height="360">
     [98, 90],
     [138, 10],
   ]" :style="'fill'" :strokeWidth="1" :color="'rgba(200, 255, 0, 0.7)'" />
+  <v-image
+    :x="0"
+    :y="0"
+    :image="'https://raw.githubusercontent.com/rustq/vue-skia/main/vue-playground/src/assets/logo.png'"
+    :width="70"
+    :height="70"
+  ></v-image>
   <v-group :x="200" :y="160" color="violet" :style="'stroke'" :invertClip="true">
     <template #clip>
       <v-circle :cx="8" :cy="68" :r="40" />
