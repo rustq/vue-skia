@@ -1,16 +1,17 @@
 {
   "name": "vue-skia",
-  "version": "0.0.4",
+  "version": "0.0.0",
+  "private": "true",
   "files": [
     "lib",
-    "soft-skia-wasm/pkg",
+    "type.d.ts",
     "main.js",
     "main.d.ts",
     "components",
     "LICENSE"
   ],
   "scripts": {
-    "build": "rm -rf lib; tsc;cp main.js main.d.ts"
+    "build": "rm -rf lib; tsc; cp main.js main.d.ts; cp type.ts type.d.ts"
   },
   "license": "MIT",
   "main": "./main.js",
