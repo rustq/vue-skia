@@ -13,6 +13,6 @@
   "main": "./main.js",
   "module": "./main.js",
   "dependencies": {
-    "soft-skia-wasm": "0.4.0"
+    "soft-skia-wasm": "0.6.0"
   }
 }
