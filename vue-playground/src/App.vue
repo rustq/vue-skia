@@ -28,6 +28,7 @@
             VRoundRect,
             VLine,
             VPoints,
+            VImage,
           }"
           @error="(e: any) => void 0"
           @input="input"
@@ -74,9 +75,9 @@
         <v-image
           :x="0"
           :y="0"
-          :image="logo"
-          :width="100"
-          :height="100"
+          :image="'https://raw.githubusercontent.com/rustq/vue-skia/main/vue-playground/src/assets/logo.png'"
+          :width="70"
+          :height="70"
         ></v-image>
       </v-surface>
     </template>
@@ -105,7 +106,6 @@ import code from "./code";
 import LoadingCode from "./loading-code";
 import "vue-live/style.css";
 import "prism-themes/themes/prism-night-owl.css";
-import logo from "./assets/raster.png";
 export default defineComponent({
   name: "App",
   components: {
@@ -132,11 +132,11 @@ export default defineComponent({
       VRoundRect,
       VLine,
       VPoints,
+      VImage,
       code,
       LoadingCode,
       debug: false,
       error: undefined,
-      logo,
     };
   },
   mounted() {
