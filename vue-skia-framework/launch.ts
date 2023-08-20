@@ -10,7 +10,7 @@ const launch = function () {
             const wasm = import("soft-skia-wasm/soft_skia_wasm.js");
             wasm.then((ssw) => {
                 ssw.default().then(() => {
-                    global.ssw = ssw;
+                    window.ssw = ssw;
                     while (SSWInitialHelper.initialSucceedCallbackQueue.length) {
                         SSWInitialHelper.initialSucceedCallbackQueue.pop()();
                     }

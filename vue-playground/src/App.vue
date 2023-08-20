@@ -11,7 +11,7 @@
       <p class="description">
         This super cool editor is based on <em>vue-live</em> !
       </p>
-      <div class="livebox">
+      <div class="livebox" v-if="!debug">
         <div class="hint">
           You can edit <a title="copy code to clipboard" @click="copy">this</a>
           <span>-></span>

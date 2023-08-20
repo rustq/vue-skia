@@ -1,0 +1,18 @@
+{
+  "name": "vue-skia",
+  "version": "0.0.6",
+  "files": [
+    "lib",
+    "type.d.ts",
+    "main.js",
+    "main.d.ts",
+    "components",
+    "LICENSE"
+  ],
+  "license": "MIT",
+  "main": "./main.js",
+  "module": "./main.js",
+  "dependencies": {
+    "soft-skia-wasm": "0.4.0"
+  }
+}
