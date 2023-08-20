@@ -47,3 +47,15 @@ jobs:
           cd vue-playground
           pnpm i
           pnpm build
+      - name: Archive vue-skia-framework artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: vue-skia-framework
+          path: |
+            vue-skia-framework
+            !node_modules
+      - name: Archive vue-playground results
+        uses: actions/upload-artifact@v3
+        with:
+          name: vue-playground
+          path: vue-playground/dist
