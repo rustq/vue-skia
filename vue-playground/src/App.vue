@@ -106,7 +106,6 @@ import code from "./code";
 import LoadingCode from "./loading-code";
 import "vue-live/style.css";
 import "prism-themes/themes/prism-night-owl.css";
-import logo from "./assets/logo.png";
 export default defineComponent({
   name: "App",
   components: {
@@ -138,7 +137,6 @@ export default defineComponent({
       LoadingCode,
       debug: false,
       error: undefined,
-      logo,
     };
   },
   mounted() {
