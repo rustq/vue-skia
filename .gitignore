@@ -25,3 +25,6 @@ package-lock.json
 lib/
 typings/
 .idea
+
+# pnpm
+pnpm-lock.yaml 
