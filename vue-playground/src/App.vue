@@ -29,6 +29,7 @@
             VLine,
             VPoints,
             VImage,
+            VText,
           }"
           @error="(e: any) => void 0"
           @input="input"
@@ -98,6 +99,7 @@ import launch, {
   VLine,
   VPoints,
   VImage,
+  VText,
 } from "vue-skia";
 import { VueLive } from "vue-live";
 import GithubCorners from "@uivjs/vue-github-corners";
@@ -119,6 +121,7 @@ export default defineComponent({
     VLine,
     VPoints,
     VImage,
+    VText
   },
   data() {
     return {
@@ -133,6 +136,7 @@ export default defineComponent({
       VLine,
       VPoints,
       VImage,
+      VText,
       code,
       LoadingCode,
       debug: false,

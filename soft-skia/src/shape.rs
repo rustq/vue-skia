@@ -1,7 +1,9 @@
 use std::collections::HashMap;
 
+use fontdue::{layout::{Layout, LayoutSettings, CoordinateSystem, TextStyle}, Font, Metrics};
 pub use tiny_skia::{ColorU8, FillRule, Mask, Paint, PathBuilder, Pixmap, Stroke, Transform};
 use tiny_skia::{LineCap, LineJoin, Path, PixmapPaint};
+use std::iter::zip;
 
 #[derive(Debug)]
 pub enum Shapes {
@@ -11,6 +13,7 @@ pub enum Shapes {
     L(Line),
     P(Points),
     I(Image),
+    T(Text),
 }
 
 #[derive(Debug)]
@@ -41,7 +44,10 @@ impl DrawContext {
 pub trait Shape {
     fn default() -> Self;
     fn draw(&self, pixmap: &mut Pixmap, context: &DrawContext) -> ();
-    fn get_path(&self, context: &DrawContext) -> Path;
+    fn get_path(&self, context: &DrawContext) -> Path {
+        let pb = PathBuilder::new();
+        pb.finish().unwrap()
+    }
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -105,6 +111,14 @@ pub struct Image {
     pub height: u32,
 }
 
+#[derive(Debug)]
+pub struct Text {
+    pub text: String,
+    pub x: i32,
+    pub y: i32,
+    pub font_size: f32,
+}
+
 impl Shapes {
     pub fn draw(&self, pixmap: &mut Pixmap, context: &DrawContext) -> () {
         match self {
@@ -114,6 +128,7 @@ impl Shapes {
             Shapes::L(line) => line.draw(pixmap, context),
             Shapes::P(points) => points.draw(pixmap, context),
             Shapes::I(image) => image.draw(pixmap, context),
+            Shapes::T(text) => text.draw(pixmap, context),
         }
     }
 
@@ -125,6 +140,7 @@ impl Shapes {
             Shapes::L(line) => line.get_path(context),
             Shapes::P(points) => points.get_path(context),
             Shapes::I(image) => image.get_path(context),
+            Shapes::T(text) => text.get_path(context),
         }
     }
 }
@@ -510,10 +526,79 @@ impl Shape for Image {
             None,
         );
     }
-    fn get_path(&self, context: &DrawContext) -> Path {
-        let pb = PathBuilder::new();
-        pb.finish().unwrap()
+    
+}
+
+impl Shape for Text {
+    fn default() -> Self {
+        todo!()
     }
+
+    fn draw(&self, pixmap: &mut Pixmap, context: &DrawContext) -> () {
+        let font = include_bytes!("../assets/Roboto-Regular.ttf") as &[u8];
+        let roboto_regular = Font::from_bytes(font, fontdue::FontSettings::default()).unwrap();
+        let fonts = &[roboto_regular];
+        let mut layout = Layout::new(CoordinateSystem::PositiveYDown);
+        layout.reset(&LayoutSettings {
+            ..LayoutSettings::default()
+        });
+        layout.append(fonts, &TextStyle::new(&self.text, self.font_size, 0));
+
+        let mut glyphs:Vec<Vec<u8>> = vec![];
+        self.text.chars().for_each(|c| {
+            let (_, bitmap) = fonts[0].rasterize(c, self.font_size);
+            glyphs.push(bitmap);
+        });
+        let dim= compute_dim(&layout);
+
+        let mut bitmap:Vec<u8> = vec![0; dim.0 * dim.1];
+        for (pos, char_bitmap) in zip(layout.glyphs(), &glyphs) {
+            let x = pos.x as i32;
+            let y = pos.y as i32 as i32;
+            let width = pos.width as usize;
+            let height = pos.height as usize;
+            let mut i = 0;
+            for y in y..y+height as i32 {
+                for x in x..x+width as i32 {
+                    let index = ((y * dim.0 as i32 + x))  as usize;
+                    if index < bitmap.len() {
+                        bitmap[index] = char_bitmap[i];
+                    }
+                    i += 1;
+                }
+            }
+        }
+        let mut rgba_bitmap:Vec<u8> = vec![];
+        for i in 0..bitmap.len() {
+            if bitmap[i] == 0 {
+                rgba_bitmap.extend([0,0,0, 0].iter());
+            } else {
+                rgba_bitmap.extend([220, 20, 60, 255].iter());
+            }
+        }
+ 
+        let p = Pixmap::from_vec(rgba_bitmap, tiny_skia::IntSize::from_wh(dim.0 as u32, dim.1 as u32).unwrap()).unwrap();
+        pixmap.draw_pixmap(
+            self.x,
+            self.y,
+            p.as_ref(),
+            &PixmapPaint::default(),
+            Transform::from_row(1.0, 0.0, 0.0, 1.0, 0.0, 0.0),
+            None,
+        );
+
+    }
+}
+
+fn compute_dim(layout: &Layout) -> (usize, usize) {
+    let (mut x1, mut y1, mut x2, mut y2): (i32, i32, i32, i32) = (0, 0, 0, 0);
+    for pos in layout.glyphs() {
+        x1 = x1.min(pos.x as i32);
+        y1 = y1.min(pos.y as i32);
+        x2 = x2.max(pos.x as i32+pos.width as i32);
+        y2 = y2.max(pos.y as i32+pos.height as i32);
+    }
+    return (1+(x2-x1) as usize, (y2-y1) as usize)
 }
 
 #[cfg(test)]
