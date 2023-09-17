@@ -573,7 +573,8 @@ impl Shape for Text {
             if bitmap[i] == 0 {
                 rgba_bitmap.extend([0,0,0, 0].iter());
             } else {
-                rgba_bitmap.extend([220, 20, 60, 255].iter());
+                // black as default, it can be a prop
+                rgba_bitmap.extend([0, 0, 0, 255].iter());
             }
         }
  
