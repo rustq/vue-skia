@@ -1,13 +1,11 @@
 extern crate soft_skia;
 mod utils;
 
-use std::collections::HashMap;
-
 use base64;
-use soft_skia::provider::{Providers, Group, Provider, GroupClip};
+use soft_skia::provider::{Providers, Group, GroupClip};
 use wasm_bindgen::prelude::*;
 use soft_skia::instance::Instance;
-use soft_skia::shape::{Circle, Line, Points, RoundRect, Shapes, PaintStyle, DrawContext, Image};
+use soft_skia::shape::{Circle, Line, Points, RoundRect, Shapes, PaintStyle, Image, Text};
 use soft_skia::shape::Rect;
 use soft_skia::shape::ColorU8;
 use soft_skia::tree::Node;
@@ -96,6 +94,14 @@ pub struct WASMImageAttr {
     height: u32,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct WASMTextAttr {
+    text: String,
+    x: i32,
+    y: i32,
+    font_size: f32,
+}
+
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum WASMShapesAttr {
@@ -106,7 +112,8 @@ pub enum WASMShapesAttr {
     P(WASMPointsAttr),
     G(WASMGroupAttr),
     GC(WASMGroupClipAttr),
-    I(WASMImageAttr)
+    I(WASMImageAttr),
+    T(WASMTextAttr),
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -118,6 +125,7 @@ pub struct WASMShape {
 impl SoftSkiaWASM {
     #[wasm_bindgen(constructor)]
     pub fn new(id: usize) -> Self {
+        utils::set_panic_hook();
         let instance = Instance::new(id);
         SoftSkiaWASM(instance)
     }
@@ -206,7 +214,6 @@ impl SoftSkiaWASM {
     #[wasm_bindgen(js_name = setAttrBySerde)]
     pub fn set_attr_by_serde(&mut self, id: usize, value: JsValue) {
         let message: WASMShape = serde_wasm_bindgen::from_value(value).unwrap();
-
         match message.attr {
             WASMShapesAttr::R(WASMRectAttr{ width, height, x, y , color, style}) => {
                 let color = parse_color(color);
@@ -280,6 +287,14 @@ impl SoftSkiaWASM {
                 height
             }) => {
                 self.0.set_shape_to_child(id, Shapes::I(Image { image, x, y, width, height }))
+            }
+            WASMShapesAttr::T(WASMTextAttr{
+                x,
+                y,
+                text,
+                font_size,
+            }) => {
+                self.0.set_shape_to_child(id, Shapes::T(Text { text, x, y, font_size}))
             }
         };
     }
