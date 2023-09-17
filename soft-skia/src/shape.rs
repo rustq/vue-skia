@@ -570,12 +570,7 @@ impl Shape for Text {
         }
         let mut rgba_bitmap:Vec<u8> = vec![];
         for i in 0..bitmap.len() {
-            if bitmap[i] == 0 {
-                rgba_bitmap.extend([0,0,0, 0].iter());
-            } else {
-                // black as default, it can be a prop
-                rgba_bitmap.extend([0, 0, 0, 255].iter());
-            }
+            rgba_bitmap.extend([0, 0, 0, bitmap[i]].iter());
         }
  
         let p = Pixmap::from_vec(rgba_bitmap, tiny_skia::IntSize::from_wh(dim.0 as u32, dim.1 as u32).unwrap()).unwrap();
