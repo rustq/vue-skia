@@ -117,6 +117,7 @@ pub struct Text {
     pub x: i32,
     pub y: i32,
     pub font_size: f32,
+    pub color: Option<ColorU8>,
 }
 
 impl Shapes {
@@ -570,7 +571,11 @@ impl Shape for Text {
         }
         let mut rgba_bitmap:Vec<u8> = vec![];
         for i in 0..bitmap.len() {
-            rgba_bitmap.extend([0, 0, 0, bitmap[i]].iter());
+            if let Some(color) = self.color {
+                rgba_bitmap.extend([color.red(), color.green(), color.blue(), bitmap[i]].iter());
+            } else {
+                rgba_bitmap.extend([0, 0, 0, bitmap[i]].iter());
+            }
         }
  
         let p = Pixmap::from_vec(rgba_bitmap, tiny_skia::IntSize::from_wh(dim.0 as u32, dim.1 as u32).unwrap()).unwrap();
