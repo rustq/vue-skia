@@ -99,7 +99,8 @@ pub struct WASMTextAttr {
     text: String,
     x: i32,
     y: i32,
-    font_size: f32,
+    font_size: Option<f32>,
+    color: Option<String>
 }
 
 
@@ -293,8 +294,11 @@ impl SoftSkiaWASM {
                 y,
                 text,
                 font_size,
+                color
             }) => {
-                self.0.set_shape_to_child(id, Shapes::T(Text { text, x, y, font_size}))
+                let color = parse_color(color);
+                let font_size = font_size.unwrap_or(16.0);
+                self.0.set_shape_to_child(id, Shapes::T(Text { text, x, y, font_size, color }))
             }
         };
     }

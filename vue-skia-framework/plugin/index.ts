@@ -175,8 +175,6 @@ const VSKNode = (name: string) => {
                   });
                 }
                 if (name === "Text") {
-                  console.log(attrs.text, attrs.fontSize);
-                  
                   core.setAttrBySerde(instance._ssw_id, {
                     attr: {
                       T: {
@@ -184,6 +182,7 @@ const VSKNode = (name: string) => {
                         x: attrs.x,
                         y: attrs.y,
                         font_size: attrs.fontSize,
+                        color: attrs.color,
                       },
                     },
                   });

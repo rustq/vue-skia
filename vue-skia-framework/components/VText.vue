@@ -1,5 +1,5 @@
 <template>
-  <v-sk-text :text="text" :x="x" :y="y" :fontSize="fontSize" />
+  <v-sk-text :text="text" :x="x" :y="y" :fontSize="fontSize" :color="color" />
 </template>
 
 <script lang="ts">
@@ -22,8 +22,12 @@ export default defineComponent({
     },
     fontSize: {
       type: Number as PropType<number>,
-      required: true,
+      required: false
     },
-  },
+    color: {
+      type: String as PropType<string>,
+      required: false
+    }
+  }
 });
 </script>
