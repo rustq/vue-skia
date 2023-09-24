@@ -183,6 +183,8 @@ const VSKNode = (name: string) => {
                         y: attrs.y,
                         font_size: attrs.fontSize,
                         color: attrs.color,
+                        width: attrs.width,
+                        height: attrs.height,
                       },
                     },
                   });
