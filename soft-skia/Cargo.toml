@@ -12,3 +12,9 @@ png = "0.17.5"
 tiny-skia = "0.10.0"
 base64 = "0.21.0"
 fontdue = "0.7.3"
+
+[dependencies.web-sys]
+version = "0.3"
+features = [
+  "console",
+]
