@@ -28,7 +28,7 @@ export default `<v-surface :width="360" :height="360">
     </template>
     <v-circle :cx="0" :cy="60" :r="50" :style="'fill'" />
     <v-circle :cx="0" :cy="60" :r="70" />
-    <v-text :x="70" :y="0" :fontSize="16" color="red" text="Hello World!" :width="50"></v-text>
+    <v-text :x="70" :y="0" :fontSize="16" color="red" text="Hello World!" :maxWidth="50"></v-text>
   </v-group>
 </v-surface>
 `;

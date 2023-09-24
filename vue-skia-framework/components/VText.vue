@@ -1,5 +1,5 @@
 <template>
-  <v-sk-text :text="text" :x="x" :y="y" :fontSize="fontSize" :color="color" :width="width" :height="height"/>
+  <v-sk-text :text="text" :x="x" :y="y" :fontSize="fontSize" :color="color" :maxWidth="maxWidth"/>
 </template>
 
 <script lang="ts">
@@ -28,14 +28,10 @@ export default defineComponent({
       type: String as PropType<string>,
       required: false
     },
-    width: {
+    maxWidth: {
       type: Number as PropType<number>,
       required: false
-    },
-    height: {
-      type: Number as PropType<number>,
-      required: false
-    },
+    }
   }
 });
 </script>

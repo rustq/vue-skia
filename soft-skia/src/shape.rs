@@ -120,8 +120,7 @@ pub struct Text {
     pub y: i32,
     pub font_size: f32,
     pub color: Option<ColorU8>,
-    pub width: Option<f32>,
-    pub height: Option<f32>,
+    pub max_width: Option<f32>,
 }
 
 impl Shapes {
@@ -545,8 +544,7 @@ impl Shape for Text {
         let fonts = &[roboto_regular];
         let mut layout = Layout::new(CoordinateSystem::PositiveYDown);
         layout.reset(&LayoutSettings {
-            max_width: self.width,
-            max_height: self.height,
+            max_width: self.max_width,
             ..LayoutSettings::default()
         });
         layout.append(fonts, &TextStyle::new(&self.text, self.font_size, 0));
