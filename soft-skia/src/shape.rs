@@ -5,6 +5,8 @@ pub use tiny_skia::{ColorU8, FillRule, Mask, Paint, PathBuilder, Pixmap, Stroke,
 use tiny_skia::{LineCap, LineJoin, Path, PixmapPaint};
 use std::iter::zip;
 
+use crate::log;
+
 #[derive(Debug)]
 pub enum Shapes {
     R(Rect),
@@ -575,6 +577,10 @@ impl Shape for Text {
         }
         let mut rgba_bitmap:Vec<u8> = vec![];
         for i in 0..bitmap.len() {
+            if bitmap[i] == 0 {
+                rgba_bitmap.extend([0, 0, 0, 0].iter());
+                continue;
+            }
             if let Some(color) = self.color {
                 rgba_bitmap.extend([color.red(), color.green(), color.blue(), bitmap[i]].iter());
             } else {
