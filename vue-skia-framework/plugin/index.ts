@@ -183,6 +183,7 @@ const VSKNode = (name: string) => {
                         y: attrs.y,
                         font_size: attrs.fontSize,
                         color: attrs.color,
+                        max_width: attrs.maxWidth,
                       },
                     },
                   });

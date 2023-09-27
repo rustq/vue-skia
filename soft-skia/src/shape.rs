@@ -5,6 +5,8 @@ pub use tiny_skia::{ColorU8, FillRule, Mask, Paint, PathBuilder, Pixmap, Stroke,
 use tiny_skia::{LineCap, LineJoin, Path, PixmapPaint};
 use std::iter::zip;
 
+use crate::log;
+
 #[derive(Debug)]
 pub enum Shapes {
     R(Rect),
@@ -118,6 +120,7 @@ pub struct Text {
     pub y: i32,
     pub font_size: f32,
     pub color: Option<ColorU8>,
+    pub max_width: Option<f32>,
 }
 
 impl Shapes {
@@ -541,6 +544,7 @@ impl Shape for Text {
         let fonts = &[roboto_regular];
         let mut layout = Layout::new(CoordinateSystem::PositiveYDown);
         layout.reset(&LayoutSettings {
+            max_width: self.max_width,
             ..LayoutSettings::default()
         });
         layout.append(fonts, &TextStyle::new(&self.text, self.font_size, 0));
@@ -571,6 +575,10 @@ impl Shape for Text {
         }
         let mut rgba_bitmap:Vec<u8> = vec![];
         for i in 0..bitmap.len() {
+            if bitmap[i] == 0 {
+                rgba_bitmap.extend([0, 0, 0, 0].iter());
+                continue;
+            }
             if let Some(color) = self.color {
                 rgba_bitmap.extend([color.red(), color.green(), color.blue(), bitmap[i]].iter());
             } else {
@@ -587,7 +595,6 @@ impl Shape for Text {
             Transform::from_row(1.0, 0.0, 0.0, 1.0, 0.0, 0.0),
             None,
         );
-
     }
 }
 
