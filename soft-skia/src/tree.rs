@@ -1,8 +1,8 @@
 use crate::provider::Providers;
 use crate::shape::Circle;
+use crate::shape::DrawContext;
 use crate::shape::Rect;
 use crate::shape::Shape;
-use crate::shape::DrawContext;
 use crate::shape::Shapes;
 use std::slice::Iter;
 use std::slice::IterMut;

@@ -9,13 +9,11 @@ const launch = function () {
             SSWInitialHelper.initialStatus = 1;
             const wasm = import("soft-skia-wasm/soft_skia_wasm.js");
             wasm.then((ssw) => {
-                ssw.default().then(() => {
                     window.ssw = ssw;
                     while (SSWInitialHelper.initialSucceedCallbackQueue.length) {
                         SSWInitialHelper.initialSucceedCallbackQueue.pop()();
                     }
                     resolve(void 0)
-                })
             })
         } else if (SSWInitialHelper.initialStatus === 1) {
             SSWInitialHelper.initialSucceedCallbackQueue.push(() => resolve(void 0));

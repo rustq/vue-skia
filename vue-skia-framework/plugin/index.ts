@@ -23,7 +23,8 @@ const WidgetList = [
     'RoundRect',
     'Rect',
     'Circle',
-    'Image'
+    'Image',
+    'Text' 
 ];
 
 const VSKNode = (name: string) => {
@@ -169,6 +170,20 @@ const VSKNode = (name: string) => {
                         y: attrs.y,
                         width: attrs.width,
                         height: attrs.height,
+                      },
+                    },
+                  });
+                }
+                if (name === "Text") {
+                  core.setAttrBySerde(instance._ssw_id, {
+                    attr: {
+                      T: {
+                        text: attrs.text,
+                        x: attrs.x,
+                        y: attrs.y,
+                        font_size: attrs.fontSize,
+                        color: attrs.color,
+                        max_width: attrs.maxWidth,
                       },
                     },
                   });

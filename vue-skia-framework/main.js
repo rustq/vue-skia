@@ -8,7 +8,8 @@ import VRoundRect from "./components/VRoundRect.vue";
 import VLine from "./components/VLine.vue";
 import VPoints from "./components/VPoints.vue";
 import VImage from './components/VImage.vue';
+import VText from './components/VText.vue';
 
 export default launch;
 export { plugin as VueSkia }
-export { VSurface, VGroup, VRect, VCircle, VRoundRect, VLine, VPoints, VImage }
+export { VSurface, VGroup, VRect, VCircle, VRoundRect, VLine, VPoints, VImage, VText }
