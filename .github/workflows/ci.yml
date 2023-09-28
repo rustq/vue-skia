@@ -28,21 +28,22 @@ jobs:
 
       - name: soft-skia-wasm
         run: |
-          cd soft-skia-wasm
           cargo install wasm-pack
-          wasm-pack build --release --target web
+          pnpm run build:wasm
 
       - name: vue-skia-framework
         run: |
           cd vue-skia-framework
           pnpm i
-          pnpm build
+          cd ..
+          pnpm run build:vue
 
       - name: vue-playground
         run: |
           cd vue-playground
           pnpm i
-          pnpm build
+          cd ..
+          pnpm --filter vue-playground build
 
       - name: Archive vue-skia-framework artifacts
         uses: actions/upload-artifact@v3
