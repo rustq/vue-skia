@@ -211,6 +211,11 @@ impl SoftSkiaWASM {
 
             Self::recursive_rasterization_node_to_pixmap(item, pixmap);
         }
+        if let Some(context) = context {
+            if let Some(mask) = &context.mask {
+                pixmap.apply_mask(mask)
+            }
+        } 
     }
 
     #[wasm_bindgen(js_name = setAttrBySerde)]

@@ -166,7 +166,6 @@ impl Shape for Rect {
             color,
             style,
             stroke_width,
-            mask,
             ..
         } = context;
 
@@ -177,7 +176,6 @@ impl Shape for Rect {
             .color
             .unwrap_or(color.unwrap_or(ColorU8::from_rgba(0, 0, 0, 255)));
         let style = self.style.unwrap_or(style.unwrap_or(PaintStyle::Fill));
-        let mask = mask.as_ref();
 
         paint.set_color_rgba8(color.red(), color.green(), color.blue(), color.alpha());
 
@@ -189,7 +187,7 @@ impl Shape for Rect {
                     stroke.width = w as f32
                 }
 
-                pixmap.stroke_path(&path, &paint, &stroke, Transform::identity(), mask);
+                pixmap.stroke_path(&path, &paint, &stroke, Transform::identity(), None);
             }
             PaintStyle::Fill => {
                 paint.anti_alias = true;
@@ -198,7 +196,7 @@ impl Shape for Rect {
                     &paint,
                     FillRule::Winding,
                     Transform::identity(),
-                    mask,
+                    None,
                 );
             }
             _ => {}
@@ -236,7 +234,6 @@ impl Shape for Circle {
             color,
             style,
             stroke_width,
-            mask,
             ..
         } = context;
 
@@ -247,7 +244,6 @@ impl Shape for Circle {
             .color
             .unwrap_or(color.unwrap_or(ColorU8::from_rgba(0, 0, 0, 255)));
         let style = self.style.unwrap_or(style.unwrap_or(PaintStyle::Fill));
-        let mask = mask.as_ref();
 
         paint.set_color_rgba8(color.red(), color.green(), color.blue(), color.alpha());
         paint.anti_alias = true;
@@ -260,7 +256,7 @@ impl Shape for Circle {
                     stroke.width = w as f32
                 }
 
-                pixmap.stroke_path(&path, &paint, &stroke, Transform::identity(), mask);
+                pixmap.stroke_path(&path, &paint, &stroke, Transform::identity(), None);
             }
             PaintStyle::Fill => {
                 paint.anti_alias = true;
@@ -269,7 +265,7 @@ impl Shape for Circle {
                     &paint,
                     FillRule::Winding,
                     Transform::identity(),
-                    mask,
+                    None,
                 );
             }
             _ => {}
@@ -303,7 +299,6 @@ impl Shape for RoundRect {
             color,
             style,
             stroke_width,
-            mask,
             ..
         } = context;
 
@@ -314,7 +309,6 @@ impl Shape for RoundRect {
             .color
             .unwrap_or(color.unwrap_or(ColorU8::from_rgba(0, 0, 0, 255)));
         let style = self.style.unwrap_or(style.unwrap_or(PaintStyle::Fill));
-        let mask = mask.as_ref();
 
         paint.set_color_rgba8(color.red(), color.green(), color.blue(), color.alpha());
         paint.anti_alias = true;
@@ -327,7 +321,7 @@ impl Shape for RoundRect {
                     stroke.width = w as f32
                 }
 
-                pixmap.stroke_path(&path, &paint, &stroke, Transform::identity(), mask);
+                pixmap.stroke_path(&path, &paint, &stroke, Transform::identity(), None);
             }
             PaintStyle::Fill => {
                 paint.anti_alias = true;
@@ -336,7 +330,7 @@ impl Shape for RoundRect {
                     &paint,
                     FillRule::Winding,
                     Transform::identity(),
-                    mask,
+                    None
                 );
             }
             _ => {}
@@ -392,7 +386,6 @@ impl Shape for Line {
         let DrawContext {
             color,
             stroke_width,
-            mask,
             ..
         } = context;
 
@@ -403,7 +396,6 @@ impl Shape for Line {
             .color
             .unwrap_or(color.unwrap_or(ColorU8::from_rgba(0, 0, 0, 255)));
         let stroke_width = self.stroke_width.unwrap_or(stroke_width.unwrap_or(1));
-        let mask = mask.as_ref();
 
         let stroke = Stroke {
             width: stroke_width as f32,
@@ -414,7 +406,7 @@ impl Shape for Line {
         };
 
         paint.set_color_rgba8(color.red(), color.green(), color.blue(), color.alpha());
-        pixmap.stroke_path(&path, &paint, &stroke, Transform::identity(), mask);
+        pixmap.stroke_path(&path, &paint, &stroke, Transform::identity(), None);
     }
 
     fn get_path(
@@ -445,7 +437,6 @@ impl Shape for Points {
             color,
             style,
             stroke_width,
-            mask,
             ..
         } = context;
 
@@ -457,7 +448,6 @@ impl Shape for Points {
             .unwrap_or(color.unwrap_or(ColorU8::from_rgba(0, 0, 0, 255)));
         let style = self.style.unwrap_or(style.unwrap_or(PaintStyle::Fill));
         let stroke_width = self.stroke_width.unwrap_or(stroke_width.unwrap_or(1));
-        let mask = mask.as_ref();
 
         paint.set_color_rgba8(color.red(), color.green(), color.blue(), color.alpha());
 
@@ -470,7 +460,7 @@ impl Shape for Points {
                     line_join: LineJoin::Miter,
                     dash: None,
                 };
-                pixmap.stroke_path(&path, &paint, &stroke, Transform::identity(), mask);
+                pixmap.stroke_path(&path, &paint, &stroke, Transform::identity(), None);
             }
             PaintStyle::Fill => {
                 paint.anti_alias = true;
@@ -479,7 +469,7 @@ impl Shape for Points {
                     &paint,
                     FillRule::Winding,
                     Transform::identity(),
-                    mask,
+                    None,
                 );
             }
             _ => {}
@@ -517,6 +507,9 @@ impl Shape for Image {
     }
 
     fn draw(&self, pixmap: &mut Pixmap, context: &DrawContext) -> () {
+        let DrawContext {
+            ..
+        } = context;
         let u8_array = base64::decode(&self.image).expect("base64 decode failed");
         let p = Pixmap::decode_png(&u8_array).expect("decode png failed");
         let scale_x = self.width as f32 / p.width() as f32;
