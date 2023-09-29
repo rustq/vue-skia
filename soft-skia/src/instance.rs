@@ -1,23 +1,23 @@
 use std::collections::HashMap;
 
 use crate::provider::Providers;
-use crate::tree::Tree;
-use crate::tree::Node;
-use crate::shape::Shapes;
-use crate::shape::Shape;
 use crate::shape::Rect;
+use crate::shape::Shape;
+use crate::shape::Shapes;
+use crate::tree::Node;
+use crate::tree::Tree;
 
 #[derive(Debug)]
 pub struct Instance {
     pub tree: Tree,
-    pub node_ptr_map: HashMap<usize, *mut Node>
+    pub node_ptr_map: HashMap<usize, *mut Node>,
 }
 
 impl Instance {
     pub fn new(id: usize) -> Self {
         Instance {
             tree: Tree::default(id),
-            node_ptr_map: HashMap::new()
+            node_ptr_map: HashMap::new(),
         }
     }
 
@@ -29,7 +29,12 @@ impl Instance {
         self.node_ptr_map.insert(child_id, raw_child);
     }
 
-    pub fn create_child_insert_before_element_of_container(&mut self, child_id: usize, insert_before_id: usize, container_id: usize) {
+    pub fn create_child_insert_before_element_of_container(
+        &mut self,
+        child_id: usize,
+        insert_before_id: usize,
+        container_id: usize,
+    ) {
         let mut child = Box::new(Node::default(child_id, Shapes::R(Rect::default())));
         let container = self.get_tree_node_by_id(container_id).unwrap();
         let raw_child: *mut _ = &mut *child;
@@ -61,12 +66,8 @@ impl Instance {
         } else {
             let raw_node = self.node_ptr_map.get(&id);
             match raw_node {
-                Some(row_node) => {
-                    unsafe {
-                        Some(&mut **row_node)
-                    }
-                },
-                _ => None
+                Some(row_node) => unsafe { Some(&mut **row_node) },
+                _ => None,
             }
         }
     }
@@ -74,11 +75,11 @@ impl Instance {
 
 #[cfg(test)]
 mod test {
+    use super::Instance;
+    use crate::shape::PaintStyle;
     use crate::shape::Rect;
     use crate::shape::Shapes;
-    use crate::shape::PaintStyle;
-    use super::Instance;
-    use tiny_skia::{ColorU8};
+    use tiny_skia::ColorU8;
 
     #[test]
     fn test_get_tree_node_by_id() {
@@ -95,43 +96,79 @@ mod test {
     #[test]
     fn test_append() {
         let mut instance = Instance::new(0);
-        assert_eq!(instance.get_tree_node_by_id(0).unwrap().get_children_len(), 0);
+        assert_eq!(
+            instance.get_tree_node_by_id(0).unwrap().get_children_len(),
+            0
+        );
 
         instance.create_child_append_to_container(1, 0);
         instance.create_child_append_to_container(2, 0);
         instance.create_child_append_to_container(3, 0);
 
-        assert_eq!(instance.get_tree_node_by_id(0).unwrap().get_children_len(), 3);
+        assert_eq!(
+            instance.get_tree_node_by_id(0).unwrap().get_children_len(),
+            3
+        );
     }
 
     #[test]
     fn test_set_shape() {
         let mut instance = Instance::new(0);
-        assert_eq!(instance.get_tree_node_by_id(0).unwrap().get_children_len(), 0);
+        assert_eq!(
+            instance.get_tree_node_by_id(0).unwrap().get_children_len(),
+            0
+        );
 
         instance.create_child_append_to_container(1, 0);
-        assert_eq!(instance.get_tree_node_by_id(0).unwrap().get_children_len(), 1);
+        assert_eq!(
+            instance.get_tree_node_by_id(0).unwrap().get_children_len(),
+            1
+        );
 
         match instance.get_tree_node_by_id(1).unwrap().shape {
-            Shapes::R(Rect { x, y, width, height, color, style }) => {
+            Shapes::R(Rect {
+                x,
+                y,
+                width,
+                height,
+                color,
+                style,
+            }) => {
                 assert_eq!(x, 0);
                 assert_eq!(y, 0);
-            },
+            }
             _ => {
                 panic!()
             }
         }
 
-        instance.set_shape_to_child(1, Shapes::R(Rect { x: 20, y: 20, width: 200, height: 200, color: Some(ColorU8::from_rgba(0, 100, 0, 255)), style: None }));
+        instance.set_shape_to_child(
+            1,
+            Shapes::R(Rect {
+                x: 20,
+                y: 20,
+                width: 200,
+                height: 200,
+                color: Some(ColorU8::from_rgba(0, 100, 0, 255)),
+                style: None,
+            }),
+        );
 
         match instance.get_tree_node_by_id(1).unwrap().shape {
-            Shapes::R(Rect { x, y, width, height, color, style }) => {
+            Shapes::R(Rect {
+                x,
+                y,
+                width,
+                height,
+                color,
+                style,
+            }) => {
                 assert_eq!(x, 20);
                 assert_eq!(y, 20);
                 assert_eq!(width, 200);
                 assert_eq!(height, 200);
                 assert_eq!(color.unwrap().green(), 100);
-            },
+            }
             _ => {
                 panic!()
             }
@@ -145,16 +182,28 @@ mod test {
         instance.create_child_append_to_container(2, 0);
         instance.create_child_append_to_container(3, 0);
 
-        assert_eq!(instance.get_tree_node_by_id(0).unwrap().get_children_len(), 3);
+        assert_eq!(
+            instance.get_tree_node_by_id(0).unwrap().get_children_len(),
+            3
+        );
 
         instance.remove_child_from_container(2, 0);
-        assert_eq!(instance.get_tree_node_by_id(0).unwrap().get_children_len(), 2);
+        assert_eq!(
+            instance.get_tree_node_by_id(0).unwrap().get_children_len(),
+            2
+        );
 
         instance.remove_child_from_container(3, 0);
-        assert_eq!(instance.get_tree_node_by_id(0).unwrap().get_children_len(), 1);
+        assert_eq!(
+            instance.get_tree_node_by_id(0).unwrap().get_children_len(),
+            1
+        );
 
         instance.remove_child_from_container(1, 0);
-        assert_eq!(instance.get_tree_node_by_id(0).unwrap().get_children_len(), 0);
+        assert_eq!(
+            instance.get_tree_node_by_id(0).unwrap().get_children_len(),
+            0
+        );
 
         instance.remove_child_from_container(1, 0);
         instance.remove_child_from_container(1, 0);
@@ -162,6 +211,9 @@ mod test {
         instance.remove_child_from_container(100, 0);
         instance.remove_child_from_container(100, 0);
         instance.remove_child_from_container(100, 0);
-        assert_eq!(instance.get_tree_node_by_id(0).unwrap().get_children_len(), 0);
+        assert_eq!(
+            instance.get_tree_node_by_id(0).unwrap().get_children_len(),
+            0
+        );
     }
 }

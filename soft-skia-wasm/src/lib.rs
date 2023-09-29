@@ -2,14 +2,14 @@ extern crate soft_skia;
 mod utils;
 
 use base64;
-use soft_skia::provider::{Providers, Group, GroupClip};
-use wasm_bindgen::prelude::*;
 use soft_skia::instance::Instance;
-use soft_skia::shape::{Circle, Line, Points, RoundRect, Shapes, PaintStyle, Image, Text};
-use soft_skia::shape::Rect;
+use soft_skia::provider::{Group, GroupClip, Providers};
 use soft_skia::shape::ColorU8;
-use soft_skia::tree::Node;
 use soft_skia::shape::Pixmap;
+use soft_skia::shape::Rect;
+use soft_skia::shape::{Circle, Image, Line, PaintStyle, Points, RoundRect, Shapes, Text};
+use soft_skia::tree::Node;
+use wasm_bindgen::prelude::*;
 
 use cssparser::{Color as CSSColor, Parser, ParserInput};
 
@@ -22,7 +22,7 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 #[wasm_bindgen]
 pub struct SoftSkiaWASM(Instance);
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct WASMRectAttr {
@@ -59,7 +59,7 @@ pub struct WASMLineAttr {
     p1: [u32; 2],
     p2: [u32; 2],
     color: Option<String>,
-    stroke_width: Option<u32>
+    stroke_width: Option<u32>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -120,7 +120,7 @@ pub enum WASMShapesAttr {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct WASMShape {
-    pub attr: WASMShapesAttr
+    pub attr: WASMShapesAttr,
 }
 
 #[wasm_bindgen]
@@ -134,12 +134,22 @@ impl SoftSkiaWASM {
 
     #[wasm_bindgen(js_name = createChildAppendToContainer)]
     pub fn create_child_append_to_container(&mut self, child_id: usize, container_id: usize) {
-        self.0.create_child_append_to_container(child_id, container_id)
+        self.0
+            .create_child_append_to_container(child_id, container_id)
     }
 
     #[wasm_bindgen(js_name = createChildInsertBeforeElementOfContainer)]
-    pub fn create_child_insert_before_element_of_container(&mut self, child_id: usize, insert_before_id: usize, container_id: usize) {
-        self.0.create_child_insert_before_element_of_container(child_id, insert_before_id, container_id);
+    pub fn create_child_insert_before_element_of_container(
+        &mut self,
+        child_id: usize,
+        insert_before_id: usize,
+        container_id: usize,
+    ) {
+        self.0.create_child_insert_before_element_of_container(
+            child_id,
+            insert_before_id,
+            container_id,
+        );
     }
 
     #[wasm_bindgen(js_name = removeChildFromContainer)]
@@ -157,12 +167,15 @@ impl SoftSkiaWASM {
     pub fn to_base64(&mut self) -> String {
         let root = self.0.tree.get_root();
         let mut pixmap = match root.shape {
-            Shapes::R( Rect { x, y, width, height, color, style }) => {
-                Pixmap::new(width, height).unwrap()
-            },
-            _ => {
-                Pixmap::new(0, 0).unwrap()
-            }
+            Shapes::R(Rect {
+                x,
+                y,
+                width,
+                height,
+                color,
+                style,
+            }) => Pixmap::new(width, height).unwrap(),
+            _ => Pixmap::new(0, 0).unwrap(),
         };
 
         Self::recursive_rasterization_node_to_pixmap(root, &mut pixmap);
@@ -194,11 +207,10 @@ impl SoftSkiaWASM {
                     Providers::G(group) => {
                         if let Some(clip) = &group.clip {
                             if let Some(clip_id) = clip.id {
-                                if let Some(clip_path) = item
-                                    .children
-                                    .iter_mut()
-                                    .find(|n| n.id == clip_id)
-                                    .and_then(|n| Some(n.shape.get_path(group.context.as_ref().unwrap())))
+                                if let Some(clip_path) =
+                                    item.children.iter_mut().find(|n| n.id == clip_id).and_then(
+                                        |n| Some(n.shape.get_path(group.context.as_ref().unwrap())),
+                                    )
                                 {
                                     group.set_context_mask(pixmap, &clip_path);
                                 }
@@ -206,7 +218,6 @@ impl SoftSkiaWASM {
                         }
                     }
                 }
-
             }
 
             Self::recursive_rasterization_node_to_pixmap(item, pixmap);
@@ -222,31 +233,108 @@ impl SoftSkiaWASM {
     pub fn set_attr_by_serde(&mut self, id: usize, value: JsValue) {
         let message: WASMShape = serde_wasm_bindgen::from_value(value).unwrap();
         match message.attr {
-            WASMShapesAttr::R(WASMRectAttr{ width, height, x, y , color, style}) => {
+            WASMShapesAttr::R(WASMRectAttr {
+                width,
+                height,
+                x,
+                y,
+                color,
+                style,
+            }) => {
                 let color = parse_color(color);
                 let style = parse_style(style);
-                self.0.set_shape_to_child(id, Shapes::R(Rect { x, y, width, height, color, style }))
-            },
-            WASMShapesAttr::C(WASMCircleAttr{ cx, cy, r, color, style }) => {
+                self.0.set_shape_to_child(
+                    id,
+                    Shapes::R(Rect {
+                        x,
+                        y,
+                        width,
+                        height,
+                        color,
+                        style,
+                    }),
+                )
+            }
+            WASMShapesAttr::C(WASMCircleAttr {
+                cx,
+                cy,
+                r,
+                color,
+                style,
+            }) => {
                 let color = parse_color(color);
                 let style = parse_style(style);
-                self.0.set_shape_to_child(id, Shapes::C(Circle { cx, cy, r, color, style }))
-            },
-            WASMShapesAttr::RR(WASMRoundRectAttr{ width, height, r, x, y , color, style}) => {
+                self.0.set_shape_to_child(
+                    id,
+                    Shapes::C(Circle {
+                        cx,
+                        cy,
+                        r,
+                        color,
+                        style,
+                    }),
+                )
+            }
+            WASMShapesAttr::RR(WASMRoundRectAttr {
+                width,
+                height,
+                r,
+                x,
+                y,
+                color,
+                style,
+            }) => {
                 let color = parse_color(color);
                 let style = parse_style(style);
 
-                self.0.set_shape_to_child(id, Shapes::RR(RoundRect { x, y, r, width, height, color, style }))
-            },
-            WASMShapesAttr::L(WASMLineAttr{ p1, p2, stroke_width, color}) => {
+                self.0.set_shape_to_child(
+                    id,
+                    Shapes::RR(RoundRect {
+                        x,
+                        y,
+                        r,
+                        width,
+                        height,
+                        color,
+                        style,
+                    }),
+                )
+            }
+            WASMShapesAttr::L(WASMLineAttr {
+                p1,
+                p2,
+                stroke_width,
+                color,
+            }) => {
                 let color = parse_color(color);
-                self.0.set_shape_to_child(id, Shapes::L(Line { p1, p2, stroke_width, color }))
-            },
-            WASMShapesAttr::P(WASMPointsAttr{ points , color, stroke_width, style }) => {
+                self.0.set_shape_to_child(
+                    id,
+                    Shapes::L(Line {
+                        p1,
+                        p2,
+                        stroke_width,
+                        color,
+                    }),
+                )
+            }
+            WASMShapesAttr::P(WASMPointsAttr {
+                points,
+                color,
+                stroke_width,
+                style,
+            }) => {
                 let color = parse_color(color);
                 let style = parse_style(style);
-                self.0.set_shape_to_child(id, Shapes::P(Points { points, stroke_width, color, style }))
-            },
+                self.0.set_shape_to_child(
+                    id,
+                    Shapes::P(Points {
+                        points,
+                        stroke_width,
+                        color,
+                        style,
+                    }),
+                )
+            }
             WASMShapesAttr::G(WASMGroupAttr {
                 x,
                 y,
@@ -282,7 +370,7 @@ impl SoftSkiaWASM {
                         context: None,
                     }),
                 )
-            },
+            }
             WASMShapesAttr::GC(WASMGroupClipAttr { clip }) => {
                 let provider = self
                     .0
@@ -301,9 +389,38 @@ impl SoftSkiaWASM {
                 y,
                 image,
                 width,
-                height
+                height,
+            }) => self.0.set_shape_to_child(
+                id,
+                Shapes::I(Image {
+                    image,
+                    x,
+                    y,
+                    width,
+                    height,
+                }),
+            ),
+            WASMShapesAttr::T(WASMTextAttr {
+                x,
+                y,
+                text,
+                font_size,
+                color,
+                max_width,
             }) => {
-                self.0.set_shape_to_child(id, Shapes::I(Image { image, x, y, width, height }))
+                let color = parse_color(color);
+                let font_size = font_size.unwrap_or(16.0);
+                self.0.set_shape_to_child(
+                    id,
+                    Shapes::T(Text {
+                        text,
+                        x,
+                        y,
+                        font_size,
+                        color,
+                        max_width,
+                    }),
+                )
             }
             WASMShapesAttr::T(WASMTextAttr{
                 x,

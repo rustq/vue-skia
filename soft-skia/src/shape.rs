@@ -1,9 +1,15 @@
 use std::collections::HashMap;
 
-use fontdue::{layout::{Layout, LayoutSettings, CoordinateSystem, TextStyle}, Font, Metrics};
+use fontdue::{
+    layout::{CoordinateSystem, Layout, LayoutSettings, TextStyle},
+    Font, Metrics,
+};
+use std::iter::zip;
 pub use tiny_skia::{ColorU8, FillRule, Mask, Paint, PathBuilder, Pixmap, Stroke, Transform};
 use tiny_skia::{LineCap, LineJoin, Path, PixmapPaint};
 use std::iter::zip;
+
+use crate::log;
 
 use crate::log;
 
@@ -520,7 +526,6 @@ impl Shape for Image {
             None,
         );
     }
-    
 }
 
 impl Shape for Text {
@@ -553,9 +558,9 @@ impl Shape for Text {
             let width = pos.width as usize;
             let height = pos.height as usize;
             let mut i = 0;
-            for y in y..y+height as i32 {
-                for x in x..x+width as i32 {
-                    let index = ((y * dim.0 as i32 + x))  as usize;
+            for y in y..y + height as i32 {
+                for x in x..x + width as i32 {
+                    let index = (y * dim.0 as i32 + x) as usize;
                     if index < bitmap.len() {
                         bitmap[index] = char_bitmap[i];
                     }
@@ -563,7 +568,7 @@ impl Shape for Text {
                 }
             }
         }
-        let mut rgba_bitmap:Vec<u8> = vec![];
+        let mut rgba_bitmap: Vec<u8> = vec![];
         for i in 0..bitmap.len() {
             if bitmap[i] == 0 {
                 rgba_bitmap.extend([0, 0, 0, 0].iter());
@@ -575,8 +580,11 @@ impl Shape for Text {
                 rgba_bitmap.extend([0, 0, 0, bitmap[i]].iter());
             }
         }
- 
-        let p = Pixmap::from_vec(rgba_bitmap, tiny_skia::IntSize::from_wh(dim.0 as u32, dim.1 as u32).unwrap()).unwrap();
+        let p = Pixmap::from_vec(
+            rgba_bitmap,
+            tiny_skia::IntSize::from_wh(dim.0 as u32, dim.1 as u32).unwrap(),
+        )
+        .unwrap();
         pixmap.draw_pixmap(
             self.x,
             self.y,
@@ -593,10 +601,10 @@ fn compute_dim(layout: &Layout) -> (usize, usize) {
     for pos in layout.glyphs() {
         x1 = x1.min(pos.x as i32);
         y1 = y1.min(pos.y as i32);
-        x2 = x2.max(pos.x as i32+pos.width as i32);
-        y2 = y2.max(pos.y as i32+pos.height as i32);
+        x2 = x2.max(pos.x as i32 + pos.width as i32);
+        y2 = y2.max(pos.y as i32 + pos.height as i32);
     }
-    return (1+(x2-x1) as usize, (y2-y1) as usize)
+    return (1 + (x2 - x1) as usize, (y2 - y1) as usize);
 }
 
 #[cfg(test)]
