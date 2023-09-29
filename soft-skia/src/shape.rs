@@ -507,9 +507,6 @@ impl Shape for Image {
     }
 
     fn draw(&self, pixmap: &mut Pixmap, context: &DrawContext) -> () {
-        let DrawContext {
-            ..
-        } = context;
         let u8_array = base64::decode(&self.image).expect("base64 decode failed");
         let p = Pixmap::decode_png(&u8_array).expect("decode png failed");
         let scale_x = self.width as f32 / p.width() as f32;

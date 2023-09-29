@@ -29,7 +29,7 @@ impl Providers {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default, Clone)]
 pub struct GroupClip {
     pub id: Option<usize>,
     pub invert: Option<bool>,

@@ -257,7 +257,17 @@ impl SoftSkiaWASM {
             }) => {
                 let color = parse_color(color);
                 let style = parse_style(style);
-                let mut clip = GroupClip::default();
+                let provider = self
+                    .0
+                    .get_tree_node_by_id(id)
+                    .unwrap()
+                    .provider.as_ref();
+                // reuse original clip
+                let mut clip = if let Some(Providers::G(group)) = provider {
+                    group.clip.clone().unwrap_or_default()
+                } else {
+                    GroupClip::default()
+                };
                 clip.invert = invert_clip;
 
                 self.0.set_provider_to_child(
