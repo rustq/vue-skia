@@ -104,7 +104,6 @@ pub struct WASMTextAttr {
     max_width: Option<f32>,
 }
 
-
 #[derive(Serialize, Deserialize, Debug)]
 pub enum WASMShapesAttr {
     R(WASMRectAttr),
@@ -226,7 +225,7 @@ impl SoftSkiaWASM {
             if let Some(mask) = &context.mask {
                 pixmap.apply_mask(mask)
             }
-        } 
+        }
     }
 
     #[wasm_bindgen(js_name = setAttrBySerde)]
@@ -345,11 +344,7 @@ impl SoftSkiaWASM {
             }) => {
                 let color = parse_color(color);
                 let style = parse_style(style);
-                let provider = self
-                    .0
-                    .get_tree_node_by_id(id)
-                    .unwrap()
-                    .provider.as_ref();
+                let provider = self.0.get_tree_node_by_id(id).unwrap().provider.as_ref();
                 // reuse original clip
                 let mut clip = if let Some(Providers::G(group)) = provider {
                     group.clip.clone().unwrap_or_default()
@@ -422,7 +417,7 @@ impl SoftSkiaWASM {
                     }),
                 )
             }
-            WASMShapesAttr::T(WASMTextAttr{
+            WASMShapesAttr::T(WASMTextAttr {
                 x,
                 y,
                 text,
@@ -432,7 +427,17 @@ impl SoftSkiaWASM {
             }) => {
                 let color = parse_color(color);
                 let font_size = font_size.unwrap_or(16.0);
-                self.0.set_shape_to_child(id, Shapes::T(Text { text, x, y, font_size, color, max_width }))
+                self.0.set_shape_to_child(
+                    id,
+                    Shapes::T(Text {
+                        text,
+                        x,
+                        y,
+                        font_size,
+                        color,
+                        max_width,
+                    }),
+                )
             }
         };
     }

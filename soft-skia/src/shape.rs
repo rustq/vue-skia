@@ -2,16 +2,11 @@ use std::collections::HashMap;
 
 use fontdue::{
     layout::{CoordinateSystem, Layout, LayoutSettings, TextStyle},
-    Font, Metrics,
+    Font,
 };
 use std::iter::zip;
 pub use tiny_skia::{ColorU8, FillRule, Mask, Paint, PathBuilder, Pixmap, Stroke, Transform};
 use tiny_skia::{LineCap, LineJoin, Path, PixmapPaint};
-use std::iter::zip;
-
-use crate::log;
-
-use crate::log;
 
 #[derive(Debug)]
 pub enum Shapes {
@@ -336,7 +331,7 @@ impl Shape for RoundRect {
                     &paint,
                     FillRule::Winding,
                     Transform::identity(),
-                    None
+                    None,
                 );
             }
             _ => {}
@@ -544,14 +539,14 @@ impl Shape for Text {
         });
         layout.append(fonts, &TextStyle::new(&self.text, self.font_size, 0));
 
-        let mut glyphs:Vec<Vec<u8>> = vec![];
+        let mut glyphs: Vec<Vec<u8>> = vec![];
         self.text.chars().for_each(|c| {
             let (_, bitmap) = fonts[0].rasterize(c, self.font_size);
             glyphs.push(bitmap);
         });
-        let dim= compute_dim(&layout);
+        let dim = compute_dim(&layout);
 
-        let mut bitmap:Vec<u8> = vec![0; dim.0 * dim.1];
+        let mut bitmap: Vec<u8> = vec![0; dim.0 * dim.1];
         for (pos, char_bitmap) in zip(layout.glyphs(), &glyphs) {
             let x = pos.x as i32;
             let y = pos.y as i32 as i32;
