@@ -221,6 +221,11 @@ impl SoftSkiaWASM {
 
             Self::recursive_rasterization_node_to_pixmap(item, pixmap);
         }
+        if let Some(context) = context {
+            if let Some(mask) = &context.mask {
+                pixmap.apply_mask(mask)
+            }
+        }
     }
 
     #[wasm_bindgen(js_name = setAttrBySerde)]
@@ -339,7 +344,13 @@ impl SoftSkiaWASM {
             }) => {
                 let color = parse_color(color);
                 let style = parse_style(style);
-                let mut clip = GroupClip::default();
+                let provider = self.0.get_tree_node_by_id(id).unwrap().provider.as_ref();
+                // reuse original clip
+                let mut clip = if let Some(Providers::G(group)) = provider {
+                    group.clip.clone().unwrap_or_default()
+                } else {
+                    GroupClip::default()
+                };
                 clip.invert = invert_clip;
 
                 self.0.set_provider_to_child(
@@ -384,6 +395,28 @@ impl SoftSkiaWASM {
                     height,
                 }),
             ),
+            WASMShapesAttr::T(WASMTextAttr {
+                x,
+                y,
+                text,
+                font_size,
+                color,
+                max_width,
+            }) => {
+                let color = parse_color(color);
+                let font_size = font_size.unwrap_or(16.0);
+                self.0.set_shape_to_child(
+                    id,
+                    Shapes::T(Text {
+                        text,
+                        x,
+                        y,
+                        font_size,
+                        color,
+                        max_width,
+                    }),
+                )
+            }
             WASMShapesAttr::T(WASMTextAttr {
                 x,
                 y,
