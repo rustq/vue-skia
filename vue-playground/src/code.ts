@@ -16,6 +16,14 @@ export default `<v-surface :width="360" :height="360">
     [138, 10],
   ]" :style="'fill'" :strokeWidth="1" :color="'rgba(200, 255, 0, 0.7)'" />
   <v-image
+    :x="30"
+    :y="40"
+    :image="'https://raw.githubusercontent.com/rustq/vue-skia/main/vue-playground/src/assets/logo.png'"
+    :width="70"
+    :height="70"
+    v-bind:blur="10"
+  ></v-image>
+  <v-image
     :x="0"
     :y="0"
     :image="'https://raw.githubusercontent.com/rustq/vue-skia/main/vue-playground/src/assets/logo.png'"
