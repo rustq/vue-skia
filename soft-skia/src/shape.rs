@@ -115,6 +115,9 @@ pub struct Image {
     pub width: u32,
     pub height: u32,
     pub blur: Option<f32>,
+    pub grayscale: Option<bool>,
+    pub brighten: Option<i32>,
+    pub invert: Option<bool>,
 }
 
 #[derive(Debug)]
@@ -511,13 +514,28 @@ impl Shape for Image {
     }
 
     fn draw(&self, pixmap: &mut Pixmap, context: &DrawContext) -> () {
-        let mut u8_array = base64::decode(&self.image).expect("base64 decode failed");
+        let u8_array = base64::decode(&self.image).expect("base64 decode failed");
         let mut bytes: Vec<u8> = Vec::new();
 
         let mut img = ImageReader::new(Cursor::new(&u8_array as &[u8])).with_guessed_format().unwrap().decode().unwrap();
+
         if let Some(blur) = self.blur {
             img = img.blur(blur);
         }
+        if let Some(grayscale) = self.grayscale {
+            if grayscale {
+                img = img.grayscale();
+            }
+        }
+        if let Some(brighten) = self.brighten {
+            img = img.brighten(brighten);
+        }
+        if let Some(invert) = self.invert {
+            if invert {
+                img.invert();
+            }
+        }
+
         img.write_to(&mut Cursor::new(&mut bytes), image::ImageFormat::Png).unwrap();
 
         let p = Pixmap::decode_png(&bytes).expect("decode png failed");
