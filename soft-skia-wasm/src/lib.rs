@@ -93,9 +93,9 @@ pub struct WASMImageAttr {
     width: u32,
     height: u32,
     blur: Option<f32>,
-    pub grayscale: Option<bool>,
-    pub brighten: Option<i32>,
-    pub invert: Option<bool>,
+    grayscale: Option<bool>,
+    brighten: Option<i32>,
+    invert: Option<bool>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
