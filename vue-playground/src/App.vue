@@ -80,6 +80,9 @@
           :width="70"
           :height="70"
           v-bind:blur="10"
+          :grayscale="false"
+          :brighten="40"
+          :invert="false"
         ></v-image>
         <v-image
           :x="0"
