@@ -34,6 +34,10 @@ export default defineComponent({
     height: {
       type: Number as PropType<number>,
       required: true,
+    },
+    filter: {
+      type: Number as PropType<number>,
+      required: false,
     }
   },
   methods: {
