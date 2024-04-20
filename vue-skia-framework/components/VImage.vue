@@ -1,5 +1,5 @@
 <template >
-  <v-sk-image v-if="loaded" :image="base64String" :x="x" :y="y" :width="width" :height="height" />
+  <v-sk-image v-if="loaded" :image="base64String" :x="x" :y="y" :width="width" :height="height" :blur="blur" :grayscale="grayscale" :brighten="brighten" :invert="invert" />
 </template>
 
 <script lang="ts">
