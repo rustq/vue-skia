@@ -74,6 +74,17 @@
         >
         </v-rect>
         <v-image
+          :x="30"
+          :y="40"
+          :image="'https://raw.githubusercontent.com/rustq/vue-skia/main/vue-playground/src/assets/logo.png'"
+          :width="70"
+          :height="70"
+          v-bind:blur="10"
+          :grayscale="false"
+          :brighten="40"
+          :invert="false"
+        ></v-image>
+        <v-image
           :x="0"
           :y="0"
           :image="'https://raw.githubusercontent.com/rustq/vue-skia/main/vue-playground/src/assets/logo.png'"

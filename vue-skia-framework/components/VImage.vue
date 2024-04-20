@@ -1,5 +1,5 @@
 <template >
-  <v-sk-image v-if="loaded" :image="base64String" :x="x" :y="y" :width="width" :height="height" />
+  <v-sk-image v-if="loaded" :image="base64String" :x="x" :y="y" :width="width" :height="height" :blur="blur" :grayscale="grayscale" :brighten="brighten" :invert="invert" />
 </template>
 
 <script lang="ts">
@@ -34,6 +34,22 @@ export default defineComponent({
     height: {
       type: Number as PropType<number>,
       required: true,
+    },
+    blur: {
+      type: Number as PropType<number>,
+      required: false,
+    },
+    grayscale: {
+      type: Boolean as PropType<boolean>,
+      required: false,
+    },
+    brighten: {
+      type: Number as PropType<number>,
+      required: false,
+    },
+    invert: {
+      type: Boolean as PropType<boolean>,
+      required: false,
     }
   },
   methods: {

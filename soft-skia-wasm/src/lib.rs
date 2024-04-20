@@ -92,6 +92,10 @@ pub struct WASMImageAttr {
     y: i32,
     width: u32,
     height: u32,
+    blur: Option<f32>,
+    grayscale: Option<bool>,
+    brighten: Option<i32>,
+    invert: Option<bool>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -385,6 +389,10 @@ impl SoftSkiaWASM {
                 image,
                 width,
                 height,
+                blur,
+                grayscale,
+                brighten,
+                invert,
             }) => self.0.set_shape_to_child(
                 id,
                 Shapes::I(Image {
@@ -393,6 +401,10 @@ impl SoftSkiaWASM {
                     y,
                     width,
                     height,
+                    blur,
+                    grayscale,
+                    brighten,
+                    invert,
                 }),
             ),
             WASMShapesAttr::T(WASMTextAttr {
