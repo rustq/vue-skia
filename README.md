@@ -105,8 +105,16 @@ $ wasm-pack build --release --target web
 
 ```shell
 $ cd vue-skia-framework
-$ npm i
-$ npm run build
+$ pnpm i
+$ pnpm run build
+```
+
+#### Vue Playground Development
+
+```shell
+$ cd vue-playground
+$ pnpm i
+$ pnpm run serve
 ```
 
 ## License

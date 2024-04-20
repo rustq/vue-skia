@@ -2,11 +2,6 @@
   "name": "monorepo",
   "version": "0.1.0",
   "private": "true",
-  "scripts": {
-    "serve": "pnpm --filter vue-playground serve",
-    "build": "pnpm build:wasm && pnpm build:vue",
-    "build:vue": "pnpm --filter vue-skia build",
-    "build:wasm": "cd soft-skia-wasm && wasm-pack build"
-  },
+  "scripts": {},
   "packageManager": "pnpm@7.32.0"
 }
