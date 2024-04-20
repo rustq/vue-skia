@@ -35,8 +35,20 @@ export default defineComponent({
       type: Number as PropType<number>,
       required: true,
     },
-    filter: {
+    blur: {
       type: Number as PropType<number>,
+      required: false,
+    },
+    grayscale: {
+      type: Boolean as PropType<boolean>,
+      required: false,
+    },
+    brighten: {
+      type: Number as PropType<number>,
+      required: false,
+    },
+    invert: {
+      type: Boolean as PropType<boolean>,
       required: false,
     }
   },
