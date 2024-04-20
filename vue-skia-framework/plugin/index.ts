@@ -170,6 +170,10 @@ const VSKNode = (name: string) => {
                         y: attrs.y,
                         width: attrs.width,
                         height: attrs.height,
+                        blur: attrs.blur,
+                        grayscale: attrs.grayscale,
+                        brighten: attrs.brighten,
+                        invert: attrs.invert,
                       },
                     },
                   });
