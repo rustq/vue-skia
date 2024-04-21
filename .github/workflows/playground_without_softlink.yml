@@ -1,4 +1,4 @@
-name: Playground Use Latest
+name: Playground Without Softlink
 
 on:
   push:
