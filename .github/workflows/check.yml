@@ -67,3 +67,11 @@ jobs:
           name: soft-skia-wasm
           path: |
             soft-skia-wasm/pkg
+
+      - name: Archive vue-playground in monorepo artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: vue-playground
+          path: |
+            vue-playground
+            !vue-playground/node_modules
