@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - '0\.*\.*'
   pull_request:
     branches:
       - main
@@ -34,7 +33,7 @@ jobs:
       - name: Archive vue-playground results
         uses: actions/upload-artifact@v3
         with:
-          name: vue-playground-use-latest
+          name: vue-playground-without-softlink
           path: |
             vue-playground
             !vue-playground/node_modules

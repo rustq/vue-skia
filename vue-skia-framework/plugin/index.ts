@@ -113,6 +113,7 @@ const VSKNode = (name: string) => {
                 (
                   parent as ComponentInternalInstanceWithSoftSkiaWASM
                 )._ssw_grouped?.(instance);
+                root._ssw_batchDraw?.()
             });
 
             onUpdated(() => {
@@ -123,6 +124,7 @@ const VSKNode = (name: string) => {
                 }
                 const core = root.ssw;
                 updateInstance(core, name, instance, attrs);
+                root._ssw_batchDraw?.()
             });
 
             /**
