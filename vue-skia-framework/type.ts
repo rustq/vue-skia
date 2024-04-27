@@ -7,6 +7,7 @@ export type ComponentInternalInstanceWithSoftSkiaWASM = ComponentInternalInstanc
     ssw: SoftSkiaWASM;
     _ssw_id: number;
     _ssw_grouped?: (instance: ComponentInternalInstanceWithSoftSkiaWASM) => void;
+    _ssw_batchDraw?: () => void;
 }
 
 declare global {

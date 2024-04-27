@@ -33,27 +33,35 @@ export default {
         const ssw = window.ssw;
         const rootID = SelfIncreaseCount.count;
         const core = new ssw.SoftSkiaWASM(rootID);
+
+        let waitingForDraw = false;
+
         instance.ssw = core; // Save on component instance
         instance._ssw_id = rootID;
         core.setAttrBySerde(rootID, { attr: { R: { x: 0, y: 0, width: attrs.width, height: attrs.height, color: 'transparent', style: "fill" } } })
 
+        // batch draw func
+        function batchDraw() {
+            if (!waitingForDraw) {
+                waitingForDraw = true;
+                window.requestAnimationFrame(() => {
+                    const base64 = core.toBase64();
+                    container.value.setAttribute("src", base64);
+                    waitingForDraw = false;
+                });
+            }
+        }
+        instance._ssw_batchDraw = () => batchDraw();
 
         onMounted(() => {
-            const base64 = core.toBase64();
-            container.value.setAttribute("src", base64);
+            batchDraw();
         });
 
         onUpdated(() => {
-            const base64 = core.toBase64();
-            // console.log(core.toDebug?.())
-            container.value.setAttribute("src", base64);
+            batchDraw();
         });
 
-        onBeforeUnmount(() => {
-            // const instance = getCurrentInstance() as ComponentInternalInstanceWithSoftSkiaWASM;
-            // const core = instance.ssw;
-            // core.free();
-        });
+        onBeforeUnmount(() => {});
 
 
         return () => h('img', { ref: container }, slots.default?.());
