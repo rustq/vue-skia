@@ -3,7 +3,7 @@
 [![license](https://img.shields.io/badge/license-MIT-cyan)](https://revolunet.mit-license.org/) ![vue-3.x](https://img.shields.io/badge/vue-3.x-lightgreen) [![crates](https://img.shields.io/crates/v/soft-skia)](https://crates.io/crates/soft_skia) [![npm](https://img.shields.io/npm/v/vue-skia?color=purple)](https://www.npmjs.com/package/vue-skia) [![downloads](https://img.shields.io/npm/dm/vue-skia)](https://www.npmjs.com/package/vue-skia)
 
 
-The `vue-skia` is a `skia` based 2d graphics `vue` rendering library. It is based on `Rust` to implement software rasterization to perform rendering. It takes up less memory than the native canvas, however it is still a experiment project. And it's based entirely on `vue` syntax.
+The `vue-skia` is a `skia` based 2d graphics `vue` rendering library. It is based on `Rust` to implement software rasterization to perform rendering. It takes up less memory than the native canvas, however it is still an experimental project. And it's based entirely on `vue` syntax.
 
 基于 `Skia` 的 2D 图形 `Vue` 渲染库 —— 使用 `Rust` 语言实现纯软件光栅化渲染，相比原生画布占用更少的内存，不过目前仍然是一个实验项目；此外使用层面完全基于 `Vue` 语法。
 
