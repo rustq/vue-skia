@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://vue-skia.netlify.app">
-    <img src="https://github.com/user-attachments/assets/7e1423b5-13c2-4f04-87db-c721c6ee8987" height="120px" />
+    <img src="https://github.com/user-attachments/assets/7e1423b5-13c2-4f04-87db-c721c6ee8987" />
   </a>
 </div>
 
