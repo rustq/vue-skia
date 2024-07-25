@@ -1,9 +1,3 @@
-<div align="center">
-  <a href="https://vue-skia.netlify.app">
-    <img src="https://github.com/user-attachments/assets/7e1423b5-13c2-4f04-87db-c721c6ee8987" />
-  </a>
-</div>
-
 # Vue Skia
 
 [![license](https://img.shields.io/badge/license-MIT-cyan)](https://revolunet.mit-license.org/) ![vue-3.x](https://img.shields.io/badge/vue-3.x-lightgreen) [![crates](https://img.shields.io/crates/v/soft-skia)](https://crates.io/crates/soft_skia) [![npm](https://img.shields.io/npm/v/vue-skia?color=purple)](https://www.npmjs.com/package/vue-skia) [![downloads](https://img.shields.io/npm/dm/vue-skia)](https://www.npmjs.com/package/vue-skia)
