@@ -1,4 +1,4 @@
-export default `<!--<template>loading</template>-->
+export default `<!-- The vue-skia is a skia-based 2d graphics vue rendering library. It is based on Rust to implement software rasterization to perform rendering. It takes up less memory than the native canvas, however it is still a experiment project. And it's based entirely on vue syntax. -->
 
 
 
@@ -18,4 +18,21 @@ export default `<!--<template>loading</template>-->
 
 
 
-`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+`;
