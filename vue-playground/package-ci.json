@@ -14,7 +14,7 @@
     "prismjs": "^1.29.0",
     "vue": "^3.2.13",
     "vue-live": "^2.5.4",
-    "vue-skia": "0.1.1-beta"
+    "vue-skia": "0.1.1"
   },
   "devDependencies": {
     "@types/node": "^20.5.0",

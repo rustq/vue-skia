@@ -231,7 +231,7 @@ body {
   position: absolute;
   top: 100px;
   left: -200px;
-  font-family: "Nanum Pen Script";
+  font-family: "Nanum Pen Script", "Nanum Pen";
   font-size: 2em;
   color: rgb(0, 161, 132);
   transform: rotate(-30deg);

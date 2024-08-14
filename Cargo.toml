@@ -14,8 +14,3 @@ members = ["soft-skia", "soft-skia-wasm"]
 [dependencies]
 png = "0.17.5"
 colorsys = "0.6.5"
-
-[dependencies.neon]
-version = "0.10.1"
-default-features = false
-features = ["napi-6", "promise-api", "task-api"]
