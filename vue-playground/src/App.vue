@@ -11,7 +11,7 @@
       <p class="description">
         This super cool editor is based on <em>vue-live</em> !
       </p>
-      <div class="livebox" v-if="!debug">
+      <div class="livebox" v-if="!loading && !debug">
         <div class="hint">
           You can edit
           <span title="copy code to clipboard" @click="copy">this</span>
@@ -231,7 +231,7 @@ body {
   position: absolute;
   top: 100px;
   left: -200px;
-  font-family: "Nanum Pen Script", "Nanum Pen";
+  font-family: "Nanum Pen Script";
   font-size: 2em;
   color: rgb(0, 161, 132);
   transform: rotate(-30deg);
