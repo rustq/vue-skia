@@ -1,5 +1,5 @@
 <template>
-  <main style="text-align: center">
+  <main v-if="!loading" style="text-align: center">
     <template v-if="true">
       <h1>Vue Skia</h1>
       <p class="description">
@@ -11,7 +11,7 @@
       <p class="description">
         This super cool editor is based on <em>vue-live</em> !
       </p>
-      <div class="livebox" v-if="!loading && !debug">
+      <div class="livebox" v-if="!debug">
         <div class="hint">
           You can edit
           <span title="copy code to clipboard" @click="copy">this</span>
@@ -37,7 +37,7 @@
         />
       </div>
     </template>
-    <template v-if="!loading && debug">
+    <template v-if="debug">
       <v-surface :width="400" :height="400">
         <v-points
           :points="[
