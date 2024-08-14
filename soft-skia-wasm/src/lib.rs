@@ -10,8 +10,7 @@ use soft_skia::shape::Rect;
 use soft_skia::shape::{Circle, Image, Line, PaintStyle, Points, RoundRect, Shapes, Text};
 use soft_skia::tree::Node;
 use wasm_bindgen::prelude::*;
-
-use cssparser::{Color as CSSColor, Parser, ParserInput};
+use csscolorparser;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
@@ -457,15 +456,9 @@ impl SoftSkiaWASM {
 
 fn parse_color(color: Option<String>) -> Option<ColorU8> {
     if let Some(color_str) = color {
-        let mut parser_input = ParserInput::new(&color_str);
-        let mut parser = Parser::new(&mut parser_input);
-
-        if let Ok(css_color) = CSSColor::parse(&mut parser) {
-            if let CSSColor::RGBA(rgba) = css_color {
-                return Some(ColorU8::from_rgba(
-                    rgba.red, rgba.green, rgba.blue, rgba.alpha,
-                ));
-            }
+        if let Ok(css_color) = csscolorparser::parse(&color_str) {
+            let css_rgba8 = css_color.to_rgba8();
+            return Some(ColorU8::from_rgba(css_rgba8[0], css_rgba8[1], css_rgba8[2], css_rgba8[3]))
         }
     }
     None
