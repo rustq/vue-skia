@@ -6,6 +6,41 @@
 import { defineComponent, getCurrentInstance, PropType } from "vue";
 import { ComponentInternalInstanceWithSoftSkiaWASM } from "../type";
 
+class ImageLoader {
+  static caches: { [url: string]: string } = {};
+
+  public static load(url: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (this.caches[url]) {
+        return resolve(this.caches[url]);
+      }
+      if (url.startsWith("data:image/png;base64")) {
+        const base64String = url.replace("data:image/png;base64,", "");
+        this.caches[url] = base64String;
+        return resolve(base64String);
+      } else {
+        fetch(url)
+          .then((res) => res.blob())
+          .then((blob) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              const base64String = (reader.result as string).replace(
+                "data:image/png;base64,",
+                ""
+              );
+              this.caches[url] = base64String;
+              return resolve(base64String);
+            };
+            reader.readAsDataURL(blob);
+          })
+          .catch(e => {
+            reject(e)
+          });
+      }
+    });
+  }
+}
+
 export default defineComponent({
   name: "VImage",
   data() {
@@ -64,25 +99,11 @@ export default defineComponent({
   },
   mounted() {
     const vm = getCurrentInstance() as ComponentInternalInstanceWithSoftSkiaWASM;
-    if (this.image?.startsWith("data:image/png;base64")) {
-      const base64String = this.image.replace("data:image/png;base64,", "")
+    ImageLoader.load(this.image).then(base64String => {
       this.base64String = base64String;
       this.loaded = true;
       this.reUpdateRoot(vm);
-    } else {
-      fetch(this.image)
-        .then((res) => res.blob())
-        .then((blob) => {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            const base64String = (reader.result as string).replace("data:image/png;base64,", "");
-            this.base64String = base64String;
-            this.loaded = true;
-            this.reUpdateRoot(vm);
-          };
-          reader.readAsDataURL(blob);
-        });
-    }
+    })
   }
 });
 </script>

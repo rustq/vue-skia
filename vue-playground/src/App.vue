@@ -11,9 +11,10 @@
       <p class="description">
         This super cool editor is based on <em>vue-live</em> !
       </p>
-      <div class="livebox" v-if="!debug">
+      <div class="livebox" v-if="!loading && !debug">
         <div class="hint">
-          You can edit <a title="copy code to clipboard" @click="copy">this</a>
+          You can edit
+          <span title="copy code to clipboard" @click="copy">this</span>
           <span>-></span>
         </div>
         <VueLive
@@ -81,15 +82,8 @@
           :height="70"
           v-bind:blur="10"
           :grayscale="false"
-          :brighten="40"
+          :brighten="80"
           :invert="false"
-        ></v-image>
-        <v-image
-          :x="0"
-          :y="0"
-          :image="'https://raw.githubusercontent.com/rustq/vue-skia/main/vue-playground/src/assets/logo.png'"
-          :width="70"
-          :height="70"
         ></v-image>
       </v-surface>
     </template>
@@ -125,14 +119,10 @@ export default defineComponent({
     VueLive,
     GithubCorners,
     VSurface,
-    VGroup,
     VRect,
     VCircle,
-    VRoundRect,
-    VLine,
     VPoints,
     VImage,
-    VText
   },
   data() {
     return {
@@ -246,6 +236,7 @@ body {
   color: rgb(0, 161, 132);
   transform: rotate(-30deg);
   transition: transform 0.2s;
+  user-select: none;
 }
 
 @media (max-width: 1600px) {

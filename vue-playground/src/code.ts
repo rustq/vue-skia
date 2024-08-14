@@ -23,15 +23,8 @@ export default `<v-surface :width="360" :height="360">
     :height="70"
     v-bind:blur="10"
     :grayscale="false"
-    :brighten="40"
+    :brighten="80"
     :invert="false"
-  ></v-image>
-  <v-image
-    :x="0"
-    :y="0"
-    :image="'https://raw.githubusercontent.com/rustq/vue-skia/main/vue-playground/src/assets/logo.png'"
-    :width="70"
-    :height="70"
   ></v-image>
   <v-group :x="200" :y="160" color="violet" :style="'stroke'" :invertClip="true">
     <template #clip>
