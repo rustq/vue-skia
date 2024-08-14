@@ -1,6 +1,6 @@
 {
   "name": "vue-playground",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -14,7 +14,7 @@
     "prismjs": "^1.29.0",
     "vue": "^3.2.13",
     "vue-live": "^2.5.4",
-    "vue-skia": "0.1.0"
+    "vue-skia": "0.1.1-beta"
   },
   "devDependencies": {
     "@types/node": "^20.5.0",
