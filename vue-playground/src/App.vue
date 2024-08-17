@@ -20,6 +20,7 @@
         </div>
         <VueLive
           :editorProps="{ lineNumbers: true }"
+          :delay="600"
           :code="!loading && !debug ? code : LoadingCode"
           :layout="CustomLayout"
           :components="{
@@ -169,7 +170,7 @@ export default defineComponent({
   },
   methods: {
     input(event: any) {
-      this.code = event.target._value;
+      // this.code = event.target._value;
     },
     copy() {
       try {
