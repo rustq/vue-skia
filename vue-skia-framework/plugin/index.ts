@@ -64,6 +64,7 @@ const VSKNode = (name: string) => {
             instance._ssw_id = (
               parent as ComponentInternalInstanceWithSoftSkiaWASM
             )._ssw_id;
+            instance._ssw_attached = true;
 
             instance._ssw_grouped = (child) => {
               core.setAttrBySerde(instance._ssw_id, {
@@ -103,6 +104,7 @@ const VSKNode = (name: string) => {
                 }
                 const core = root.ssw;
                 instance._ssw_id = SelfIncreaseCount.count;
+                instance._ssw_attached = true;
                 var parent = instance.parent;
                 while (!('_ssw_id' in parent)) {
                     parent = parent.parent;
@@ -208,7 +210,10 @@ const VSKNode = (name: string) => {
                 while (!('_ssw_id' in parent)) {
                     parent = parent.parent;
                 }
-                core.removeChildFromContainer(child_id, (parent as ComponentInternalInstanceWithSoftSkiaWASM)._ssw_id)
+                instance._ssw_attached = false;
+                if ((parent as ComponentInternalInstanceWithSoftSkiaWASM)._ssw_attached && parent.isMounted) {
+                  core.removeChildFromContainer(child_id, (parent as ComponentInternalInstanceWithSoftSkiaWASM)._ssw_id)
+                }
             });
 
             return () => h(name, {}, slots.default?.())
