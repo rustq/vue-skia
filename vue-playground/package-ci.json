@@ -15,7 +15,7 @@
     "vue": "^3.2.13",
     "vue-live": "^2.5.4",
     "vue3-progress": "0.0.1-beta4",
-    "vue-skia": "0.1.1"
+    "vue-skia": "0.1.2-beta"
   },
   "devDependencies": {
     "@types/node": "^20.5.0",
