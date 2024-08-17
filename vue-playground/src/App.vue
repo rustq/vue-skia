@@ -1,4 +1,5 @@
 <template>
+  <vue3-progress />
   <main v-if="!loading" style="text-align: center">
     <template v-if="true">
       <h1>Vue Skia</h1>
@@ -113,6 +114,7 @@ import code from "./code";
 import LoadingCode from "./loading-code";
 import "vue-live/style.css";
 import "prism-themes/themes/prism-night-owl.css";
+
 export default defineComponent({
   name: "App",
   components: {
@@ -159,7 +161,11 @@ export default defineComponent({
       }
 
       this.loading = false;
+      (this as unknown as { $progress: { start: () => void; finish: () => void } }).$progress.finish();
     });
+  },
+  created() {
+    (this as unknown as { $progress: { start: () => void; finish: () => void } }).$progress.start();
   },
   methods: {
     input(event: any) {
