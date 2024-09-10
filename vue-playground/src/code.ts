@@ -13,7 +13,6 @@ export default `<v-surface :width="360" :height="360">
     [74, 165],
     [10, 103],
     [98, 90],
-    [138, 10],
   ]" :style="'fill'" :strokeWidth="1" :color="'rgba(200, 255, 0, 0.7)'" />
   <v-image
     :x="30"
