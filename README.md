@@ -51,7 +51,6 @@ app.mount("#app");
           [74, 165],
           [10, 103],
           [98, 90],
-          [138, 10],
         ]" :style="'fill'" :strokeWidth="1" :color="'rgba(200, 255, 0, 0.7)'" />
     </v-surface>
   </template>
